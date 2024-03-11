@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overtime Work System</title>
+</head>
+<body>
+
+    <h1>Overtime Work Request</h1>
+    <form id="overtimeForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+        
+        <label for="shift">Shift:</label>
+        <select id="shift" name="shift" required>
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+        </select><br><br>
+        
+        <label for="startTime">Start Time:</label>
+        <select id="startTime" name="startTime" required>
+            <option value="" disabled selected>Select Start Time</option>
+        </select><br><br>
+        
+        <label for="endTime">End Time:</label>
+        <select id="endTime" name="endTime" required>
+            <option value="" disabled selected>Select End Time</option>
+        </select><br><br>
+        
+        <label for="reason">Reason:</label><br>
+        <textarea id="reason" name="reason" rows="4" cols="50" required></textarea><br><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        const sendData = async (formData) => {
+            try {
+                let response = await axios.post("http://localhost:8080/employee/overtime/create", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+
+                console.log("ID:", response.data.id);
+                // Handle response as needed
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        const morningStartTimeSelect = document.getElementById("startTime");
+        const afternoonStartTimeSelect = document.getElementById("startTime");
+        const endTimeSelect = document.getElementById("endTime");
+        
+        document.getElementById("shift").addEventListener("change", function() {
+            const shift = this.value;
+            
+            if (shift === "morning") {
+                morningStartTimeSelect.innerHTML = "";
+                for (let i = 6; i <= 8; i++) {
+                    const option = document.createElement("option");
+                    option.text = `${i < 10 ? "0" : ""}${i}:00 AM`;
+                    option.value = `${i < 10 ? "0" : ""}${i}:00`;
+                    morningStartTimeSelect.add(option);
+                }
+                
+                endTimeSelect.innerHTML = "";
+                for (let i = 7; i <= 9; i++) {
+                    const option = document.createElement("option");
+                    option.text = `${i < 10 ? "0" : ""}${i}:00 AM`;
+                    option.value = `${i < 10 ? "0" : ""}${i}:00`;
+                    endTimeSelect.add(option);
+                }
+            } else if (shift === "afternoon") {
+                morningStartTimeSelect.innerHTML = "";
+                for (let i = 18; i <= 21; i++) {
+                    const option = document.createElement("option");
+                    option.text = `${i > 12 ? i - 12 : i}:00 PM`;
+                    option.value = `${i < 10 ? "0" : ""}${i}:00`;
+                    morningStartTimeSelect.add(option);
+                }
+                
+                endTimeSelect.innerHTML = "";
+                for (let i = 19; i <= 22; i++) {
+                    const option = document.createElement("option");
+                    option.text = `${i > 12 ? i - 12 : i}:00 PM`;
+                    option.value = `${i < 10 ? "0" : ""}${i}:00`;
+                    endTimeSelect.add(option);
+                }
+            }
+        });
+
+        document.getElementById("overtimeForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            let formData = new FormData(this);
+            sendData(formData);
+        });
+    </script>
+</body>
+</html>
