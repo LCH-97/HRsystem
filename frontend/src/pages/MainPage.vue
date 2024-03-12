@@ -6,7 +6,7 @@
         <img class="profile-pic"
             src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg"
             alt="Profile Picture">
-        <h2>안녕하세요</h2>
+        <h2>안녕하세요 {{ this.$route.query.name }}</h2>
         <!-- 나중에는 여기 직원 이름이 오도록 -->
 
         <div class="button-container">
@@ -14,7 +14,7 @@
         </div>
 
         <h1 id="sumTime" class="time">총 업무시간 </h1>
-        <h1 id="startTime" class="time">근무 시작 </h1>
+        <h1 id="startTime" class="time">근무 시작 {{ this.startTime }} </h1>
         <h1 id="endTime" class="time">근무 종료 </h1>
 
     </div>
@@ -38,6 +38,7 @@ export default {
     data() {
         return {
             responseData: null,
+            startTime: '',
             username: '',
             password: '',
         };
@@ -61,12 +62,39 @@ export default {
                 .then(response => {
                     console.log('Response:', response.data);
                     this.responseData = response.data;
-                   
+                    this.startTime = response.data.startTime;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
                 });
-        }
+        },
+        leave() {
+            console.log("click");
+            // const api = process.env.VUE_APP_BACKEND_URL;
+            const api = 'http://localhost:8080';
+            console.log(api);
+            // let formData = new FormData();
+            // formData.append('username', this.username);
+            // formData.append('password', this.password);
+            const token = sessionStorage.getItem('token');
+            axios.post(api + '/employee/leave',null, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                    this.responseData = response.data;
+                    this.startTime = response.data.endtime;
+                })
+                .catch(error => {
+                    console.error('Error updating data:', error);
+                });
+        },
+    },
+    computed(){
+        // 출근한 상태인지 확인해야함.
     },
 }
 </script>
