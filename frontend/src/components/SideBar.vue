@@ -7,7 +7,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="/main">
                                 <div class="sb-nav-link-icon"><svg class="svg-inline--fa fa-gauge-high"
                                         aria-hidden="true" focusable="false" data-prefix="fas" data-icon="gauge-high"
                                         role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
@@ -20,7 +20,7 @@
                                 메인 화면
                             </a>
                             <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="/" data-bs-toggle="collapse"
+                            <a class="nav-link collapsed" href="/signUp" data-bs-toggle="collapse"
                                 data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><svg class="svg-inline--fa fa-table-columns"
                                         aria-hidden="true" focusable="false" data-prefix="fas" data-icon="table-columns"

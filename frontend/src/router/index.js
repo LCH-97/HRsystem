@@ -8,8 +8,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/signup", component: SignUpPage },
+    { path: "/", component: LoginPage },
     { path: "/login", component: LoginPage },
-    { path: "/", component: MainPage },
+    { path: "/main", component: MainPage },
   ],
 });
 
