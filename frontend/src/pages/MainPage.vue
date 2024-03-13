@@ -10,12 +10,16 @@
         <!-- 나중에는 여기 직원 이름이 오도록 -->
 
         <div class="button-container">
-            <button id="commuteButton" @click="commute">출근</button>
+            <button id="commuteButton" @click="commute" v-show="!isCommute">출근</button>
+        </div>
+
+        <div class="button-container">
+            <button id="leaveButton" @click="leave" v-show="isCommute">퇴근</button>
         </div>
 
         <h1 id="sumTime" class="time">총 업무시간 </h1>
         <h1 id="startTime" class="time">근무 시작 {{ this.startTime }} </h1>
-        <h1 id="endTime" class="time">근무 종료 </h1>
+        <h1 id="endTime" class="time">근무 종료 {{ this.endTime }}</h1>
 
     </div>
 
@@ -37,10 +41,12 @@ export default {
     },
     data() {
         return {
-            responseData: null,
             startTime: '',
-            username: '',
-            password: '',
+            endTime: '',
+            isCommute: false,
+
+
+            
         };
     },
     methods: {
@@ -61,8 +67,9 @@ export default {
             })
                 .then(response => {
                     console.log('Response:', response.data);
-                    this.responseData = response.data;
-                    this.startTime = response.data.startTime;
+                    // this.responseData = response.data;
+                    this.startTime = response.data.result.startTime;
+                    this.isCommute = !this.isCommute;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
@@ -77,7 +84,7 @@ export default {
             // formData.append('username', this.username);
             // formData.append('password', this.password);
             const token = sessionStorage.getItem('token');
-            axios.post(api + '/employee/leave',null, {
+            axios.patch(api + '/employee/leave',null, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
@@ -85,8 +92,33 @@ export default {
             })
                 .then(response => {
                     console.log('Response:', response.data);
-                    this.responseData = response.data;
-                    this.startTime = response.data.endtime;
+                    // this.responseData = response.data;
+                    this.endTime = response.data.result.endtime;
+                    this.isCommute = !this.isCommute;
+                })
+                .catch(error => {
+                    console.error('Error updating data:', error);
+                });
+        },
+        check() {
+            console.log("click");
+            // const api = process.env.VUE_APP_BACKEND_URL;
+            const api = 'http://localhost:8080';
+            console.log(api);
+            // let formData = new FormData();
+            // formData.append('username', this.username);
+            // formData.append('password', this.password);
+            const token = sessionStorage.getItem('token');
+            axios.get(api + '/employee/commute/check',null, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                    // this.responseData = response.data;
+                    this.isCommute = response.data.result;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
@@ -95,6 +127,8 @@ export default {
     },
     computed(){
         // 출근한 상태인지 확인해야함.
+        this.check()
+        
     },
 }
 </script>
@@ -118,6 +152,21 @@ export default {
 } */
 
 #commuteButton {
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 12px;
+    background-color: #f7c231;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 187px;
+    height: 35px;
+}
+
+#leaveButton {
     border: none;
     outline: none;
     padding: 10px 20px;
