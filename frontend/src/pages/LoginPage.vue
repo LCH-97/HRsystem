@@ -39,20 +39,7 @@
                     </div>
                 </main>
             </div>
-            <div id="layoutAuthentication_footer">
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            
         </div>
   
   
@@ -97,6 +84,9 @@
           console.log('Response:', response.data);
           this.responseData = response.data;
           sessionStorage.setItem('token', response.data.result.token);
+
+          // main page로 이동해야지/?
+          this.$router.push('/main?name='+response.data.result.name);
         })
         .catch(error => {
           console.error('Error updating data:', error);

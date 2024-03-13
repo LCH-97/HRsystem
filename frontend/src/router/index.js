@@ -20,7 +20,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/signup", component: SignUpPage },
+    { path: "/", component: LoginPage },
     { path: "/login", component: LoginPage },
+
     { path: "/", component: MainPage },
 
     { path: "/goout",
@@ -42,6 +44,7 @@ const router = createRouter({
         { path: "update", component: GooutTypeUpdate },
       ],
     }
+
   ],
 },
 );
