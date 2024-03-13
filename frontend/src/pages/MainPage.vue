@@ -77,7 +77,8 @@ export default {
                     // this.responseData = response.data;
                     this.startTime = response.data.result.startTime;
                     this.commuteId = response.data.result.id;
-                    this.isCommute = !this.isCommute;
+                    this.isCommute = true;
+                    this.isLeave = false;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
@@ -103,14 +104,14 @@ export default {
                     // this.responseData = response.data;
                     this.endTime = response.data.result.endTime;
                     this.sumTime = response.data.result.sumTime;
-                    this.isCommute = !this.isCommute;
+                    this.isLeave = true;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
                 });
         },
         check() {
-            console.log("click");
+            console.log("check");
             // const api = process.env.VUE_APP_BACKEND_URL;
             const api = 'http://localhost:8080';
             console.log(api);
@@ -118,14 +119,14 @@ export default {
             // formData.append('username', this.username);
             // formData.append('password', this.password);
             const token = sessionStorage.getItem('token');
-            axios.get(api + '/employee/commute/check',null, {
+            axios.get(api + '/employee/commute/check', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
                 }
             })
                 .then(response => {
-                    console.log('Response:', response.data);
+                    console.log('Chcek Response:', response.data);
                     // this.responseData = response.data;
                     this.isCommute = response.data.result.isCommute;
                     this.isLeave = response.data.result.isLeave;
@@ -148,7 +149,7 @@ export default {
                 });
         },
     },
-    computed(){
+    mounted(){
         // 출근한 상태인지 확인해야함.
         this.check()
         
