@@ -45,8 +45,8 @@ export default {
             });
           },
           updateGooutType() {
-            // localStorage에 수정할 gooutType 정보 저장
-            localStorage.setItem('updateGooutTypeInfo', JSON.stringify(this.gooutType));
+            // localStorage에 수정할 gooutType 정보와 id 저장
+            localStorage.setItem('updateGooutTypeInfo', JSON.stringify({ ...this.gooutType, id: this.id }));
             // 수정 페이지로 이동
             this.$router.push('/gooutType/update');
           },
