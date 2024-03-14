@@ -6,17 +6,14 @@
       <main>
         <div class="container-fluid px-4">
           <h1 class="mt-4">모든 결재</h1>
+          <a class="make-approve" href="/approve/create">결재만들기 </a>
           <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active">모든 결재</li>
           </ol>
           <div class="row">
             <div class="col-xl-3 col-md-6"></div>
-            <div class="col-xl-3 col-md-6"></div>
-            <div class="col-xl-3 col-md-6"></div>
-            <div class="col-xl-3 col-md-6"></div>
           </div>
           <div class="row">
-            <div class="col-xl-6"></div>
             <div class="col-xl-6"></div>
           </div>
           <div class="card mb-4">
@@ -43,14 +40,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(approve, index) in approvals" :key="index">
+                  <tr v-for="(approve, index) in approvals" :key="index" @click="goToApproveReadPage(approve.id)">
                     <td>{{ approve.id }}</td>
                     <td>{{ approve.createAt }}</td>
                     <td>{{ approve.title }}</td>
-                    <td>{{ approve.employee }}</td>
+                    <td>{{ approve.name }}</td>
                     <td>{{ approve.confirmer1 }}</td>
                     <td>{{ approve.confirmer2 }}</td>
-                    <td>{{ approve.status }}</td>
+                    <td>{{ getStatusText(approve.status) }}</td>
                   </tr>
                 </tbody>
                 <tfoot>
@@ -110,7 +107,24 @@ export default {
         console.error("Error fetching data:", error);
       });
     },
+    goToApproveReadPage(id) {
+    if (id) {
+      this.$router.push(`/approve/read/${id}`);
+    } else {
+      console.error("ID is undefined");
+    }
   },
+  getStatusText(status) {
+      const statusMap = {
+        0: "대기중",
+        1: "결재자1 승인",
+        2: "최종 승인",
+        3: "반려",
+      };
+      return statusMap[status] || "알 수 없음";
+  }
+}
+  
 };
 </script>
 
@@ -358,5 +372,14 @@ tfoot tr th {
 
 .translate-middle-y {
   transform: translateY(-50%) !important;
+}
+.make-approve {
+  padding:10px 30px;
+  background-color: #0b5ed7;
+  position: absolute;
+  right: 10%;
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
 }
 </style>
