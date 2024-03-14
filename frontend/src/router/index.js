@@ -5,6 +5,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import ApproveListPage from "@/pages/Approve/ApproveListPage.vue";
 import ApproveCreatePage from "@/pages/Approve/ApproveCreatePage.vue"
+import ApproveReadPage from "@/pages/Approve/ApproveReadPage.vue"
 
 import SignUpPage from "@/pages/SignUpPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
@@ -31,6 +32,7 @@ const router = createRouter({
     { path: "/main", component: MainPage },
     { path: "/approve/list", component: ApproveListPage },
     { path: "/approve/create", component: ApproveCreatePage },
+    { path: "/approve/read/:id", component: ApproveReadPage },
 
 
     { path: "/goout",
