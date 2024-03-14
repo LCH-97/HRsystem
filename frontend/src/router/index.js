@@ -11,6 +11,7 @@ import OvertimeApproveaPage from '../pages/OvertimeApproveaPage.vue';
 
 import ApproveListPage from "@/pages/Approve/ApproveListPage.vue";
 import ApproveCreatePage from "@/pages/Approve/ApproveCreatePage.vue"
+import ApproveReadPage from "@/pages/Approve/ApproveReadPage.vue"
 
 import SignUpPage from "@/pages/SignUpPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
@@ -44,6 +45,7 @@ const router = createRouter({
 
     { path: "/approve/list", component: ApproveListPage },
     { path: "/approve/create", component: ApproveCreatePage },
+    { path: "/approve/read/:id", component: ApproveReadPage },
 
 
     { path: "/goout",
