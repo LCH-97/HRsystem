@@ -6,16 +6,24 @@
         <img class="profile-pic"
             src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg"
             alt="Profile Picture">
-        <h2>안녕하세요 {{ this.$route.query.name }}</h2>
+        <h2>안녕하세요 {{ this.$route.query.name }} </h2>
         <!-- 나중에는 여기 직원 이름이 오도록 -->
 
         <div class="button-container">
-            <button id="commuteButton" @click="commute">출근</button>
+            <button id="commuteButton" @click="commute" v-show="!isCommute">출근</button>
         </div>
 
-        <h1 id="sumTime" class="time">총 업무시간 </h1>
+        <div class="button-container">
+            <button id="leaveButton" @click="leave" v-show="isCommute && !isLeave">퇴근 {{ this.commuteId }}</button>
+        </div>
+
+        <div class="button-container">
+            <button id="leaveButton" v-show="isCommute && isLeave">빨리 나가라</button>
+        </div>
+
+        <h1 id="sumTime" class="time">총 업무시간 {{this.sumTime}}</h1>
         <h1 id="startTime" class="time">근무 시작 {{ this.startTime }} </h1>
-        <h1 id="endTime" class="time">근무 종료 </h1>
+        <h1 id="endTime" class="time">근무 종료 {{ this.endTime }}</h1>
 
     </div>
 
@@ -37,10 +45,15 @@ export default {
     },
     data() {
         return {
-            responseData: null,
             startTime: '',
-            username: '',
-            password: '',
+            endTime: '',
+            sumTime: '',
+            isCommute: false,
+            isLeave: true,
+            commuteId: '',
+
+
+            
         };
     },
     methods: {
@@ -61,15 +74,18 @@ export default {
             })
                 .then(response => {
                     console.log('Response:', response.data);
-                    this.responseData = response.data;
-                    this.startTime = response.data.startTime;
+                    // this.responseData = response.data;
+                    this.startTime = response.data.result.startTime;
+                    this.commuteId = response.data.result.id;
+                    this.isCommute = true;
+                    this.isLeave = false;
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
                 });
         },
         leave() {
-            console.log("click");
+            console.log(" leave click");
             // const api = process.env.VUE_APP_BACKEND_URL;
             const api = 'http://localhost:8080';
             console.log(api);
@@ -77,7 +93,7 @@ export default {
             // formData.append('username', this.username);
             // formData.append('password', this.password);
             const token = sessionStorage.getItem('token');
-            axios.post(api + '/employee/leave',null, {
+            axios.patch(api + '/employee/leave/'+this.commuteId,null, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token,
@@ -85,16 +101,58 @@ export default {
             })
                 .then(response => {
                     console.log('Response:', response.data);
-                    this.responseData = response.data;
-                    this.startTime = response.data.endtime;
+                    // this.responseData = response.data;
+                    this.endTime = response.data.result.endTime;
+                    this.sumTime = response.data.result.sumTime;
+                    this.isLeave = true;
+                })
+                .catch(error => {
+                    console.error('Error updating data:', error);
+                });
+        },
+        check() {
+            console.log("check");
+            // const api = process.env.VUE_APP_BACKEND_URL;
+            const api = 'http://localhost:8080';
+            console.log(api);
+            // let formData = new FormData();
+            // formData.append('username', this.username);
+            // formData.append('password', this.password);
+            const token = sessionStorage.getItem('token');
+            axios.get(api + '/employee/commute/check', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+                .then(response => {
+                    console.log('Chcek Response:', response.data);
+                    // this.responseData = response.data;
+                    this.isCommute = response.data.result.isCommute;
+                    this.isLeave = response.data.result.isLeave;
+                    if(this.isCommute){
+                        this.commuteId = response.data.result.id;
+                        this.startTime = response.data.result.startTime;
+                    }
+                    if(this.isLeave){
+                        this.endTime = response.data.result.endTime;
+                        this.sumTime = response.data.result.sumTime;
+                    }
+                    
+                    
+
+                    
+                    //페이지 구성에 필요한 걸 다 가져와야한다.
                 })
                 .catch(error => {
                     console.error('Error updating data:', error);
                 });
         },
     },
-    computed(){
+    mounted(){
         // 출근한 상태인지 확인해야함.
+        this.check()
+        
     },
 }
 </script>
@@ -118,6 +176,21 @@ export default {
 } */
 
 #commuteButton {
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 12px;
+    background-color: #f7c231;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 187px;
+    height: 35px;
+}
+
+#leaveButton {
     border: none;
     outline: none;
     padding: 10px 20px;
