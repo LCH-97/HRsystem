@@ -48,7 +48,7 @@ export default {
       })
         .then(() => {
           alert("휴가타입이 성공적으로 수정되었습니다.");
-          this.$router.push("/gooutType/list");
+          this.$router.push("/gooutType/read/"+this.gooutTypeInfo.id);
         })
         .catch((error) => {
           console.error("Error:", error);

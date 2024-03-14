@@ -1,133 +1,102 @@
 <template>
-  <div class="button-container">
-    <br>
-    <button @click="goToGooutCreate">휴가 등록</button>
-    <br><br>
-  </div>
+  <div>
+    <div class="button-container">
+      <br>
+      <button @click="goToGooutCreate">휴가 등록</button>
+      <br><br>
+    </div>
 
-  <div class="container-fluid px-4">
-    <h1 class="mt-4">모든 휴가</h1>
-    <ol class="breadcrumb mb-4">
-      <li class="breadcrumb-item active">모든 휴가</li>
-    </ol>
-    <div class="row">
-      <div class="col-xl-3 col-md-6"></div>
-      <div class="col-xl-3 col-md-6"></div>
-      <div class="col-xl-3 col-md-6"></div>
-      <div class="col-xl-3 col-md-6"></div>
-    </div>
-    <div class="row">
-      <div class="col-xl-6"></div>
-      <div class="col-xl-6"></div>
-    </div>
-    <div class="card mb-4">
-      <div class="card-header">
-        <i class="fas fa-table me-1"></i>
-        내 휴가들
-      </div>
-      <div class="card-body">
-        <button>전체</button>
-        <button>기안 중</button>
-        <button>진행 중</button>
-        <button>반려</button>
-        <button>결제 완료</button>
-        <table id="datatablesSimple">
-          <thead>
-            <tr>
-              <th>작성자</th>
-              <th>요청일</th>
-              <th>휴가 시작일</th>
-              <th>휴가 종료일</th>
-              <th>휴가 유형</th>
-              <th>대리자</th>
-              <th>결재자</th>
-              <th>진행상태</th>
-            </tr>
-          </thead>
-          <tfoot>
-            <tr>
-              <th>작성자</th>
-              <th>요청일</th>
-              <th>휴가 시작일</th>
-              <th>휴가 종료일</th>
-              <th>휴가 유형</th>
-              <th>대리자</th>
-              <th>결재자</th>
-              <th>진행상태</th>
-            </tr>
-          </tfoot>
-          <tbody>
-            <tr v-for="goout in goouts" :key="goout.idx">
-              <td>{{ goout.employee }}</td>
-              <td>{{ goout.updateAt }}</td>
-              <td>{{ goout.startDate }}</td>
-              <td>{{ goout.endDate }}</td>
-              <td>{{ goout.type }}</td>
-              <td>{{ goout.derija }}</td>
-              <td>{{ goout.결재자 }}</td>
-              <td>{{ goout.진행상황 }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="gooutList">
+      <ul>
+        <li v-for="goout in goouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
+          <div><strong>이름:</strong> {{ goout.name }}</div>
+          <div><strong>휴가 유형:</strong> {{ goout.gooutTypeName }}</div>
+          <div><strong>상태:</strong> {{ getStatusText(goout.status) }}</div>
+          <div><strong>시작 날짜:</strong> {{ goout.first }}</div>
+          <div><strong>종료 날짜:</strong> {{ goout.last }}</div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
-  
 <script>
+import axios from 'axios';
+
 export default {
   name: 'VacationPage',
-
-  methods: {
-      goToGooutCreate() {
-      this.$router.push("/goout/create");
-    },
-},
-
   data() {
     return {
-      goouts: [
-        // 예시 데이터입니다. 실제 데이터로 대체해야 합니다.
-        {
-          idx: 1,
-          employee: '나',
-          updateAt: '태어난 때',
-          startDate: '오늘',
-          endDate: '평생',
-          type: '유급 휴가',
-          derija: '알아서해',
-          결재자: '나',
-          진행상황: '결재',
-        },
-        // 다른 데이터 항목들...
-      ],
-    };
+      goouts: [],
+    }
+  },
+  created() {
+    this.fetchGoouts();
+  },
+  methods: {
+    getStatusText(status) {
+    const statusMap = {
+      '0': '대기중',
+      '1': '결재자1 승인',
+      '2': '최종 승인',
+      '3': '반려',
+      // 필요한 다른 상태들...
+      };
+      return statusMap[status] || '알 수 없음';
+    },
+
+    goToGooutCreate() {
+      this.$router.push("/goout/create");
+    },
+    fetchGoouts() {
+      // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
+      axios.get('http://localhost:8080/goout/check')
+        .then(response => {
+          this.goouts = response.data.result;
+        })
+        .catch(error => {
+          console.error("휴가 목록 가져오기 실패:", error);
+        });
+    },
+    goToGooutReadPage(id) {
+  if (id) {
+    this.$router.push(`/goout/read/${id}`);
+  } else {
+    console.error("ID is undefined");
+  }
+}
   },
 };
 </script>
 
-
-  
 <style>
-
-
 .button-container {
   text-align: right;
   padding-right: 40px;
   background-color: #F7F8FA;
 }
-.button-container button{
-  font-size:18px;
-  font-weight:600;
+.button-container button {
+  font-size: 18px;
+  font-weight: 600;
   padding: 5px 10px;
-  color:white;
-  letter-spacing:0.2px;
+  color: white;
+  letter-spacing: 0.2px;
   border: none;
   background-color: #fae14a;
 }
 .button-container button:hover {
   color: #555555;
 }
+.gooutList ul {
+  list-style: none;
+  padding: 0;
+}
+.gooutItem {
+  cursor: pointer;
+  margin: 10px 0;
+  transition: color 0.3s ease;
+}
+.gooutItem:hover {
+  color: #007BFF; /* 마우스를 올렸을 때 색상 변경 */
+}
 </style>
-  

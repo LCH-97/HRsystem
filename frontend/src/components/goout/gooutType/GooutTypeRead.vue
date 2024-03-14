@@ -13,8 +13,8 @@
       </div>
     </div>
     <br><br>
-    <div class="goout-button">
-      <button @click="updateGooutType">수정</button>
+    <div class="gooutType-button">
+      <button @click="updateGooutType">수정</button> 
       <button @click="deleteGooutType">삭제</button>
     </div>
   </div>
@@ -37,11 +37,11 @@ export default {
           if (response.data.isSuccess) {
             this.gooutType = response.data.result;
           } else {
-            alert("휴가타입 정보를 불러오는데 실패했습니다.");
+            alert("휴가 정보를 불러오는데 실패했습니다.");
           }
             })
             .catch(error => {
-              console.error("휴가타입 정보를 불러오는 중 오류가 발생했습니다.", error);
+              console.error("휴가 정보를 불러오는 중 오류가 발생했습니다.", error);
             });
           },
           updateGooutType() {
@@ -55,12 +55,12 @@ export default {
       if (confirm("정말로 이 휴가타입을 삭제하시겠습니까?")) {
         axios.delete(`http://localhost:8080/gooutType/delete/${this.id}`)
           .then(() => {
-            alert("휴가타입이 성공적으로 삭제되었습니다.");
+            alert("휴가가 성공적으로 삭제되었습니다.");
             this.$router.push("/gooutType/list"); // 휴가타입 목록 페이지로 리디렉션
           })
           .catch(error => {
-            console.error("휴가타입 삭제 중 오류 발생:", error);
-            alert("휴가타입 삭제 중 오류가 발생했습니다.");
+            console.error("휴가 삭제 중 오류 발생:", error);
+            alert("휴가 삭제 중 오류가 발생했습니다.");
           });
       }
     }
@@ -84,9 +84,8 @@ export default {
   text-align: center;
 }
 
-.goout-button {
+.goout-type-button {
   display: flex;
-  gap: 10px;
   margin-top: 20px;
 }
 
@@ -100,5 +99,8 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+button:first-of-type {
+  margin-right: 10px;
 }
 </style>
