@@ -2,6 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 
 
 
+import OvertimeCreatePage from '../pages/OvertimeCreatePage.vue';
+import OvertimeListPage from '../pages/OvertimeListPage.vue';
+import OvertimeModifyPage from '../pages/OvertimeModifyPage.vue';
+import OvertimeApproveaPage from '../pages/OvertimeApproveaPage.vue';
+
+
 
 import ApproveListPage from "@/pages/Approve/ApproveListPage.vue";
 import ApproveCreatePage from "@/pages/Approve/ApproveCreatePage.vue"
@@ -21,6 +27,7 @@ import GooutPage from "@/pages/goout/GooutPage.vue";
 import GooutTypePage from "@/pages/goout/GooutTypePage.vue";
 
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -29,6 +36,12 @@ const router = createRouter({
     { path: "/login", component: LoginPage },
 
     { path: "/main", component: MainPage },
+
+    { path: "/overtimecreate", component: OvertimeCreatePage},
+    { path: "/overtimelist", component: OvertimeListPage},
+    { path: "/overtimemodify", component: OvertimeModifyPage},
+    { path: "/overtimeapprovea", component: OvertimeApproveaPage},
+
     { path: "/approve/list", component: ApproveListPage },
     { path: "/approve/create", component: ApproveCreatePage },
 
@@ -52,7 +65,6 @@ const router = createRouter({
         { path: "update", component: GooutTypeUpdate },
       ],
     }
-
 
   ],
 },
