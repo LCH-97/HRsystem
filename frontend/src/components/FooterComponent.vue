@@ -20,7 +20,7 @@
 
 
 export default {
-    name: 'SideBar',
+    name: 'FooterComponent',
     components: {
 
     }
