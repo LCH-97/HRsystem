@@ -84,6 +84,12 @@ export default {
       this.employees = response.data;
     },
     async getGooutCreate() {
+
+      if (this.confirmer1Id === this.confirmer2Id) {
+    alert("결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
+    return; // 메소드 실행을 중단
+  }
+
   let formData = new FormData();
   formData.append('gooutCreateReq', new Blob([JSON.stringify({
     agentId: this.agentId,
