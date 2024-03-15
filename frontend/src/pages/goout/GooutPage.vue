@@ -1,6 +1,6 @@
 <template>
-  <!-- <HeaderComponent />
-  <SideBar /> -->
+  <HeaderComponent />
+  <SideBar />
 
   <div class="all">
       <div class="gooutBanner">
@@ -15,14 +15,14 @@
 </template>
 
 <script>
-// import SideBar from '@/components/SideBar.vue'
-// import HeaderComponent from '@/components/HeaderComponent.vue'
+import SideBar from '@/components/SideBar.vue'
+import HeaderComponent from '@/components/HeaderComponent.vue'
 export default {
   name: 'GooutPage',
-//   components: {
-//     SideBar,
-//     HeaderComponent,
-//   },
+  components: {
+    SideBar,
+    HeaderComponent,
+  },
 }
 </script>
 
@@ -64,4 +64,7 @@ export default {
     text-align: center; /* 텍스트 중앙 정렬 */
   }
   
+  .all{
+    padding-left: 225px;
+  }
 </style>
