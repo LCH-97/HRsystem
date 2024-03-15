@@ -8,30 +8,39 @@
     <div class="ReqBox">
       <article class="ReqInputBox">
         <div class="ReqInput">
+
           <p>휴가 유형</p>
-          <select v-model="updateInfo.gooutTypeId">
+          <select v-model="gooutTypeId">
+            <option value="">선택하세요</option>
             <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
-          </select><br>
+          </select><br> 
           <p>신청직원</p>
-          <select v-model="updateInfo.employeeId">
+          <select v-model="employeeId">
+            <option value="">선택하세요</option>
             <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
           </select><br>
           <p>대리인</p>
-          <select v-model="updateInfo.agentId">
+          <select v-model="agentId">
+            <option value="">선택하세요</option>
             <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
           </select><br>
+          
           <p>시작 날짜</p>
-          <input type="date" v-model="updateInfo.first"><br>
+          <input type="date" v-model="first"><br>
           <p>종료 날짜</p>
-          <input type="date" v-model="updateInfo.last"><br>
+          <input type="date" v-model="last"><br>
+
           <p>결재자1</p>
-          <select v-model="updateInfo.confirmer1Id">
-            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-          </select><br>
-          <p>결재자2</p>
-          <select v-model="updateInfo.confirmer2Id">
-            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-          </select><br>
+            <select v-model="confirmer1Id">
+              <option value="">선택하세요</option>
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+            </select><br>
+
+            <p>결재자2</p>
+            <select v-model="confirmer2Id">
+              <option value="">선택하세요</option>
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+            </select><br>
         </div>
       </article>
       <div class="button-container">
@@ -58,40 +67,35 @@ export default {
         confirmer2Id: "",
       },
       gooutTypes: [],
-      employees: [],
-      gooutId: this.$route.params.id, // Assuming you're passing the goout ID as a route param
+      employees: [],  
+      
     };
   },
 
-  methods: {
-    async created() {
-  await this.loadInitialData();
-  await this.fetchGooutTypes();
-  await this.fetchEmployees();
+  async created() {
+    await this.loadUpdateInfo();
+    await this.fetchGooutTypes();
+    await this.fetchEmployees();
   },
-  async loadInitialData() {
-      const gooutId = this.$route.params.id;
-      try {
-        // 휴가 정보와 결재라인 정보를 불러오는 로직
-        const [gooutResponse, gooutLineResponse] = await Promise.all([
-          axios.get(`${this.backend}/goout/${gooutId}`),
-          axios.get(`${this.backend}/gooutLine/2/${gooutId}`)
-        ]);
 
-        if (gooutResponse.data && gooutResponse.data.result) {
-          // 휴가 정보를 updateInfo에 할당
-        }
+  methods: {
 
-        if (gooutLineResponse.data && gooutLineResponse.data.result) {
-          // 결재라인 정보를 updateInfo에 할당
-        }
-      } catch (error) {
-        console.error("데이터 로딩 실패:", error);
-        alert("데이터 로딩 중 오류가 발생했습니다.");
+    loadUpdateInfo() {
+      const storedInfo = localStorage.getItem('updateGooutInfo');
+      if (storedInfo) {
+        this.updateInfo = JSON.parse(storedInfo);
+        // 불러온 정보를 바탕으로 각 필드의 초기값 설정
+        this.gooutTypeId = this.updateInfo.gooutTypeId;
+        this.agentId = this.updateInfo.agentId;
+        this.employeeId = this.updateInfo.employeeId;
+        this.first = this.updateInfo.first;
+        this.last = this.updateInfo.last;
+        this.confirmer1Id = this.updateInfo.confirmer1Id;
+        this.confirmer2Id = this.updateInfo.confirmer2Id;
+      } else {
+        console.error("수정할 정보가 존재하지 않습니다.");
       }
     },
-
-
 
     async fetchGooutTypes() {
       try {
@@ -105,40 +109,108 @@ export default {
     async fetchEmployees() {
       try {
         const response = await axios.get(`${this.backend}/employee/list`);
-        this.employees = response.data.result;
+        this.employees = response.data; // 백엔드 응답에 'result' 키가 없다면 이렇게 접근합니다.
       } catch (error) {
         console.error("직원 목록 로딩 실패:", error);
       }
     },
 
     async updateGoout() {
+
+      if (this.employeeId === this.agentId) {
+    alert("결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다.");
+    return; // 메소드 실행을 중단
+  }
+      if (this.confirmer1Id === this.confirmer2Id) {
+    alert("결재라인 수정 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
+    return; // 메소드 실행을 중단
+  }
+
+
   try {
+    // 데이터 객체 동적 생성
+    let updateData = { id: this.updateInfo.id };
+    if (this.gooutTypeId) updateData.gooutTypeId = this.gooutTypeId;
+    if (this.first) updateData.first = this.first;
+    if (this.last) updateData.last = this.last;
+    if (this.employeeId) updateData.employeeId = this.employeeId;
+    if (this.agentId) updateData.agentId = this.agentId;
+
     // Goout 정보 업데이트 실행
-    await axios.patch(`${this.backend}/goout/update`, this.updateInfo);
+    await axios.patch(`${this.backend}/goout/update`, updateData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     console.log("Goout 정보 수정 성공");
 
-    // GooutLine 정보 업데이트 준비
-    const gooutLineUpdateInfo = {
-      gooutId: this.gooutId,
-      confirmer1Id: this.updateInfo.confirmer1Id,
-      confirmer2Id: this.updateInfo.confirmer2Id,
-      employeeId: this.updateInfo.employeeId,
-    };
+    // GooutLine 업데이트를 위한 동적 데이터 객체 생성
+    let gooutLineUpdateReq = { gooutId: this.updateInfo.id };
+    if (this.confirmer1Id) gooutLineUpdateReq.confirmer1Id = this.confirmer1Id;
+    if (this.confirmer2Id) gooutLineUpdateReq.confirmer2Id = this.confirmer2Id;
+    if (this.employeeId) gooutLineUpdateReq.employeeId = this.employeeId;
 
     // GooutLine 정보 업데이트 실행
-    await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateInfo);
+    await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateReq, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     console.log("GooutLine 정보 수정 성공");
 
     alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
-    this.$router.push("/goout/list");
+    this.$router.push("/goout/list"); // 수정 완료 후, 리스트 페이지로 리다이렉션
   } catch (error) {
     console.error("휴가 정보 또는 결재라인 정보 수정 실패:", error);
     alert("휴가 정보 또는 결재라인 정보 수정에 실패하였습니다.");
   }
+
+  // try {
+  //   // 사용자가 선택한 값이 있으면 해당 값을 사용하고, 그렇지 않으면 기존의 정보를 사용
+  //   const updateData = {
+  //     id: this.updateInfo.id,
+  //     gooutTypeId: this.gooutTypeId || this.updateInfo.gooutTypeId,
+  //     first: this.first || this.updateInfo.first,
+  //     last: this.last || this.updateInfo.last,
+  //     employeeId: this.employeeId || this.updateInfo.employeeId,
+  //     agentId: this.agentId || this.updateInfo.agentId,
+  //   };
+
+  //   // Goout 정보 업데이트 실행
+  //   await axios.patch(`${this.backend}/goout/update`, updateData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   console.log("Goout 정보 수정 성공");
+
+  //   const gooutLineUpdateReq = {
+  //     gooutId: this.updateInfo.id, // 수정된 Goout의 ID
+  //     confirmer1Id: this.confirmer1Id || this.updateInfo.confirmer1Id,
+  //     confirmer2Id: this.confirmer2Id || this.updateInfo.confirmer2Id,
+  //     employeeId: this.employeeId || this.updateInfo.employeeId, // 중복되므로 필요에 따라 제거 가능
+  //   };
+
+  //   // GooutLine 정보 업데이트 실행
+  //   await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateReq, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
+  //   console.log("GooutLine 정보 수정 성공");
+
+  //   alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
+  //   this.$router.push("/goout/list"); // 수정 완료 후, 리스트 페이지로 리다이렉션
+  // } catch (error) {
+  //   console.error("휴가 정보 또는 결재라인 정보 수정 실패:", error);
+  //   alert("휴가 정보 또는 결재라인 정보 수정에 실패하였습니다.");
+  // }
+
 }
   }
 };
 </script>
+  
   
   <style scoped>
  .gooutUpdateBanner {
