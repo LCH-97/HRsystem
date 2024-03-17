@@ -94,7 +94,7 @@
     margin: 20px;
   }
   table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
     margin-top: 47px;
     margin-left: 261px;

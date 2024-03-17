@@ -24,7 +24,7 @@
               <td class="table-data">{{ overtime.shift }}</td>
               <td class="table-data">{{ overtime.startTime }}</td>
               <td class="table-data">{{ overtime.endTime }}</td>
-              <td class="table-data">{{ overtime.reason }}</td>
+              <td class="table-data-reason">{{ overtime.reason }}</td>
               <td class="table-data">{{ overtime.status }}</td>
             </tr>
           </tbody>
@@ -64,7 +64,7 @@
         }
       },
       viewOvertimeDetail(id) {
-        window.location.href = `http://localhost:8080/employee/overtime/read/${id}`;
+        window.location.href = `/overtime/read/${id}`;
       }
     }
   };
@@ -80,12 +80,13 @@
   h1 {
     font-size: 30px;
     margin-left: 260px;
+    margin-top: 66px;
   }
   table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
-    margin-top: 13px;
-    margin-left: 9px;
+    margin-top: 31px;
+    margin-left: 253px;
   }
   th, td {
     padding: 10px;
@@ -103,6 +104,12 @@
   }
   .table-data {
     cursor: pointer;
+  }
+  .table-data-reason{
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+
   }
   </style>
   

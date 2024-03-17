@@ -6,6 +6,7 @@ import OvertimeCreatePage from '../pages/OvertimeCreatePage.vue';
 import OvertimeListPage from '../pages/OvertimeListPage.vue';
 import OvertimeModifyPage from '../pages/OvertimeModifyPage.vue';
 import OvertimeApproveaPage from '../pages/OvertimeApproveaPage.vue';
+import OvertimeDetailPage from '../pages/OvertimeDetailPage.vue';
 
 
 
@@ -29,6 +30,8 @@ import GooutTypeUpdate from "@/components/goout/gooutType/GooutTypeUpdate.vue";
 import GooutPage from "@/pages/goout/GooutPage.vue";
 import GooutTypePage from "@/pages/goout/GooutTypePage.vue";
 
+import BoardListPage from "@/pages/BoardListPage.vue";
+import BoardReadPage from "@/pages/BoardReadPage.vue";
 
 
 const router = createRouter({
@@ -44,11 +47,16 @@ const router = createRouter({
     { path: "/overtimelist", component: OvertimeListPage},
     { path: "/overtimemodify", component: OvertimeModifyPage},
     { path: "/overtimeapprovea", component: OvertimeApproveaPage},
+    { path: "/overtime/read/:id", component: OvertimeDetailPage},
 
     { path: "/approve/list", component: ApproveListPage },
 
     { path: "/approve/create", component: ApproveCreatePage },
     { path: "/approve/read/:id", component: ApproveReadPage },
+
+
+    { path: "/board", component: BoardListPage },
+    { path: "/board/read/:id", component: BoardReadPage },
 
 
 
