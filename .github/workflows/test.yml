@@ -42,14 +42,7 @@ jobs:
 
 
     - name: Save Test Results
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: .surefire/target/surefire-reports
-
-    - name: Upload Test Report
-      uses: EnricoMi/publish-unit-test-result-action@v1
-      with:
-        files: '**/*.xml'
-        publish_junit: true
+      run: |
+        cd ./backend
+        ls ./target
 
