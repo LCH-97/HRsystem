@@ -16,7 +16,7 @@ public class PositionService {
                 .positionName(createPositionReq.getPositionName())
                 .positionNum(createPositionReq.getPositionNum())
                 .build();
-        positionRepository.save(position);
+        position = positionRepository.save(position);
         return CreatePositionRes.builder().id(position.getId()).build();
     }
 }

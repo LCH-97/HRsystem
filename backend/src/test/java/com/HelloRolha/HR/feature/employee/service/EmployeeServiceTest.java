@@ -1,14 +1,10 @@
-package com.HelloRolha.HR.feature.position.service;
+package com.HelloRolha.HR.feature.employee.service;
 
 import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpReq;
 import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpRes;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import com.HelloRolha.HR.feature.employee.service.EmployeeService;
-import com.HelloRolha.HR.feature.position.model.dto.create.CreatePositionReq;
-import com.HelloRolha.HR.feature.position.model.dto.create.CreatePositionRes;
-import com.HelloRolha.HR.feature.position.model.entity.Position;
-import com.HelloRolha.HR.feature.position.repo.PositionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,28 +19,38 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class PositionServiceTest {
+class EmployeeServiceTest {
+    //    @Mock
+//
     @Mock
-    private PositionRepository positionRepository;
-//    @Mock
-//    private PasswordEncoder passwordEncoder;
+    private EmployeeRepository memberRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
-    private PositionService positionService;
+    private EmployeeService employeeService;
+
     @Test
-    void create() {
-        System.out.println("test");
-        Position position = Position.builder()
+    // method
+    void employeeService_signup_success(){
+//given
+        Employee employee = Employee.builder()
                 .id(1)
                 .build();
-        given(positionRepository.save(any(Position.class))).willReturn(position);
-        CreatePositionReq request = CreatePositionReq.builder()
-                .positionNum(123)
-                .positionName("테스트")
+        given(memberRepository.save(any(Employee.class))).willReturn(employee);
+        SignUpReq request = SignUpReq.builder()
+                .username("test01@test.com")
+                .password("qwer1234")
+                .name("test01")
                 .build();
+
         //when
-        CreatePositionRes response = positionService.create(request);
+        SignUpRes response = employeeService.signUp(request);
+
         //then
-//        assertNotNull(response.getId());
-        assertEquals(response.getId(),1);
+        assertTrue(response.getResult());
+//        assertEquals(1000L,  response.getCode());
+//        assertEquals(1L,  response.getResult().get("idx"));
+//        assertEquals("요청 성공.",  response.getMessage());
+//        assertTrue(response.getSuccess());
     }
 }
