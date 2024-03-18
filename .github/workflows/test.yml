@@ -32,7 +32,8 @@ jobs:
       run: ls
     - name: cd backend/
       run: cd backend
-    
+    - name: list file
+      run: ls
     - name: Run Tests
       run: mvn test
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
