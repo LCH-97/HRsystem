@@ -21,11 +21,14 @@ public class DepartmentService {
     private final DepartmentRepository departmentRepository;
 
     public CreateDepartmentRes create(CreateDepartmentReq createDepartmentReq) {
-        Department department = Department.builder()
+//        Department department = Department.builder()
+//                .departmentNum(createDepartmentReq.getDepartmentNum())
+//                .departmentName(createDepartmentReq.getDepartmentName())
+//                .build();
+        Department department = departmentRepository.save(Department.builder()
                 .departmentNum(createDepartmentReq.getDepartmentNum())
                 .departmentName(createDepartmentReq.getDepartmentName())
-                .build();
-        departmentRepository.save(department);
+                .build());
 
         return CreateDepartmentRes.builder()
                 .id(department.getId())
