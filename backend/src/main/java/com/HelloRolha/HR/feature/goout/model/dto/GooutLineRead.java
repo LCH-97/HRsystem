@@ -12,6 +12,8 @@ public class GooutLineRead {
     private String confirmer1Name;
     private Integer confirmer2Id;
     private String confirmer2Name;
+    private Integer employeeId;
+    private String employeeName;
     private Integer gooutId;
     private String comment;
     private LocalDateTime approveTime;
