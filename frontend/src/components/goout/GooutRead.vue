@@ -5,7 +5,8 @@
       <br><br><br>
       <div v-if="goout && gooutLine">
         <h2>{{ goout.gooutTypeName }}</h2>
-        <p>신청직원: {{ goout.employeeName }}</p>
+        <p>휴가결재 올린사람: {{ gooutLine?.employeeName }}</p>
+        <p>휴가가는 직원: {{ goout.employeeName }}</p>
         <p>대리인: {{ goout.agentName }}</p>
         <p>시작 날짜: {{ goout.first }}</p>
         <p>종료 날짜: {{ goout.last }}</p>
@@ -20,13 +21,23 @@
       </div>
     </div>
     <br><br>
-    <div class="goout-button">      
-      <button @click="confirm1">결재자1 결재</button>
-      <button @click="confirm2">결재자2 결재</button>      
-      <button @click="reject1">결재자1 반려</button>
-      <button @click="reject2">결재자2 반려</button>
-      <button @click="updateGoout">수정</button>
-      <button @click="deleteGoout">삭제</button>
+      <div class="goout-button">
+        <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId">
+        <!-- Show these buttons if the logged-in user is confirmer1 -->
+          <button @click="confirm1">결재자1 결재</button>
+          <button @click="reject1">결재자1 반려</button>
+        </div>
+        <!-- Show these buttons if the logged-in user is confirmer2 -->
+        <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId">
+          <button @click="confirm2">결재자2 결재</button>
+          <button @click="reject2">결재자2 반려</button>
+        </div>
+        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+        <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
+          <button @click="updateGoout">수정</button>
+          <button @click="deleteGoout">삭제</button>
+        </div>
+        <!-- If logged-in user's ID does not match any, do not show any buttons -->
     </div>
   </div>
 </template>
@@ -34,6 +45,7 @@
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   data() {
@@ -45,6 +57,15 @@ export default {
     };
   },
   methods: {
+    setLoggedInUser() {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode(token); // Use the correct decoding method
+      this.loggedInUserId = decoded.ID; // Adjust according to your token structure
+    }
+  },
+
+
     async confirm1() {
   if (confirm("결재하시겠습니까?")) {
     try {
@@ -200,6 +221,9 @@ async returnGooutStatus(status) {
   created() {
     this.fetchGoout();
   },
+  mounted() {
+  this.setLoggedInUser();
+},
 
 computed: {
     // 휴가 사용일 수를 계산하는 계산된 속성
