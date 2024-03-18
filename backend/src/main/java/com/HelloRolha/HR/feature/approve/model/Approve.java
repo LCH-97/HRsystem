@@ -20,7 +20,6 @@ import java.util.List;
 public class Approve extends BaseEntity {
     private String content;
     private String title;
-    @Column(nullable = true)
     private Integer status =0;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "employee_id")
     private Employee employee; //작성자

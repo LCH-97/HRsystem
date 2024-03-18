@@ -19,4 +19,7 @@ public class ApproveRead {
     private String confirmer1; // confirmer1 필드 추가
     private String confirmer2; // confirmer2 필드 추가
 
+    private Integer confirmer1Id;
+    private Integer confirmer2Id;
+
 }
