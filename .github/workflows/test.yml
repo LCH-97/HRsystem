@@ -27,6 +27,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+
+    - name: list file
+      run: ls
+    - name: cd backend/
+      run: cd backend
     - name: Build with Maven
       run: mvn clean install
     - name: Run Tests
