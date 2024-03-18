@@ -39,7 +39,8 @@ jobs:
       run: |
         cd ./backend
         mvn test
-        cd ./surefire-reports
+        ls
+        cd ./target.surefire-reports
         ls | grep *.txt
 
  
