@@ -43,6 +43,7 @@ jobs:
 
     - name: Save Test Results
       run: |
-        cd ./backend
-        ls ./target
+        cd ./backend/surefire-reports
+        ls | grep *.txt
+        
 
