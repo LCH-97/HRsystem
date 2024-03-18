@@ -31,7 +31,7 @@ jobs:
     - name: list file
       run: ls
     - name: cd backend
-      run: cd backend
+      run: cd ./backend
     - name: 현재 경로
       run: pwd
     - name: Run Tests
