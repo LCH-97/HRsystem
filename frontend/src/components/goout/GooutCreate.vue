@@ -50,6 +50,7 @@
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   data() {
@@ -65,13 +66,25 @@ export default {
       files: [], // 여러 파일을 저장할 배열
       confirmer1Id: "",
       confirmer2Id: "",
+      loggedInUserId: null, // 로그인한 사용자 ID 저장
     }
   },
   async created() {
     await this.fetchGooutTypes();
     await this.fetchEmployees();
   },
+  mounted() {
+    this.setLoggedInUser();
+  },
   methods: {
+    setLoggedInUser() {
+      const token = sessionStorage.getItem('token'); // 로컬 스토리지 또는 적절한 저장소에서 토큰 가져오기
+      if (token) {
+        const decoded = jwtDecode(token);
+        this.loggedInUserId = decoded.ID; // 실제 토큰 구조에 따라 변경될 수 있음
+      }
+    },
+
     handleFilesUpload(event) {
       this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
     },
@@ -117,12 +130,13 @@ export default {
 },
 
 async createGooutLine(gooutId) {
+  this.setLoggedInUser();
   try {
     const gooutLineReq = {
       confirmer1Id: this.confirmer1Id,
       confirmer2Id: this.confirmer2Id,
       gooutId: gooutId,
-      employeeId: this.employeeId,  
+      employeeId: this.loggedInUserId,  
     };
     const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
       headers: {
