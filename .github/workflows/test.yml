@@ -43,6 +43,6 @@ jobs:
         cd ./target/surefire-reports
         pwd
         ls 
-
+        ls | grep txt
  
 
