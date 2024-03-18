@@ -9,12 +9,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ApproveLine extends ApproveLineBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class ApproveLine extends ApproveLineBaseEntity {
     @JoinColumn(name = "confirmer2_id")
     private Employee confirmer2;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "approve_id")
     private Approve approve;
 

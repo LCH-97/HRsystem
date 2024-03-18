@@ -16,11 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ApproveUpdateRes {
 
-    private String title;
 
     private String content;
-
-    private String filename;
 
 
     @OneToMany(mappedBy = "approve")

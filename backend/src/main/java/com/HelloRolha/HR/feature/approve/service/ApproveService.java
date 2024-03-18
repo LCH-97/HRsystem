@@ -4,6 +4,7 @@ import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.ApproveFile;
 import com.HelloRolha.HR.feature.approve.model.ApproveLine;
 import com.HelloRolha.HR.feature.approve.model.dto.Approve.*;
+import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.ReturnStatusRes;
 import com.HelloRolha.HR.feature.approve.repo.ApproveFileRepository;
 import com.HelloRolha.HR.feature.approve.repo.ApproveLineRepository;
 import com.HelloRolha.HR.feature.approve.repo.ApproveRepository;
@@ -40,9 +41,9 @@ public class ApproveService {
     @Value("gurigiri-s3")
     private String bucket;
 
-    @Transactional
-    public ApproveCreateRes create(ApproveCreateReq approveCreateReq) {
-        Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    public Approve create(ApproveCreateReq approveCreateReq) {
+        Employee employee = employeeRepository.findById(approveCreateReq.getEmployeeId())
+                .orElseThrow(() -> new IllegalArgumentException("신청직원의 ID가 존재하지 않습니다."));
 
         Approve approve = Approve.builder()
                 .content(approveCreateReq.getContent())
@@ -51,16 +52,8 @@ public class ApproveService {
                 .employee(employee)
                 .build();
 
-        Approve app = approveRepository.save(approve);
+        return approveRepository.save(approve);
 
-        return ApproveCreateRes.builder()
-                .id(app.getId())
-                .employeeId(app.getEmployee().getId())
-                .title(app.getTitle())
-                .content(app.getContent())
-                .status(app.getStatus())
-                .createAt(approve.getCreateAt())
-                .build();
     }
 
     @Transactional
@@ -72,16 +65,27 @@ public class ApproveService {
             Employee employee = approve.getEmployee();
             String employeeName = employee != null ? employee.getName() : "Unknown"; // Employee가 null이면 "Unknown"
 
-            String confirmer1Name = "Unknown"; // 초기값 설정
-            String confirmer2Name = "Unknown"; // 초기값 설정
+            String confirmer1Name = "Unknown";
+            String confirmer2Name = "Unknown";
 
-            if (!approve.getApproveLines().isEmpty()) {
-                ApproveLine firstApproveLine = approve.getApproveLines().get(0); // 첫 번째 ApproveLine 가져오기
-                confirmer1Name = firstApproveLine.getConfirmer1() != null ? firstApproveLine.getConfirmer1().getName() : "N/A";
-                confirmer2Name = firstApproveLine.getConfirmer2() != null ? firstApproveLine.getConfirmer2().getName() : "N/A";
+            if (approve != null && !approve.getApproveLines().isEmpty()) {
+                ApproveLine approveLine = approve.getApproveLines().get(0); // 첫 번째 ApproveLine을 가져옴
+
+                Employee confirmer1 = approveLine.getConfirmer1();
+                Employee confirmer2 = approveLine.getConfirmer2();
+
+                confirmer1Name = confirmer1 != null ? confirmer1.getName() : "Unknown"; // confirmer1의 이름을 가져옴
+                confirmer2Name = confirmer2 != null ? confirmer2.getName() : "Unknown"; // confirmer2의 이름을 가져옴
             }
 
-            ApproveList approveList = ApproveList.builder()
+//            String confirmer1Name = approve.getApproveLines().get(0).getConfirmer1().getName();
+//            String confirmer2Name = approve.getApproveLines().get(1).getConfirmer1().getName();
+
+//            String confirmer1Name = "Unknown"; // 초기값 설정
+//            String confirmer2Name = "Unknown"; // 초기값 설정
+
+            if (employee != null) {
+                ApproveList approveList = ApproveList.builder()
                     .id(approve.getId())
                     .name(employeeName)
                     .title(approve.getTitle())
@@ -90,12 +94,12 @@ public class ApproveService {
                     .updateAt(approve.getUpdateAt())
                     .confirmer1(confirmer1Name) // confirmer1의 이름 설정
                     .confirmer2(confirmer2Name) // confirmer2의 이름 설정
-                    .status(approve.getStatus())
+                    .status(approve.getApproveLines().get(0).getStatus())
                     .build();
 
             approveLists.add(approveList);
         }
-
+        }
         return approveLists;
     }
 
@@ -105,24 +109,36 @@ public class ApproveService {
         Approve approve = approveRepository.findById(approveId)
                 .orElseThrow(() -> new RuntimeException("결재 정보를 찾을 수 없습니다."));
         String confirmer1Name = "Unknown"; // 초기값 설정
+        Integer confirmer1Id = 0;
         String confirmer2Name = "Unknown"; // 초기값 설정
+        Integer confirmer2Id = 0;
+        //ApproveLine firstApproveLine = approve.getApproveLines().get(0); // 첫 번째 ApproveLine 가져오기
         if (!approve.getApproveLines().isEmpty()) {
             ApproveLine firstApproveLine = approve.getApproveLines().get(0); // 첫 번째 ApproveLine 가져오기
             confirmer1Name = firstApproveLine.getConfirmer1() != null ? firstApproveLine.getConfirmer1().getName() : "N/A";
             confirmer2Name = firstApproveLine.getConfirmer2() != null ? firstApproveLine.getConfirmer2().getName() : "N/A";
+            confirmer1Id = firstApproveLine.getConfirmer1() != null ? firstApproveLine.getConfirmer1().getId() : 0;
+            confirmer2Id = firstApproveLine.getConfirmer2() != null ? firstApproveLine.getConfirmer2().getId() : 0;
+
+
+//            confirmer1Name = firstApproveLine.getConfirmer1().getName();
+//            confirmer2Name = firstApproveLine.getConfirmer2().getName();
         }
         return ApproveRead.builder()
                 .id(approve.getId())
                 .title(approve.getTitle())
+                .content(approve.getContent())
+                .status(approve.getApproveLines().get(0).getStatus())
                 .confirmer1(confirmer1Name) // confirmer1의 이름 설정
                 .confirmer2(confirmer2Name) // confirmer2의 이름 설정
-                .content(approve.getContent())
+                .confirmer1Id(confirmer1Id)
+                .confirmer2Id(confirmer2Id)
                 .build();
     }
 
 
     @Transactional
-    public void update(ApproveUpdate approveUpdate) {
+    public ApproveUpdate update(ApproveUpdate approveUpdate) {
         Approve approve = approveRepository.findById(approveUpdate.getId())
                 .orElseThrow(() -> new RuntimeException("결재 정보를 찾을 수 없습니다."));
 
@@ -130,21 +146,24 @@ public class ApproveService {
             throw new IllegalStateException("반려된 상태의 결재만 수정할 수 있습니다.");
         }
 
-        approve.setTitle(approveUpdate.getTitle());
         approve.setContent(approveUpdate.getContent());
-        approveRepository.save(approve);
+        return ApproveUpdate.builder()
+                .content(approveUpdate.getContent())
+                .build();
     }
 
     @Transactional
-    public void returnStatus(Integer id, Integer approveLineId) {
+    public ReturnStatusRes returnStatus(Integer id, Integer approveLineId) {
         ApproveLine approveLine = approveLineRepository.findById(approveLineId)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 결재 라인 정보를 찾을 수 없습니다."));
 
         Approve approve = approveRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID의 결재 정보를 찾을 수 없습니다."));
-
-        approve.setStatus(approve.getStatus());
-        approveRepository.save(approve);
+        return ReturnStatusRes.builder()
+                .status(approveLine.getStatus())
+                .build();
+//        approve.setStatus(approve.getStatus());
+//        approveRepository.save(approve);
     }
 
     @Transactional

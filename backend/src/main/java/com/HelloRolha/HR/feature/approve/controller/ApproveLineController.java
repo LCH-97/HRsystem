@@ -1,8 +1,10 @@
 package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.feature.approve.model.ApproveLine;
 import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.*;
 import com.HelloRolha.HR.feature.approve.service.ApproveLineService;
+import com.HelloRolha.HR.feature.goout.model.GooutLine;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,30 +18,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApproveLineController {
     private final ApproveLineService approveLineService;
+
     @PostMapping("/create")
-    public ResponseEntity<BaseRes> create(ApproveLineCreateReq approveLineCreateReq) {
+    public ResponseEntity<BaseRes> create(@RequestBody ApproveLineCreateReq approveLineCreateReq) {
+        ApproveLine approveLine = approveLineService.create(approveLineCreateReq);
+
         BaseRes res = BaseRes.builder()
                 .code(200)
                 .isSuccess(true)
                 .message("결재 라인 생성 성공")
-                .result(approveLineService.create(approveLineCreateReq))
+                .result(approveLine)
                 .build();
 
         return ResponseEntity.ok().body(res);
     }
 
-    @PatchMapping("/patch")
-    public ResponseEntity<BaseRes> create(ApproveLinePatchReq approveLinePatchReq) {
-        BaseRes res = BaseRes.builder()
-                .code(200)
-                .isSuccess(true)
-                .message("결재 라인 변경 성공")
-                .result(approveLineService.patch(approveLinePatchReq))
-                .build();
+//    @PatchMapping("/patch")
+//    public ResponseEntity<BaseRes> create(ApproveLinePatchReq approveLinePatchReq) {
+//        BaseRes res = BaseRes.builder()
+//                .code(200)
+//                .isSuccess(true)
+//                .message("결재 라인 변경 성공")
+//                .result(approveLineService.patch(approveLinePatchReq))
+//                .build();
+//
+//        return ResponseEntity.ok().body(res);
+//    }
 
-        return ResponseEntity.ok().body(res);
-    }
-    @RequestMapping(method = RequestMethod.GET, value = "/list")
+    @GetMapping("/list")
     public ResponseEntity<BaseRes> list() {
         try {
             List<ApproveLineList> approveLineLists = approveLineService.list();
@@ -60,7 +66,7 @@ public class ApproveLineController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<BaseRes> read(@PathVariable Integer id) {
         try {
             ApproveLineRead approveLineRead = approveLineService.read(id);
@@ -81,16 +87,36 @@ public class ApproveLineController {
         }
     }
 
+    @GetMapping("/2/{id}")
+    public ResponseEntity<BaseRes> read2(@PathVariable Integer id) {
+        try {
+            ApproveLineRead approveLineRead = approveLineService.read2(id);
+            BaseRes response = BaseRes.builder()
+                    .code(1200)
+                    .message("결재 라인 상세 조회 성공")
+                    .isSuccess(true)
+                    .result(approveLineRead)
+                    .build();
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            BaseRes response = BaseRes.builder()
+                    .code(1400)
+                    .message("결재 라인 상세 조회 실패: " + e.getMessage())
+                    .isSuccess(false)
+                    .build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/confirm1")
+
+    @PatchMapping("/confirm1")
     public ResponseEntity<BaseRes> confirm1(@RequestBody ApproveLineConfirm approveLineConfirm) {
         try {
-            approveLineService.confirm1(approveLineConfirm);
             BaseRes response = BaseRes.builder()
                     .code(1200)
                     .message("결재자1의 결재 처리 성공")
                     .isSuccess(true)
-                    .result(approveLineConfirm)
+                    .result(approveLineService.confirm1(approveLineConfirm))
                     .build();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -110,15 +136,14 @@ public class ApproveLineController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/confirm2")
+    @PatchMapping("/confirm2")
     public ResponseEntity<BaseRes> confirm2(@RequestBody ApproveLineConfirm approveLineConfirm) {
         try {
-            approveLineService.confirm2(approveLineConfirm);
             BaseRes response = BaseRes.builder()
                     .code(1200)
                     .message("결재자2의 결재 처리 성공")
                     .isSuccess(true)
-                    .result(approveLineConfirm)
+                    .result(approveLineService.confirm2(approveLineConfirm))
                     .build();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -139,15 +164,14 @@ public class ApproveLineController {
 
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/reject1")
+    @PatchMapping("/reject1")
     public ResponseEntity<BaseRes> reject1(@RequestBody ApproveLineConfirm approveLineConfirm) {
         try {
-            approveLineService.reject1(approveLineConfirm);
             BaseRes response = BaseRes.builder()
                     .code(1200)
                     .message("결재자1의 거절 처리 성공")
                     .isSuccess(true)
-                    .result(approveLineConfirm)
+                    .result(approveLineService.reject1(approveLineConfirm))
                     .build();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -168,15 +192,14 @@ public class ApproveLineController {
 
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/reject2")
+    @PatchMapping("/reject2")
     public ResponseEntity<BaseRes> reject2(@RequestBody ApproveLineConfirm approveLineConfirm) {
         try {
-            approveLineService.reject2(approveLineConfirm);
             BaseRes response = BaseRes.builder()
                     .code(1200)
                     .message("결재자2의 거절 처리 성공")
                     .isSuccess(true)
-                    .result(approveLineConfirm)
+                    .result(approveLineService.reject2(approveLineConfirm))
                     .build();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -196,7 +219,7 @@ public class ApproveLineController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<BaseRes> delete(@PathVariable Integer id) {
         try {
             approveLineService.delete(id);
@@ -222,5 +245,17 @@ public class ApproveLineController {
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<BaseRes> update(@RequestBody ApproveLineUpdateReq approveLineUpdateReq) {
+        approveLineService.update(approveLineUpdateReq);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("결재 정보 수정 성공")
+                .isSuccess(true)
+                .result(approveLineUpdateReq)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

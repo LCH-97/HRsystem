@@ -9,9 +9,13 @@ import com.HelloRolha.HR.feature.approve.repo.ApproveRepository;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import com.HelloRolha.HR.feature.goout.model.Goout;
+import com.HelloRolha.HR.feature.goout.model.GooutLine;
+import com.HelloRolha.HR.feature.goout.model.dto.GooutLineList;
+import com.HelloRolha.HR.feature.goout.model.dto.GooutLineUpdateReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -30,7 +34,8 @@ public class ApproveLineService {
     ZonedDateTime nowInKorea = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
     LocalDateTime localDateTimeInKorea = nowInKorea.toLocalDateTime();
 
-    public Object create(ApproveLineCreateReq approveLineCreateReq) {
+    @Transactional
+    public ApproveLine create(ApproveLineCreateReq approveLineCreateReq) {
         if (approveLineCreateReq.getConfirmer1Id().equals(approveLineCreateReq.getConfirmer2Id())) {
             throw new IllegalArgumentException("결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
         }
@@ -40,40 +45,30 @@ public class ApproveLineService {
         Employee confirmer2 = employeeRepository.findById(approveLineCreateReq.getConfirmer2Id())
                 .orElseThrow(() -> new IllegalArgumentException("결재자2의 ID가 존재하지 않습니다."));
         Approve approve = approveRepository.findById(approveLineCreateReq.getApproveId())
-                .orElseThrow(() -> new IllegalArgumentException("휴가의 ID가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("결재의 ID가 존재하지 않습니다."));
+        Employee employee = employeeRepository.findById(approveLineCreateReq.getEmployeeId())
+                .orElseThrow(() -> new IllegalArgumentException("기안자의 ID가 존재하지 않습니다."));
+
 
         ApproveLine approveLine =ApproveLine.builder()
                         .approve(approve)
                         .confirmer1(confirmer1)
                         .confirmer2(confirmer2)
+                        .confirmer(employee)
+                        .approveTime(localDateTimeInKorea)
                         .status(0)
                         .build();
 
         return approveLineRepository.save(approveLine);
     }
 
-    public Object applyApprove(Integer approveId) {
-        Optional<ApproveLine> optional = approveLineRepository.findById(approveId);
-        if(optional.isEmpty()){
-            throw ApproveNotFoundException.forIdx(approveId);
-        }
-        Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        ApproveLine approveLine = optional.get();
-        if (approveLine.getConfirmer().getId().equals(employee.getId())){
-            approveLine.setApproveTime(LocalDateTime.now());
-            approveLine.setStatus(1);
-        }
-        approveLineRepository.save(approveLine);
 
 
-        return approveLine;
-    }
+//    public Object patch(ApproveLinePatchReq approveLinePatchReq) {
+//        return null;
+//    }
 
-
-    public Object patch(ApproveLinePatchReq approveLinePatchReq) {
-        return null;
-    }
-
+    @Transactional
     public List<ApproveLineList> list() {
         List<ApproveLine> approveLines = approveLineRepository.findAll(); // 모든 결재라인 조회
         List<ApproveLineList> approveLineLists = new ArrayList<>();
@@ -99,6 +94,7 @@ public class ApproveLineService {
         return approveLineLists;
     }
 
+    @Transactional
     public ApproveLineRead read(Integer id) {
         ApproveLine approveLine = approveLineRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
@@ -114,8 +110,26 @@ public class ApproveLineService {
                 .build();
     }
 
+    @Transactional
+    public ApproveLineRead read2(Integer id) {
+        ApproveLine approveLine = approveLineRepository.findByApproveId(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
 
-    public void confirm1(ApproveLineConfirm approveLineConfirm) {
+        return ApproveLineRead.builder()
+                .confirmer1Id(approveLine.getConfirmer1().getId())
+                .confirmer1Name(approveLine.getConfirmer1().getName())
+                .confirmer2Id(approveLine.getConfirmer2().getId())
+                .confirmer2Name(approveLine.getConfirmer2().getName())
+                .approveId(approveLine.getApprove().getId())
+                .comment(approveLine.getComment())
+                .approveTime(approveLine.getApproveTime())
+                .applyTime(approveLine.getApplyTime())
+                .status(approveLine.getStatus())
+                .build();
+    }
+
+    @Transactional
+    public ApproveConfirmRes confirm1(ApproveLineConfirm approveLineConfirm) {
         ApproveLine approveLine = approveLineRepository.findById(approveLineConfirm.getApproveId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
 
@@ -128,13 +142,14 @@ public class ApproveLineService {
         }
 
         approveLine.setStatus(1);
-
+        approveLine.setComment(approveLineConfirm.getComment());
         approveLine.setApplyTime(localDateTimeInKorea); // applyTime 설정
         approveLineRepository.save(approveLine); // 변경 사항 저장
-
+        return ApproveConfirmRes.builder().status(approveLine.getStatus()).build();
     }
 
-    public void confirm2(ApproveLineConfirm approveLineConfirm) {
+    @Transactional
+    public ApproveConfirmRes confirm2(ApproveLineConfirm approveLineConfirm) {
         ApproveLine approveLine = approveLineRepository.findById(approveLineConfirm.getApproveId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
 
@@ -147,12 +162,14 @@ public class ApproveLineService {
         }
 
         approveLine.setStatus(2);
-
+        approveLine.setComment(approveLineConfirm.getComment());
         approveLine.setApplyTime(localDateTimeInKorea); // applyTime 설정
         approveLineRepository.save(approveLine); // 변경 사항 저장
+        return ApproveConfirmRes.builder().status(approveLine.getStatus()).build();
     }
 
-    public void reject1 (ApproveLineConfirm approveLineConfirm) {
+    @Transactional
+    public ApproveConfirmRes reject1(ApproveLineConfirm approveLineConfirm) {
         ApproveLine approveLine = approveLineRepository.findById(approveLineConfirm.getApproveId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
 
@@ -165,14 +182,14 @@ public class ApproveLineService {
         }
 
         approveLine.setStatus(3);
-
         approveLine.setComment(approveLineConfirm.getComment());
-
         approveLine.setApplyTime(localDateTimeInKorea); // applyTime 설정
         approveLineRepository.save(approveLine); // 변경 사항 저장
+        return ApproveConfirmRes.builder().status(approveLine.getStatus()).build();
     }
 
-    public void reject2 (ApproveLineConfirm approveLineConfirm) {
+    @Transactional
+    public ApproveConfirmRes reject2(ApproveLineConfirm approveLineConfirm) {
         ApproveLine approveLine = approveLineRepository.findById(approveLineConfirm.getApproveId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
 
@@ -185,17 +202,31 @@ public class ApproveLineService {
         }
 
         approveLine.setStatus(3);
-
         approveLine.setComment(approveLineConfirm.getComment());
-
         approveLine.setApplyTime(localDateTimeInKorea); // applyTime 설정
         approveLineRepository.save(approveLine); // 변경 사항 저장
-
+        return ApproveConfirmRes.builder().status(approveLine.getStatus()).build();
     }
 
+    @Transactional
+    public void update(ApproveLineUpdateReq approveLineUpdateReq) {
+        ApproveLine approveLine = approveLineRepository.findByApproveId(approveLineUpdateReq.getApproveId())
+                .orElseThrow(() -> new RuntimeException("해당 ID의 결재 정보를 찾을 수 없습니다."));
 
+        Employee confirmer1 = employeeRepository.findById(approveLineUpdateReq.getConfirmer1Id())
+                .orElseThrow(() -> new RuntimeException("해당 ID의 결재자1 정보를 찾을 수 없습니다."));
+        Employee confirmer2 = employeeRepository.findById(approveLineUpdateReq.getConfirmer2Id())
+                .orElseThrow(() -> new RuntimeException("해당 ID의 결재자2 정보를 찾을 수 없습니다."));
+
+        // 결재라인 정보 업데이트
+        approveLine.setConfirmer1(confirmer1);
+        approveLine.setConfirmer2(confirmer2);
+        approveLineRepository.save(approveLine);
+    }
+
+    @Transactional
     public void delete(Integer id) {
-        ApproveLine approveLine = approveLineRepository.findById(id)
+        ApproveLine approveLine = approveLineRepository.findByApproveId(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 결재라인이 존재하지 않습니다."));
 
         approveLineRepository.delete(approveLine);

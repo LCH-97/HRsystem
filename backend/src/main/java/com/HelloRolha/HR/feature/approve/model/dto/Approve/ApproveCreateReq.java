@@ -10,16 +10,9 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
-@Getter
-@Setter
 public class ApproveCreateReq {
-    //private Integer id;
-
-    private String content;
-
-    private Integer status;
-
     private String title;
+    private String content;
+    private Integer employeeId;
 
-    //private Integer employeeId; // 작성자?
 }

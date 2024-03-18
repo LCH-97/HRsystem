@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.approve.model.dto.Approve;
 
 
+import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -11,8 +12,6 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
-@Getter
-@Setter
 public class ApproveCreateRes {
     private Integer id;
 
@@ -27,5 +26,5 @@ public class ApproveCreateRes {
 
     private String title;
 
-    private Integer employeeId;
+    private String employeeName;
 }

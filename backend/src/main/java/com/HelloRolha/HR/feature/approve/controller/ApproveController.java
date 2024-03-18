@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.dto.Approve.*;
 import com.HelloRolha.HR.feature.approve.service.ApproveService;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,14 @@ import java.util.List;
 public class ApproveController {
     private final ApproveService approveService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/create")
+    @PostMapping("/create")
     public ResponseEntity create(@RequestPart ApproveCreateReq approveCreateReq,
                                 @RequestPart MultipartFile[] uploadFiles) {
-ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
+Approve approve = approveService.create(approveCreateReq);
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
                 String uploadPath = approveService.uploadFile(uploadFile);
-                approveService.saveFile(approveCreateRes.getId(), uploadPath);
+                approveService.saveFile(approve.getId(), uploadPath);
             }
         }
 
@@ -32,7 +33,7 @@ ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
                 .code(1200)
                 .message("결재 생성")
                 .isSuccess(true)
-                .result(approveCreateRes)
+                .result(approve.getId())
                 .build();
         return ResponseEntity.ok().body(response);
     }
@@ -50,9 +51,15 @@ ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
 
 
     @RequestMapping(method = RequestMethod.GET, value = "/read/{id}")
-    public ResponseEntity<ApproveRead> read(@PathVariable Integer id) {
+    public ResponseEntity<BaseRes> read(@PathVariable Integer id) {
         ApproveRead readRes = approveService.read(id);
-        return ResponseEntity.ok().body(readRes);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("결재 상세 보기 성공")
+                .isSuccess(true)
+                .result(readRes)
+                .build();
+        return ResponseEntity.ok().body(response);
     }
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/update")
@@ -62,7 +69,7 @@ ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
                 .code(1200)
                 .message("결재 수정 성공")
                 .isSuccess(true)
-                .result(approveUpdate)
+                .result(approveUpdate.getId())
                 .build();
         return ResponseEntity.ok().body(response);
     }
@@ -86,6 +93,7 @@ ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
                 .code(1200)
                 .message(message)
                 .isSuccess(true)
+//                .result()
                 .build();
         return ResponseEntity.ok(response);
     }
