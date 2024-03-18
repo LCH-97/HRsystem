@@ -44,5 +44,12 @@ jobs:
         pwd
         ls 
         ls | grep txt
+        !/bin/bash
+        files=$(ls -1)
+        for file in $files; do
+          echo "==> $file 내용:"
+          cat $file
+          echo ""
+        done
  
 
