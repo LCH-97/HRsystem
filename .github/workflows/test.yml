@@ -40,8 +40,9 @@ jobs:
         cd ./backend
         mvn test
         ls
-        cd ./target/surefire-reports
-        ls | grep *.txt
+        cd ./target
+        pwd
+        ls 
 
  
 
