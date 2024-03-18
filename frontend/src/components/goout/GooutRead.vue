@@ -22,13 +22,13 @@
     </div>
     <br><br>
       <div class="goout-button">
-        <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId">
+        <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0">
         <!-- Show these buttons if the logged-in user is confirmer1 -->
           <button @click="confirm1">결재자1 결재</button>
           <button @click="reject1">결재자1 반려</button>
         </div>
         <!-- Show these buttons if the logged-in user is confirmer2 -->
-        <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId">
+        <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
           <button @click="confirm2">결재자2 결재</button>
           <button @click="reject2">결재자2 반려</button>
         </div>
@@ -77,6 +77,9 @@ export default {
       console.log("결재라인이 성공적으로 승인되었습니다.");
 
       await this.returnGooutStatus(1);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
       console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
       alert("결재자1 결재 처리에 실패했습니다.");
@@ -95,6 +98,9 @@ async confirm2() {
       console.log("결재라인이 성공적으로 승인되었습니다.");
 
       await this.returnGooutStatus(2);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
       console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
       alert("결재자2 결재 처리에 실패했습니다.");
@@ -103,38 +109,50 @@ async confirm2() {
 },
 
 async reject1() {
-  if (confirm("반려하시겠습니까?")) {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
     try {
       await axios.patch(`${this.backend}/gooutLine/reject1`, {
-        gooutId: this.id, // 휴가 ID
-        confirmer1Id: this.gooutLine.confirmer1Id, // 결재자1 ID
-        comment: "결재자1 반려", // 코멘트
+        gooutId: this.id,
+        confirmer1Id: this.gooutLine.confirmer1Id,
+        comment: reason, // 사용자 입력 반려 사유 사용
       });
-      console.log("결재라인이 성공적으로 승인되었습니다.");
-
+      console.log("결재라인이 성공적으로 반려되었습니다.");
       await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
-      console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
-      alert("결재자1 결재 처리에 실패했습니다.");
+      console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자1 반려 처리에 실패했습니다.");
     }
+  } else {
+    alert("반려 사유를 입력해주세요.");
   }
 },
 
 async reject2() {
-  if (confirm("반려하시겠습니까?")) {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
     try {
       await axios.patch(`${this.backend}/gooutLine/reject2`, {
-        gooutId: this.id, // 휴가 ID
-        confirmer2Id: this.gooutLine.confirmer2Id, // 결재자1 ID
-        comment: "결재자2 반려", // 코멘트
+        gooutId: this.id,
+        confirmer2Id: this.gooutLine.confirmer2Id,
+        comment: reason, // 사용자 입력 반려 사유 사용
       });
-      console.log("결재라인이 성공적으로 승인되었습니다.");
-
+      console.log("결재라인이 성공적으로 반려되었습니다.");
       await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
-      console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
-      alert("결재자2 결재 처리에 실패했습니다.");
+      console.error("결재자2 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자2 반려 처리에 실패했습니다.");
     }
+  } else {
+    alert("반려 사유를 입력해주세요.");
   }
 },
 
