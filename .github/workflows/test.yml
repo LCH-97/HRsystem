@@ -47,28 +47,9 @@ jobs:
         name: test-results
         path: .surefire/target/surefire-reports
 
-    - name: Print Test Results
-      uses: actions/github-script@v5
+    - name: Upload Test Report
+      uses: EnricoMi/publish-unit-test-result-action@v1
       with:
-        script: |
-          const fs = require('fs');
-          const path = require('path');
-
-          const resultsPath = path.join('.surefire', 'target', 'surefire-reports', 'TEST-*.xml');
-          const results = fs.readdirSync(resultsPath);
-
-          let success = true;
-          for (const result of results) {
-            const xml = fs.readFileSync(path.join(resultsPath, result), 'utf-8');
-            if (xml.includes('<failure>')) {
-              success = false;
-              console.log(`Test ${result} failed!`);
-            } else {
-              console.log(`Test ${result} passed!`);
-            }
-          }
-
-          if (!success) {
-            throw new Error('Test failed!');
-          }
+        files: '**/*.xml'
+        publish_junit: true
 
