@@ -120,8 +120,11 @@ public class GooutService {
             }
 
             return GooutRead.builder()
+                    .agentId(agent.getId())
                     .agentName(agent.getName())
+                    .employeeId(employee.getId())
                     .employeeName(employee.getName())
+                    .gooutTypeId(gooutType.getId())
                     .gooutTypeName(gooutType.getName())
                     .status(goout.getStatus())
                     .first(goout.getFirst())
