@@ -24,10 +24,10 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: lch2023-s3
+      bucket: ${ BUCKET_NAME }
     credentials:
-      access-key: AKIA2H67JGHVCOYRJA54
-      secret-key: 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
+      access-key: ${ BUCKET_ACCESS_KEY }
+      secret-key: ${ BUCKET_SECRET_KEY }
     region:
       static: ap-northeast-2
       auto: false
