@@ -48,11 +48,11 @@ jobs:
         path: ./backend/target/surefire-reports/*
         # The desired behavior if no files are found using the provided path.
        
-    - name: push
-      run: |
-        echo {{ github.ref }}
-        git pull origin backend/test/develop
-        git push origin backend/test/init:backend/test/develop
+    # - name: push
+    #   run: |
+    #     echo {{ github.ref }}
+    #     git pull origin backend/test/develop
+    #     git push origin backend/test/init:backend/test/develop
 
  
 
