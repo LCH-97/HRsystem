@@ -7,41 +7,30 @@
       <form @submit.prevent="handleFormSubmission">
         <div class="row">
           <div class="label">신청자</div>
-          <div class="input">
-            <input type="text" v-model="name" required>
-          </div>
+          <select v-model="employeeId">
+            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+          </select><br>
+
         </div>
         <div class="row">
           <div class="label">대리인</div>
-          <div class="input">
-            <input type="text" v-model="name" required>
-          </div>
+          <select v-model="agentId">
+            <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
+          </select><br>
         </div>
         <div class="row">
           <div class="label">근태 사유</div>
           <div class="input">
-            <select v-model="leaveReason" required>
-              <option value="">선택</option>
-              <option value="연차휴가">연차휴가</option>
-              <option value="병가">병가</option>
-              <option value="출장">출장</option>
-              <option value="기타">기타</option>
-            </select>
+            <select v-model="gooutTypeId">
+            <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
+          </select><br> 
           </div>
         </div>
         <div class="row">
-          <div class="label">기간</div>
-          <div class="input">
-            <input type="date" v-model="startDate" required>
-            <span>~</span>
-            <input type="date" v-model="endDate" required>
-          </div>
-        </div>
-        <div class="row">
-          <div class="label">비고</div>
-          <div class="input">
-            <textarea v-model="note"></textarea>
-          </div>
+          <p>시작 날짜</p>
+          <input type="date" v-model="first"><br>
+          <p>종료 날짜</p>
+          <input type="date" v-model="last"><br>
         </div>
           <div class="row">
             <div class="label">첨부파일</div>
@@ -52,14 +41,15 @@
         <div class="row">
           <div class="label">결재라인</div>
           <div class="input">
-            <select v-model="confirmer1Id" required>
-              <option value="">결재자 1 선택</option>
+            <p>결재자1</p>
+            <select v-model="confirmer1Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-            </select>
-            <select v-model="confirmer2Id" required>
-              <option value="">결재자 2 선택</option>
+            </select><br>
+
+            <p>결재자2</p>
+            <select v-model="confirmer2Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-            </select>
+            </select><br>
           </div>
         </div>
         <div class="row">
@@ -91,8 +81,12 @@ export default {
       confirmer1Id: "",
       confirmer2Id: "",
       loggedInUserId: null, // 로그인한 사용자 ID 저장
+      sortColumn: null, // 분류할 열 (예: 'name' 또는 'startDate')
+      sortOrder: 'asc', // 분류 순서 (오름차순 또는 내림차순)
     }
   },
+
+  
 
   async created() {
     await this.fetchGooutTypes();
@@ -103,6 +97,14 @@ export default {
   },
   methods: {
 
+    sortBy(column) {
+    if (this.sortColumn === column) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortOrder = 'asc';
+    }
+  },
     
     setLoggedInUser() {
       const token = sessionStorage.getItem('token'); // 로컬 스토리지 또는 적절한 저장소에서 토큰 가져오기
@@ -183,6 +185,8 @@ async createGooutLine(gooutId) {
         await this.getGooutCreate();
     }
   },
+
+  
 }
 
 
