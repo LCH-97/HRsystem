@@ -1,14 +1,16 @@
 <template>
   <div>
     <div class="button-container">
-      <br>
-      <button @click="goToGooutCreate">휴가 등록</button>
-      <br><br>
+      <button @click="filterGoouts(null)">전체 보기</button>
+      <button @click="filterGoouts(0)">대기중</button>
+      <button @click="filterGoouts(1)">결재자1 승인</button>
+      <button @click="filterGoouts(2)">최종 승인</button>
+      <button @click="filterGoouts(3)">반려</button>
     </div>
 
     <div class="gooutList">
       <ul>
-        <li v-for="goout in goouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
+        <li v-for="goout in filteredGoouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
           <div><strong>이름:</strong> {{ goout.name }}</div>
           <div><strong>휴가 유형:</strong> {{ goout.gooutTypeName }}</div>
           <div><strong>상태:</strong> {{ getStatusText(goout.status) }}</div>
@@ -28,6 +30,7 @@ export default {
   data() {
     return {
       goouts: [],
+      filteredGoouts: [], // 필터링된 휴가 목록
     }
   },
   created() {
@@ -64,8 +67,19 @@ export default {
   } else {
     console.error("ID is undefined");
   }
-}
+},
+filterGoouts(status) {
+      if (status === null) {
+        this.filteredGoouts = this.goouts;
+      } else {
+        this.filteredGoouts = this.goouts.filter(goout => goout.status === status);
+      }
+    }
   },
+  mounted() {
+    // fetchGoouts 호출 후 초기 필터링 상태로 설정
+    this.filteredGoouts = this.goouts;
+  }
 };
 </script>
 
