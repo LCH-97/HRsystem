@@ -114,12 +114,12 @@ public class ApproveLineService {
     public ApproveLineRead read2(Integer id) {
         ApproveLine approveLine = approveLineRepository.findByApproveId(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 결재라인이 존재하지 않습니다."));
-
         return ApproveLineRead.builder()
                 .confirmer1Id(approveLine.getConfirmer1().getId())
                 .confirmer1Name(approveLine.getConfirmer1().getName())
                 .confirmer2Id(approveLine.getConfirmer2().getId())
                 .confirmer2Name(approveLine.getConfirmer2().getName())
+                .employeeId(approveLine.getConfirmer().getId())
                 .approveId(approveLine.getApprove().getId())
                 .comment(approveLine.getComment())
                 .approveTime(approveLine.getApproveTime())
