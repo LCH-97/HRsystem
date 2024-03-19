@@ -94,28 +94,20 @@ export default {
       currentFilterStatus: null, // 현재 선택된 필터 상태
     };
   },
-  mounted() {
-    this.fetchApprovals();
+  async mounted() {
+    await this.fetchApprovals();
   },
   methods: {
      async fetchApprovals() {
   const api = "http://localhost:8080/approve/list";
-  axios.get(api)
-    .then((response) => {
-      this.approvals = response.data.result.map(approve => {
-        return{
-          ...approve,
-          confirmer1Name: approve.confirmer1,
-          confirmer2Name: approve.confirmer2,
-        }
-      });
-      this.filteredApprovals = this.approvals;
-      console.log(this.approvals);
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
-},
+  try {
+        const response = await axios.get(api);
+        this.approvals = response.data.result;
+        this.filteredApprovals = this.approvals; // 초기 로딩 시 전체 결재 목록을 보여줍니다.
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
 
   //   fetchApproveLine() {
   //     const api = `http://localhost:8080/approve/line/${approveId}`; // 예시 API 엔드포인트, 실제 엔드포인트로 교체 필요

@@ -26,16 +26,6 @@
               ></textarea>
             </div>
             <br/><br/>
-            <p>기안자</p>
-          <select v-model="employeeId">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          >
             <br/><br/>
               <p>결재자1</p>
           <select v-model="confirmer1Id">
@@ -78,6 +68,8 @@
 </template>
 <script>
 import axios from "axios";
+import { jwtDecode } from 'jwt-decode';
+
 export default {
   name: "ApproveCreatePage",
   data() {
@@ -87,16 +79,28 @@ export default {
       content: "",
       confirmer1Id: "",
       confirmer2Id: "",
-      employeeId: "",
       employees: [],
       files: [],
-    };
+      loggedInUserId: null, // 로그인한 사용자 ID 저장
+    }
   },
   async created() {
     await this.fetchEmployees();
 
   },
+  mounted() {
+    this.setLoggedInUser();
+  },
   methods: {
+    setLoggedInUser() {
+  const token = sessionStorage.getItem('token');
+  if (token) {
+    const decoded = jwtDecode(token);
+    console.log('Decoded:', decoded); // 디코드된 토큰 출력
+    this.loggedInUserId = decoded.ID;
+    console.log('Logged In User ID:', this.loggedInUserId); // 사용자 ID 출력
+  }
+},
    
     handleFilesUpload(event) {
       this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
@@ -107,14 +111,7 @@ export default {
     },
     async getApproveCreate() {
 
-  //   const token = sessionStorage.getItem('token');
-  // if (!token) {
-  //   alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
-  //   return;
-  // }
-
-  // 입력값 검증
-  if (!this.title || !this.content) {
+   if (!this.title || !this.content) {
     alert("제목과 내용을 입력해주세요.");
     return;
   }
@@ -127,7 +124,7 @@ export default {
   formData.append("approveCreateReq", new Blob([JSON.stringify({
     title: this.title,
     content: this.content,
-    employeeId: this.employeeId
+    employeeId: this.loggedInUserId,
   })], { type: "application/json" }));
 
   // 파일들을 formData에 추가
@@ -139,7 +136,6 @@ export default {
     // 서버에 결재 생성 요청 전송
     const response = await axios.post(`${this.backend}/approve/create`, formData, {
       headers: {
-        // 'Authorization': `Bearer ${token}`, // 토큰을 헤더에 추가
         'Content-Type': 'multipart/form-data'
       }
     });
@@ -165,14 +161,15 @@ async createApproveLine(approveId) {
     alert("결재 ID가 제공되지 않았습니다.");
     return;
   }
-
+  this.setLoggedInUser();
+  try {
   const approveLineReq = {
     confirmer1Id: this.confirmer1Id,
     confirmer2Id: this.confirmer2Id,
-    employeeId: this.employeeId,
+    employeeId: this.loggedInUserId,
     approveId: approveId,
   };
-  try {
+
     const response = await axios.post(`${this.backend}/approve/line/create`, approveLineReq, {
       headers: {
         'Content-Type': 'application/json'
@@ -193,58 +190,8 @@ async handleFormSubmission() {
 }
   }
 }
-//   try {
-//     const approveLineReq = {
-//       confirmer1Id: this.confirmer1Id,
-//       confirmer2Id: this.confirmer2Id,
-//       approveId: approveId,
-//     };
-//     const response = await axios.post(`${this.backend}/approveLine/create`, approveLineReq, {
-//       headers: {
-//         'Content-Type': 'application/json'
-//       }
-//     });
-//     console.log("ApproveLine 생성 성공:", response);
-//     alert("결재 등록 및 결재라인 생성 완료");
-//     this.$router.push("/approve/list");
-//   }catch (error) {
-//     console.error("결재라인 생성 실패", error);
-//     alert("결재라인 생성 실패:" + error.response.data.message);
-//   }
-// },
-// async handleFormSubmission() {
-//   await this.getApproveCreate();
-// }
-//   }
-// }
-//       try {
-//         // Approve 생성
-//         const approveResponse = await axios.post(`${this.backend}/approve/create`, formData, {
-//           headers: { 'Content-Type': 'multipart/form-data' },
-//         });
-//         // ApproveLine 생성을 위한 데이터 준비
-//         const approveLineData = {
-//           approveId: approveResponse.data.result.id,
-//           confirmer1Id: this.approver1,
-//           confirmer2Id: this.approver2,
-//           // comment 필드는 필요에 따라 추가하세요
-//         };
-//         // ApproveLine 생성
-//         await axios.post(`${this.backend}/approve/line/create`, approveLineData, {
-//           headers: { 'Content-Type': 'application/json' },
-//         });
-//         alert("결재 및 결재라인이 성공적으로 생성되었습니다.");
-//         this.$router.push("/approve/list");
-//       } catch (error) {
-//         console.error("결재 생성 실패:", error.response.data);
-//         alert("결재 생성에 실패했습니다.");
-//       }
-//     },
-//     async handleFormSubmission() {
-//         await this.getApproveCreate();
-//     }
-//   },
-// };
+
+
 </script>
 <style scoped>
 /* 여기에 스타일을 추가할 수 있습니다. */
