@@ -51,7 +51,7 @@ jobs:
     - name: push
       run: |
         echo {{ github.ref }}
-        git pull origin backend/test/init
+        git pull origin backend/test/develop
         git push origin backend/test/init:backend/test/develop
 
  
