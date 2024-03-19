@@ -6,8 +6,8 @@
       <button @click="filterGoouts(1)">결재자1 승인</button>
       <button @click="filterGoouts(2)">최종 승인</button>
       <button @click="filterGoouts(3)">반려</button>
+      <button @click="goToGooutCreate">휴가 등록</button>
     </div>
-
     <div class="gooutList">
       <ul>
         <li v-for="goout in filteredGoouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
@@ -21,10 +21,8 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
-
 export default {
   name: 'VacationPage',
   data() {
@@ -47,7 +45,6 @@ export default {
       };
       return statusMap[status] || '알 수 없음';
     },
-
     goToGooutCreate() {
       this.$router.push("/goout/create");
     },
@@ -82,7 +79,6 @@ filterGoouts(status) {
   }
 };
 </script>
-
 <style>
 .button-container {
   text-align: right;
@@ -96,7 +92,7 @@ filterGoouts(status) {
   color: white;
   letter-spacing: 0.2px;
   border: none;
-  background-color: #fae14a;
+  background-color: #FAE14A;
 }
 .button-container button:hover {
   color: #555555;
