@@ -43,13 +43,13 @@ public class ApproveService {
 
     public Approve create(ApproveCreateReq approveCreateReq) {
         Employee employee = employeeRepository.findById(approveCreateReq.getEmployeeId())
-                .orElseThrow(() -> new IllegalArgumentException("신청직원의 ID가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("기안자의 ID가 존재하지 않습니다."));
 
         Approve approve = Approve.builder()
                 .content(approveCreateReq.getContent())
                 .title(approveCreateReq.getTitle())
-                .status(0)
                 .employee(employee)
+                .status(0)
                 .build();
 
         return approveRepository.save(approve);
