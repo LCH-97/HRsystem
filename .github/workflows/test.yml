@@ -13,12 +13,11 @@ on:
     branches: [ "backend/develop","backend/test/target","backend/test/init" ]
   pull_request:
     branches: [ "backend/develop","backend/test/target","backend/test/init" ]
+permissions: write-all
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -39,7 +38,7 @@ jobs:
       run: |
         cd ./backend
         mvn test
-        
+  
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
