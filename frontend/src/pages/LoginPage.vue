@@ -84,7 +84,6 @@
           console.log('Response:', response.data);
           this.responseData = response.data;
           sessionStorage.setItem('token', response.data.result.token);
-
           // main page로 이동해야지/?
           this.$router.push('/main?name='+response.data.result.name);
         })

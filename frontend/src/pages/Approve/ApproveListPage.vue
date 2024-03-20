@@ -22,11 +22,11 @@
               내 결재들
             </div>
             <div class="card-body">
-              <button>전체</button>
-              <button>기안 중</button>
-              <button>진행 중</button>
-              <button>반려</button>
-              <button>결제 완료</button>
+              <button @click="filterApprovalsByStatus(null)">전체</button>
+              <button @click="filterApprovalsByStatus(0)">기안 중</button>
+              <button @click="filterApprovalsByStatus(1)">진행 중</button>
+              <button @click="filterApprovalsByStatus(3)">반려</button>
+              <button @click="filterApprovalsByStatus(2)">결제 완료</button>
               <table id="datatablesSimple">
                 <thead>
                   <tr>
@@ -40,7 +40,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(approve, index) in approvals" :key="index" @click="goToApproveReadPage(approve.id)">
+                  <tr v-for="(approve, index) in filteredApprovals" :key="index" @click="goToApproveReadPage(approve.id)">
                     <td>{{ approve.id }}</td>
                     <td>{{ approve.createAt }}</td>
                     <td>{{ approve.title }}</td>
@@ -89,24 +89,38 @@ export default {
   name: "ApproveListPage",
   data() {
     return {
-      approvals: [], // 데이터 배열 이름 수정
+      approvals: [],
+      filteredApprovals: [], // 필터링된 결재 목록
+      currentFilterStatus: null, // 현재 선택된 필터 상태
     };
   },
-  mounted() {
-    this.fetchApprovals();
+  async mounted() {
+    await this.fetchApprovals();
   },
   methods: {
-    fetchApprovals() {
-      const api = "http://localhost:8080/approve/list";
-      axios.get(api)
-      .then((response) => {
-        this.approvals = response.data.result; // 데이터 배열 이름 수정
-        console.log(response.data.result);
-      })
-      .catch((error) => {
+     async fetchApprovals() {
+  const api = "http://localhost:8080/approve/list";
+  try {
+        const response = await axios.get(api);
+        this.approvals = response.data.result;
+        this.filteredApprovals = this.approvals; // 초기 로딩 시 전체 결재 목록을 보여줍니다.
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
+      }
     },
+
+  //   fetchApproveLine() {
+  //     const api = `http://localhost:8080/approve/line/${approveId}`; // 예시 API 엔드포인트, 실제 엔드포인트로 교체 필요
+  // axios.get(api)
+  //   .then((response) => {
+  //     this.approveLine = response.data
+  //     // 처리 로직, 예를 들어 `this.approveLine = response.data` 등
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching approve line data:", error);
+  //   });
+  //   },
+
     goToApproveReadPage(id) {
     if (id) {
       this.$router.push(`/approve/read/${id}`);
@@ -122,8 +136,16 @@ export default {
         3: "반려",
       };
       return statusMap[status] || "알 수 없음";
-  }
-}
+  },
+  filterApprovalsByStatus(status) {
+    this.currentFilterStatus = status;
+    if(status === null) {
+      this.filteredApprovals = this.approvals;
+    } else {
+      this.filteredApprovals = this.approvals.filter(approve => approve.status === status);
+    }
+  },
+},
   
 };
 </script>

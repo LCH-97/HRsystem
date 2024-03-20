@@ -5,7 +5,8 @@
       <br><br><br>
       <div v-if="goout && gooutLine">
         <h2>{{ goout.gooutTypeName }}</h2>
-        <p>신청직원: {{ goout.employeeName }}</p>
+        <p>휴가결재 올린사람: {{ gooutLine?.employeeName }}</p>
+        <p>휴가가는 직원: {{ goout.employeeName }}</p>
         <p>대리인: {{ goout.agentName }}</p>
         <p>시작 날짜: {{ goout.first }}</p>
         <p>종료 날짜: {{ goout.last }}</p>
@@ -20,13 +21,23 @@
       </div>
     </div>
     <br><br>
-    <div class="goout-button">      
-      <button @click="confirm1">결재자1 결재</button>
-      <button @click="confirm2">결재자2 결재</button>      
-      <button @click="reject1">결재자1 반려</button>
-      <button @click="reject2">결재자2 반려</button>
-      <button @click="updateGoout">수정</button>
-      <button @click="deleteGoout">삭제</button>
+      <div class="goout-button">
+        <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0">
+        <!-- Show these buttons if the logged-in user is confirmer1 -->
+          <button @click="confirm1">결재자1 결재</button>
+          <button @click="reject1">결재자1 반려</button>
+        </div>
+        <!-- Show these buttons if the logged-in user is confirmer2 -->
+        <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
+          <button @click="confirm2">결재자2 결재</button>
+          <button @click="reject2">결재자2 반려</button>
+        </div>
+        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+        <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
+          <button @click="updateGoout">수정</button>
+          <button @click="deleteGoout">삭제</button>
+        </div>
+        <!-- If logged-in user's ID does not match any, do not show any buttons -->
     </div>
   </div>
 </template>
@@ -34,6 +45,7 @@
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   data() {
@@ -45,6 +57,15 @@ export default {
     };
   },
   methods: {
+    setLoggedInUser() {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode(token); // Use the correct decoding method
+      this.loggedInUserId = decoded.ID; // Adjust according to your token structure
+    }
+  },
+
+
     async confirm1() {
   if (confirm("결재하시겠습니까?")) {
     try {
@@ -56,6 +77,9 @@ export default {
       console.log("결재라인이 성공적으로 승인되었습니다.");
 
       await this.returnGooutStatus(1);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
       console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
       alert("결재자1 결재 처리에 실패했습니다.");
@@ -74,6 +98,9 @@ async confirm2() {
       console.log("결재라인이 성공적으로 승인되었습니다.");
 
       await this.returnGooutStatus(2);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
       console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
       alert("결재자2 결재 처리에 실패했습니다.");
@@ -82,38 +109,50 @@ async confirm2() {
 },
 
 async reject1() {
-  if (confirm("반려하시겠습니까?")) {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
     try {
       await axios.patch(`${this.backend}/gooutLine/reject1`, {
-        gooutId: this.id, // 휴가 ID
-        confirmer1Id: this.gooutLine.confirmer1Id, // 결재자1 ID
-        comment: "결재자1 반려", // 코멘트
+        gooutId: this.id,
+        confirmer1Id: this.gooutLine.confirmer1Id,
+        comment: reason, // 사용자 입력 반려 사유 사용
       });
-      console.log("결재라인이 성공적으로 승인되었습니다.");
-
+      console.log("결재라인이 성공적으로 반려되었습니다.");
       await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
-      console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
-      alert("결재자1 결재 처리에 실패했습니다.");
+      console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자1 반려 처리에 실패했습니다.");
     }
+  } else {
+    alert("반려 사유를 입력해주세요.");
   }
 },
 
 async reject2() {
-  if (confirm("반려하시겠습니까?")) {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
     try {
       await axios.patch(`${this.backend}/gooutLine/reject2`, {
-        gooutId: this.id, // 휴가 ID
-        confirmer2Id: this.gooutLine.confirmer2Id, // 결재자1 ID
-        comment: "결재자2 반려", // 코멘트
+        gooutId: this.id,
+        confirmer2Id: this.gooutLine.confirmer2Id,
+        comment: reason, // 사용자 입력 반려 사유 사용
       });
-      console.log("결재라인이 성공적으로 승인되었습니다.");
-
+      console.log("결재라인이 성공적으로 반려되었습니다.");
       await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
     } catch (error) {
-      console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
-      alert("결재자2 결재 처리에 실패했습니다.");
+      console.error("결재자2 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자2 반려 처리에 실패했습니다.");
     }
+  } else {
+    alert("반려 사유를 입력해주세요.");
   }
 },
 
@@ -169,13 +208,29 @@ async returnGooutStatus(status) {
       return statusMap[status] || '알 수 없음';
     },
     updateGoout() {
-
-      if (this.goout.status !== 3) {
-    alert("반려상태가 아니면 수정을 할 수 없습니다. 없습니다.");
-    return; // 메소드 실행을 중단
+  if (this.goout.status !== 3) {
+    alert("반려상태가 아니면 수정할 수 없습니다.");
+    return;
   }
   const gooutId = this.$route.params.id;
-  localStorage.setItem('updateGooutInfo', JSON.stringify({ ...this.goout, id: gooutId }));
+  localStorage.setItem('updateGooutInfo', JSON.stringify({
+    gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+    gooutTypeName: this.goout.gooutTypeName, // For display purposes
+    employeeId: this.goout.employeeId,
+    employeeName: this.goout.employeeName, // For display purposes
+    agentId: this.goout.agentId,
+    agentName: this.goout.agentName, // For display purposes
+    first: this.goout.first,
+    last: this.goout.last,
+    id: gooutId
+  }));
+
+  localStorage.setItem('updateGooutLineInfo', JSON.stringify({
+    confirmer1Id: this.gooutLine?.confirmer1Id,
+    confirmer1Name: this.gooutLine?.confirmer1Name,
+    confirmer2Id: this.gooutLine?.confirmer2Id,
+    confirmer2Name: this.gooutLine?.confirmer2Name,
+  }));
   this.$router.push('/goout/update');
 },
 
@@ -200,6 +255,9 @@ async returnGooutStatus(status) {
   created() {
     this.fetchGoout();
   },
+  mounted() {
+  this.setLoggedInUser();
+},
 
 computed: {
     // 휴가 사용일 수를 계산하는 계산된 속성
@@ -218,33 +276,4 @@ computed: {
 </script>
 
 <style scoped>
-.all {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.goout-read-page {
-  max-width: 600px;
-  padding: 20px;
-  text-align: center;
-}
-
-.goout-button {
-  display: flex;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
 </style>
