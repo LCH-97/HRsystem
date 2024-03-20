@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ApproveReturn {
     private Integer id;
-    private Integer approveLineId;
+    private Integer status;
 }

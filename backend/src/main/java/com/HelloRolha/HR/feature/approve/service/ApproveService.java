@@ -10,6 +10,7 @@ import com.HelloRolha.HR.feature.approve.repo.ApproveLineRepository;
 import com.HelloRolha.HR.feature.approve.repo.ApproveRepository;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
+import com.HelloRolha.HR.feature.goout.model.dto.GooutReturnReq;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -138,7 +139,7 @@ public class ApproveService {
 
 
     @Transactional
-    public ApproveUpdate update(ApproveUpdate approveUpdate) {
+    public void update(ApproveUpdate approveUpdate) {
         Approve approve = approveRepository.findById(approveUpdate.getId())
                 .orElseThrow(() -> new RuntimeException("결재 정보를 찾을 수 없습니다."));
 
@@ -147,23 +148,21 @@ public class ApproveService {
         }
 
         approve.setContent(approveUpdate.getContent());
-        return ApproveUpdate.builder()
-                .content(approveUpdate.getContent())
-                .build();
+        approve.setUpdateAt(approve.getUpdateAt());
+//        return ApproveUpdate.builder()
+//                .content(approveUpdate.getContent())
+//                .build();
+        approveRepository.save(approve);
     }
 
     @Transactional
-    public ReturnStatusRes returnStatus(Integer id, Integer approveLineId) {
-        ApproveLine approveLine = approveLineRepository.findById(approveLineId)
-                .orElseThrow(() -> new RuntimeException("해당 ID의 결재 라인 정보를 찾을 수 없습니다."));
+    public void returnStatus(ApproveReturn approveReturn) {
 
-        Approve approve = approveRepository.findById(id)
+        Approve approve = approveRepository.findById(approveReturn.getId())
                 .orElseThrow(() -> new RuntimeException("해당 ID의 결재 정보를 찾을 수 없습니다."));
-        return ReturnStatusRes.builder()
-                .status(approveLine.getStatus())
-                .build();
-//        approve.setStatus(approve.getStatus());
-//        approveRepository.save(approve);
+
+        approve.setStatus(approveReturn.getStatus());
+        approveRepository.save(approve);
     }
 
     @Transactional
@@ -189,7 +188,9 @@ public class ApproveService {
         String folderPath = makeFolder();
         String uuid = UUID.randomUUID().toString();
         String saveFileName = folderPath + File.separator + uuid + "_" + originalName;
-        try (InputStream input = file.getInputStream()) {
+        InputStream input = null;
+        try {
+            input = file.getInputStream();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
@@ -197,6 +198,12 @@ public class ApproveService {
             s3.putObject(bucket, saveFileName.replace(File.separator, "/"), input, metadata);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
