@@ -1,5 +1,7 @@
 <template>
-  <div class="all">
+    <HeaderComponent />
+    <SideBar />
+  <div class="approve-read-all">
     <div class="approve-read-page">
       <h2>결재 상세보기</h2>
       <br /><br />
@@ -7,36 +9,54 @@
         <h3>{{ this.approve.title }}</h3>
         <br />
         <br />
-        <p>상태: {{ getStatusText(this.approve.status) }}</p>
-        <br />
-        <p>결재자1: {{ this.approve.confirmer1 }}</p>
-        <p v-if="this.approve.status==1 ||this.approve.status==2 ">결재1 완료</p>
-        <br />
-        <p>결재자2: {{ this.approve.confirmer2 }}</p>
-        <p v-if="this.approve.status==2 ">결재2 완료</p>
-
-        <br />
         <br />
         <p>내용: {{ this.approve.content }}</p>
         <br />
+        <p>상태: {{ getStatusText(this.approve.status) }}</p>
+        <br />
+        <p>결재자1: {{ this.approve.confirmer1 }}</p>
+        <p v-if="this.approve.status == 1 || this.approve.status == 2">
+          결재1 완료
+        </p>
+        <br />
+        <p>결재자2: {{ this.approve.confirmer2 }}</p>
+        <p v-if="this.approve.status == 2">결재2 완료</p>
+        <br /><br /><br /><br />
+        <p v-if="this.approve.status == 3"> 반려사유: {{ this.approveLine.comment }}</p>
+        <br />
+       
       </div>
     </div>
     <div class="approve-button">
-      <div class="confirm1-button" v-if="approveLine?.confirmer1Id === loggedInUserId && approve.status == 0">
+      <div
+        class="confirm1-button"
+        v-if="
+          approveLine?.confirmer1Id === loggedInUserId && approve.status == 0
+        "
+      >
         <!-- Show these buttons if the logged-in user is confirmer1 -->
-          <button @click="confirm1">결재자1 결재</button>
-          <button @click="reject1">결재자1 반려</button>
-        </div>
-        <!-- Show these buttons if the logged-in user is confirmer2 -->
-        <div class="confirm1-button" v-else-if="approveLine?.confirmer2Id === loggedInUserId && approveLine?.status == 1">
-          <button @click="confirm2">결재자2 결재</button>
-          <button @click="reject2">결재자2 반려</button>
-        </div>
-        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-        <div class="confirm1-button" v-else-if="approveLine?.employeeId === loggedInUserId">
-          <button @click="updateApprove">수정</button>
-          <button @click="deleteApprove">삭제</button>
-        </div>
+        <button @click="confirm1">결 재</button>
+        <button @click="reject1">반 려</button>
+      </div>
+      <!-- Show these buttons if the logged-in user is confirmer2 -->
+      <div
+        class="confirm1-button"
+        v-else-if="
+          approveLine?.confirmer2Id === loggedInUserId &&
+          approveLine?.status == 1
+        "
+      >
+        <button @click="confirm2">결 재</button>
+        <button @click="reject2">반 려</button>
+      </div>
+      <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+      <div
+        class="confirm1-button"
+        v-else-if="approveLine?.employeeId === loggedInUserId"
+      >
+        <button @click="updateApprove">수 정</button>
+        <button @click="deleteApprove">삭 제</button>
+      </div>
       <!-- <button @click="createApproveLine">상신</button> -->
     </div>
   </div>
@@ -45,8 +65,15 @@
 <script>
 import axios from "axios";
 import { jwtDecode } from 'jwt-decode';
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import SideBar from "@/components/SideBar.vue";
 
 export default {
+  name: "ApproveReadPage",
+    components: {
+      SideBar,
+      HeaderComponent,
+    },
   data() {
     return {
       approve: "",
@@ -71,7 +98,7 @@ export default {
         console.log("confirmer1Id:", this.approve.confirmer1Id);
         try {
            await axios.patch(`${this.backend}/approve/line/confirm1`, {
-            approveId: this.$route.params.id, // 휴가 ID
+            approveId: this.id, 
             confirmer1Id: this.approveLine.confirmer1Id, // 결재자1 ID
             comment: "결재자1 승인", // 코멘트
           });
@@ -91,12 +118,12 @@ export default {
       if (confirm("결재하시겠습니까?")) {
         try {
           await axios.patch(`${this.backend}/approve/line/confirm2`, {
-            approveId: this.$route.params.id, // 휴가 ID
-            confirmer2Id: this.approveLine.confirmer2Id, // 결재자1 ID
-            comment: "결재자2 승인", // 코멘트
+            approveId: this.$route.params.id, 
+            confirmer2Id: this.approveLine.confirmer2Id, 
+            comment: "결재자2 승인",
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
-          
+
           await this.returnApproveStatus(2);
           this.$router.push(`/approve/read/` + this.$route.params.id).then(() => {
   this.$router.go(0);
@@ -115,7 +142,7 @@ export default {
           await axios.patch(`${this.backend}/approve/line/reject1`, {
         approveId: this.id,
         confirmer1Id: this.approveLine.confirmer1Id,
-        comment: reason, 
+        comment: reason,
           });
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
@@ -137,7 +164,7 @@ export default {
           await axios.patch(`${this.backend}/approve/line/reject2`, {
         approveId: this.id,
         confirmer2Id: this.approveLine.confirmer2Id,
-        comment: reason, 
+        comment: reason,
           });
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
@@ -153,10 +180,6 @@ export default {
     }},
 
     async createApproveLine() {
-      // if (!approveId) {
-      //   alert("결재 ID가 제공되지 않았습니다.");
-      //   return;
-      // }
 
       const approveLineReq = {
         confirmer1Id: this.confirmer1Id,
@@ -243,7 +266,7 @@ export default {
     updateApprove() {
       if (this.approve.status !== 3) {
         alert("반려상태가 아니면 수정을 할 수 없습니다. 없습니다.");
-        return; // 메소드 실행을 중단
+        return;
       }
       const approveId = this.$route.params.id;
       localStorage.setItem(
@@ -253,34 +276,50 @@ export default {
       this.$router.push("/approve/update");
     },
 
-    deleteApprove() {
+    async deleteApprove() {
       if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
-        axios
+        try {
+      await axios
+          .delete(`http://localhost:8080/approve/line/delete/${this.id}`)
+      await axios
           .delete(`http://localhost:8080/approve/delete/${this.id}`)
-          .then(() => {
+
             alert("결재가 성공적으로 삭제되었습니다.");
-            this.$router.push("/approve/list"); // 휴가타입 목록 페이지로 리디렉션
-          })
-          .catch((error) => {
+            this.$router.push("/approve/list");
+      }
+          catch(error)  {
             console.error("결재 삭제 중 오류 발생:", error);
             alert("결재 삭제 중 오류가 발생했습니다.");
-          });
+          }
+        }
       }
     },
-    // created() {
-    //   this.fetchApprove();
-    //   this.fetchApproveLine();
-    // },
-  },
+
   created() {
     this.fetchApprove();
-    // this.returnApproveStatus();
-    // this.fetchApproveLine()
+
   },
   mounted() {
   this.setLoggedInUser();
-},
-};
+}};
 </script>
 
-<style></style>
+<style scoped>
+.approve-read-all {
+  margin-top: 30px;
+  margin-left: 320px;
+  width: 80%;
+}
+button {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #F75C29;
+  margin: 15px 0px 15px 10px;
+  width: 100px;
+}
+</style>
