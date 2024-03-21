@@ -208,13 +208,29 @@ async returnGooutStatus(status) {
       return statusMap[status] || '알 수 없음';
     },
     updateGoout() {
-
-      if (this.goout.status !== 3) {
-    alert("반려상태가 아니면 수정을 할 수 없습니다. 없습니다.");
-    return; // 메소드 실행을 중단
+  if (this.goout.status !== 3) {
+    alert("반려상태가 아니면 수정할 수 없습니다.");
+    return;
   }
   const gooutId = this.$route.params.id;
-  localStorage.setItem('updateGooutInfo', JSON.stringify({ ...this.goout, id: gooutId }));
+  localStorage.setItem('updateGooutInfo', JSON.stringify({
+    gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+    gooutTypeName: this.goout.gooutTypeName, // For display purposes
+    employeeId: this.goout.employeeId,
+    employeeName: this.goout.employeeName, // For display purposes
+    agentId: this.goout.agentId,
+    agentName: this.goout.agentName, // For display purposes
+    first: this.goout.first,
+    last: this.goout.last,
+    id: gooutId
+  }));
+
+  localStorage.setItem('updateGooutLineInfo', JSON.stringify({
+    confirmer1Id: this.gooutLine?.confirmer1Id,
+    confirmer1Name: this.gooutLine?.confirmer1Name,
+    confirmer2Id: this.gooutLine?.confirmer2Id,
+    confirmer2Name: this.gooutLine?.confirmer2Name,
+  }));
   this.$router.push('/goout/update');
 },
 
@@ -260,33 +276,4 @@ computed: {
 </script>
 
 <style scoped>
-.all {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.goout-read-page {
-  max-width: 600px;
-  padding: 20px;
-  text-align: center;
-}
-
-.goout-button {
-  display: flex;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
 </style>

@@ -1,36 +1,47 @@
 <template>
-  <div>
-    <div class="gooutCreateBanner">
-        <div class="gooutCreateBannerTxt">
-            <h2>휴가 등록하기</h2>
-        </div>      
+  <div class="container">
+    <div class="header">
+      <h1>휴가 신청</h1>
     </div>
-    <div class="ReqBox">  
-      <article class="ReqInputBox">
-        <div class="ReqInput">
-          <p>휴가 유형</p>
-          <select v-model="gooutTypeId">
-            <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
-          </select><br> 
-          <p>신청직원</p>
+    <div class="content">
+      <form @submit.prevent="handleFormSubmission">
+        <div class="row">
+          <div class="label">신청자</div>
           <select v-model="employeeId">
             <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
           </select><br>
-          <p>대리인</p>
+
+        </div>
+        <div class="row">
+          <div class="label">대리인</div>
           <select v-model="agentId">
             <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
           </select><br>
-          
+        </div>
+        <div class="row">
+          <div class="label">근태 사유</div>
+          <div class="input">
+            <select v-model="gooutTypeId">
+            <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
+          </select><br> 
+          </div>
+        </div>
+        <div class="row">
           <p>시작 날짜</p>
           <input type="date" v-model="first"><br>
           <p>종료 날짜</p>
           <input type="date" v-model="last"><br>
-
-          <p>파일 첨부</p>
-            <input type="file" @change="handleFilesUpload" multiple class="fileUploadEx"><br>
-
-
-          <p>결재자1</p>
+        </div>
+          <div class="row">
+            <div class="label">첨부파일</div>
+            <div class="input">
+              <input type="file" multiple @change="handleFilesUpload">
+            </div>
+          </div>
+        <div class="row">
+          <div class="label">결재라인</div>
+          <div class="input">
+            <p>결재자1</p>
             <select v-model="confirmer1Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
             </select><br>
@@ -39,14 +50,17 @@
             <select v-model="confirmer2Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
             </select><br>
+          </div>
         </div>
-      </article>
-      <div class="button-container">
-        <button @click="handleFormSubmission">휴가 등록</button><br><br>
-      </div>
+        <div class="row">
+          <div class="button">
+            <button type="submit">제출</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-</template>
+  </template>
 
 <script>
 import axios from 'axios';
@@ -67,8 +81,13 @@ export default {
       confirmer1Id: "",
       confirmer2Id: "",
       loggedInUserId: null, // 로그인한 사용자 ID 저장
+      sortColumn: null, // 분류할 열 (예: 'name' 또는 'startDate')
+      sortOrder: 'asc', // 분류 순서 (오름차순 또는 내림차순)
     }
   },
+
+  
+
   async created() {
     await this.fetchGooutTypes();
     await this.fetchEmployees();
@@ -77,6 +96,16 @@ export default {
     this.setLoggedInUser();
   },
   methods: {
+
+    sortBy(column) {
+    if (this.sortColumn === column) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortOrder = 'asc';
+    }
+  },
+    
     setLoggedInUser() {
       const token = sessionStorage.getItem('token'); // 로컬 스토리지 또는 적절한 저장소에서 토큰 가져오기
       if (token) {
@@ -156,69 +185,82 @@ async createGooutLine(gooutId) {
         await this.getGooutCreate();
     }
   },
+
+  
 }
+
+
+
+
+
+
 </script>
 
-<style scoped>
-.gooutCreateBanner{
-    margin: 0 auto; /* 수평 중앙 정렬 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    padding-top: 15px;
-    padding-bottom: 20px;
-    background-color: #F7F8FA;
+<style>
+.container {
+  width: 500px;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-.gooutCreateBannerTxt{
-    font-size: 40px;
-    font-weight: 600;
-    color: rgb(85, 85, 85);
+.header {
+  background-color: #f7f8fa;
+  padding: 10px;
+  text-align: center;
 }
 
-.ReqBox{
-    margin: 0 auto;
-    text-align: center;
-    background-color: #F7F8FA;
-    border: 1px solid  #F7F8FA;
-    border-radius: 12px;
+.header h1 {
+  font-size: 20px;
+  margin: 0;
 }
 
-.ReqInput{
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-basis: 0px;
-    font-size: 20px;
-    font-weight: bold;
-    color: rgb(85, 85, 85);
-    margin-top: 28px;
-    margin-bottom: 28px;
-    text-align: center;
-    width: 30%;
-}
-.nameEx, .detailEx, .maxHolidayEx{
-    text-align: center;
+.content {
+  padding: 20px;
 }
 
-.ReqInputBox{
-    margin: 0 auto;
-    text-align: center;
-    width: 30%;
-    display: flex;
-    justify-content: center;
+.row {
+  display: flex;
+  margin-bottom: 10px;
 }
 
-.button-container button{
-  font-size:18px;
-  font-weight: bold;
-  font-weight:600;
+.label {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
+}
+
+.input {
+  flex: 1;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  width: 100%;
+}
+
+textarea {
+  height: 100px;
+}
+
+.button {
+  text-align: center;
+}
+
+button {
   padding: 5px 10px;
-  color:white;
-  letter-spacing:0.2px;
-  border: none;
-  background-color: #fae14a;
-}
-.button-container button:hover {
-  color: #555555;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f7f8fa;
+  cursor: pointer;
 }
 
+button:hover {
+  background-color: #ddd;
+}
 </style>
