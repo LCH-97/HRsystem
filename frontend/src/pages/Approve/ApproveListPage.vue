@@ -22,11 +22,11 @@
               내 결재들
             </div>
             <div class="card-body">
-              <button @click="filterApprovalsByStatus(null)">전체</button>
-              <button @click="filterApprovalsByStatus(0)">기안 중</button>
-              <button @click="filterApprovalsByStatus(1)">진행 중</button>
-              <button @click="filterApprovalsByStatus(3)">반려</button>
-              <button @click="filterApprovalsByStatus(2)">결제 완료</button>
+              <button @click="filterApprovalsByStatus(null)">전체 {{ statusCounts.total }}</button>
+              <button @click="filterApprovalsByStatus(0)">기안중 {{ statusCounts.대기중 }}</button>
+              <button @click="filterApprovalsByStatus(1)">진행중 {{ statusCounts.결재자1승인 }}</button>
+              <button @click="filterApprovalsByStatus(3)">반려 {{ statusCounts.반려 }}</button>
+              <button @click="filterApprovalsByStatus(2)">결제 완료 {{ statusCounts.최종승인 }}</button>
               <table id="datatablesSimple">
                 <thead>
                   <tr>
@@ -100,6 +100,23 @@ export default {
       currentFilterStatus: null, // 현재 선택된 필터 상태
     };
   },
+  computed: {
+  // 상태별 개수를 계산하는 계산된 속성
+  statusCounts() {
+    const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
+
+    // 모든 approvals를 순회하며 상태별로 개수를 계산합니다.
+    this.approvals.forEach(approve => {
+      counts.total += 1;
+      const statusText = this.getStatusText(approve.status);
+      if (counts[statusText] !== undefined) {
+        counts[statusText] += 1;
+      }
+    });
+
+    return counts;
+  }
+},
   async mounted() {
     await this.fetchApprovals();
   },
@@ -115,17 +132,7 @@ export default {
       }
     },
 
-  //   fetchApproveLine() {
-  //     const api = `http://localhost:8080/approve/line/${approveId}`; // 예시 API 엔드포인트, 실제 엔드포인트로 교체 필요
-  // axios.get(api)
-  //   .then((response) => {
-  //     this.approveLine = response.data
-  //     // 처리 로직, 예를 들어 `this.approveLine = response.data` 등
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error fetching approve line data:", error);
-  //   });
-  //   },
+  
 
     goToApproveReadPage(id) {
     if (id) {
@@ -137,8 +144,8 @@ export default {
   getStatusText(status) {
       const statusMap = {
         0: "대기중",
-        1: "결재자1 승인",
-        2: "최종 승인",
+        1: "결재자1승인",
+        2: "최종승인",
         3: "반려",
       };
       return statusMap[status] || "알 수 없음";
@@ -196,12 +203,12 @@ button {
   letter-spacing: 0.2px;
   border: none;
   border-radius: 10px;
-  background-color: #F75C29;
+  background-color: #111111;
   margin: -5px 0px 15px 10px;
 }
 
 button:hover {
-  color: #555555;
+  background-color: #F75C29;
 }
 
 /* 테이블 스타일 */
@@ -224,13 +231,6 @@ button:hover {
   border-bottom: 2px solid #e3e6f0;
 }
 
-
-
-
-
-
-
-
 .make-approve {
   position: absolute;
   right: 5%;
@@ -242,8 +242,11 @@ button:hover {
   letter-spacing: 0.2px;
   border: none;
   border-radius: 10px;
-  background-color: #F75C29;
+  background-color: #111111;
   margin: -5px 0px 15px 10px;
+}
+.make-approve:hover{
+  background-color: #F75C29;
 }
 
 </style>

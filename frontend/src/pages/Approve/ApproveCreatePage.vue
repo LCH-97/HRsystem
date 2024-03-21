@@ -220,18 +220,19 @@ button {
   letter-spacing: 0.2px;
   border: none;
   border-radius: 10px;
-  background-color: #F75C29;
+  background-color: #111111;
   margin: 15px 0px 15px 10px;
   width: 100px;
+}
+button:hover{
+  background-color: #F75C29;
 }
 .form-control{
   width: 50%;
   resize: none;
 
 }
-.title.form-control{
-  
-}
+
 .confirmer{
   margin-top: 50px;
   width: 100px;
