@@ -89,15 +89,6 @@ export default {
       }
     },
 
-
-
-
-
-
-
-
-
-
     async updateApprove() {
 
       if (this.confirmer1Id === this.confirmer2Id) {
@@ -110,7 +101,7 @@ export default {
       try {
         // 데이터 객체 동적 생성
         let updateData = { id: this.updateInfo.id };
-        if (this.content) updateData.content = this.content; // content 추가
+        if (this.updateInfo.content) updateData.content = this.updateInfo.content; // content 추가
 
         console.log(updateData);
         // Approve 정보 업데이트 실행
@@ -120,10 +111,6 @@ export default {
           },
         });
         console.log("Approve 정보 수정 성공");
-
-
-
-
 
         // ApproveLine 업데이트를 위한 동적 데이터 객체 생성
         let approveLineUpdateReq = { approveId: this.updateInfo.id };

@@ -1,14 +1,14 @@
 <template>
-  <!-- <HeaderComponent />
-    <SideBar /> -->
+    <HeaderComponent />
+    <SideBar />
+
   <div id="layoutSidenav">
     <div id="layoutSidenav_content">
       <main>
         <div class="container-fluid px-4">
           <h1 class="mt-4">모든 결재</h1>
-          <a class="make-approve" href="/approve/create">결재만들기 </a>
           <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">모든 결재</li>
+          <a class="make-approve" href="/approve/create">결재만들기 </a>
           </ol>
           <div class="row">
             <div class="col-xl-3 col-md-6"></div>
@@ -22,11 +22,11 @@
               내 결재들
             </div>
             <div class="card-body">
-              <button @click="filterApprovalsByStatus(null)">전체</button>
-              <button @click="filterApprovalsByStatus(0)">기안 중</button>
-              <button @click="filterApprovalsByStatus(1)">진행 중</button>
-              <button @click="filterApprovalsByStatus(3)">반려</button>
-              <button @click="filterApprovalsByStatus(2)">결제 완료</button>
+              <button @click="filterApprovalsByStatus(null)">전체 {{ statusCounts.total }}</button>
+              <button @click="filterApprovalsByStatus(0)">기안중 {{ statusCounts.대기중 }}</button>
+              <button @click="filterApprovalsByStatus(1)">진행중 {{ statusCounts.결재자1승인 }}</button>
+              <button @click="filterApprovalsByStatus(3)">반려 {{ statusCounts.반려 }}</button>
+              <button @click="filterApprovalsByStatus(2)">결제 완료 {{ statusCounts.최종승인 }}</button>
               <table id="datatablesSimple">
                 <thead>
                   <tr>
@@ -84,9 +84,15 @@
 
 <script>
 import axios from "axios";
+import SideBar from "@/components/SideBar.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 export default {
   name: "ApproveListPage",
+    components: {
+      SideBar,
+      HeaderComponent,
+    },
   data() {
     return {
       approvals: [],
@@ -94,6 +100,23 @@ export default {
       currentFilterStatus: null, // 현재 선택된 필터 상태
     };
   },
+  computed: {
+  // 상태별 개수를 계산하는 계산된 속성
+  statusCounts() {
+    const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
+
+    // 모든 approvals를 순회하며 상태별로 개수를 계산합니다.
+    this.approvals.forEach(approve => {
+      counts.total += 1;
+      const statusText = this.getStatusText(approve.status);
+      if (counts[statusText] !== undefined) {
+        counts[statusText] += 1;
+      }
+    });
+
+    return counts;
+  }
+},
   async mounted() {
     await this.fetchApprovals();
   },
@@ -109,17 +132,7 @@ export default {
       }
     },
 
-  //   fetchApproveLine() {
-  //     const api = `http://localhost:8080/approve/line/${approveId}`; // 예시 API 엔드포인트, 실제 엔드포인트로 교체 필요
-  // axios.get(api)
-  //   .then((response) => {
-  //     this.approveLine = response.data
-  //     // 처리 로직, 예를 들어 `this.approveLine = response.data` 등
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error fetching approve line data:", error);
-  //   });
-  //   },
+  
 
     goToApproveReadPage(id) {
     if (id) {
@@ -131,8 +144,8 @@ export default {
   getStatusText(status) {
       const statusMap = {
         0: "대기중",
-        1: "결재자1 승인",
-        2: "최종 승인",
+        1: "결재자1승인",
+        2: "최종승인",
         3: "반려",
       };
       return statusMap[status] || "알 수 없음";
@@ -162,7 +175,7 @@ h1.mt-4 {
 /* 브레드크럼 스타일 */
 .breadcrumb.mb-4 {
   background-color: #f8f9fa;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1rem 50px;
   border-radius: 0.375rem;
 }
 
@@ -183,17 +196,19 @@ h1.mt-4 {
 
 /* 버튼 스타일 */
 button {
-  background-color: #0d6efd;
-  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white;
+  letter-spacing: 0.2px;
   border: none;
-  padding: 0.375rem 0.75rem;
-  margin-right: 0.5rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
+  border-radius: 10px;
+  background-color: #111111;
+  margin: -5px 0px 15px 10px;
 }
 
 button:hover {
-  background-color: #0b5ed7;
+  background-color: #F75C29;
 }
 
 /* 테이블 스타일 */
@@ -216,192 +231,22 @@ button:hover {
   border-bottom: 2px solid #e3e6f0;
 }
 
-/* 푸터 스타일 */
-tfoot tr th {
-  color: #495057;
-  background-color: #f8f9fa;
-  border-top: 2px solid #e3e6f0;
-}
-.btn-outline-primary {
-  --bs-btn-color: #0d6efd;
-  --bs-btn-border-color: #0d6efd;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #0d6efd;
-  --bs-btn-hover-border-color: #0d6efd;
-  --bs-btn-focus-shadow-rgb: 13, 110, 253;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #0d6efd;
-  --bs-btn-active-border-color: #0d6efd;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #0d6efd;
-  --bs-btn-disabled-bg: transparent;
-  --bs-btn-disabled-border-color: #0d6efd;
-  --bs-gradient: none;
-}
-
-.collapse:not(.show) {
-  display: none;
-}
-
-.collapsing {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.35s ease;
-}
-.overflow-hidden {
-  overflow: hidden !important;
-}
-
-.overflow-visible {
-  overflow: visible !important;
-}
-
-.overflow-scroll {
-  overflow: scroll !important;
-}
-
-.d-inline {
-  display: inline !important;
-}
-
-.d-inline-block {
-  display: inline-block !important;
-}
-
-.d-block {
-  display: block !important;
-}
-
-.d-grid {
-  display: grid !important;
-}
-
-.d-table {
-  display: table !important;
-}
-
-.d-table-row {
-  display: table-row !important;
-}
-
-.d-table-cell {
-  display: table-cell !important;
-}
-
-.d-flex {
-  display: flex !important;
-}
-
-.d-inline-flex {
-  display: inline-flex !important;
-}
-
-.d-none {
-  display: none !important;
-}
-
-.shadow {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.shadow-sm {
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-}
-
-.shadow-lg {
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-}
-
-.shadow-none {
-  box-shadow: none !important;
-}
-
-.position-static {
-  position: static !important;
-}
-
-.position-relative {
-  position: relative !important;
-}
-
-.position-absolute {
-  position: absolute !important;
-}
-
-.position-fixed {
-  position: fixed !important;
-}
-
-.position-sticky {
-  position: sticky !important;
-}
-
-.top-0 {
-  top: 0 !important;
-}
-
-.top-50 {
-  top: 50% !important;
-}
-
-.top-100 {
-  top: 100% !important;
-}
-
-.bottom-0 {
-  bottom: 0 !important;
-}
-
-.bottom-50 {
-  bottom: 50% !important;
-}
-
-.bottom-100 {
-  bottom: 100% !important;
-}
-
-.start-0 {
-  left: 0 !important;
-}
-
-.start-50 {
-  left: 50% !important;
-}
-
-.start-100 {
-  left: 100% !important;
-}
-
-.end-0 {
-  right: 0 !important;
-}
-
-.end-50 {
-  right: 50% !important;
-}
-
-.end-100 {
-  right: 100% !important;
-}
-
-.translate-middle {
-  transform: translate(-50%, -50%) !important;
-}
-
-.translate-middle-x {
-  transform: translateX(-50%) !important;
-}
-
-.translate-middle-y {
-  transform: translateY(-50%) !important;
-}
 .make-approve {
-  padding:10px 30px;
-  background-color: #0b5ed7;
   position: absolute;
-  right: 10%;
-  border-radius: 10px;
-  color: white;
+  right: 5%;
   text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 7px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #111111;
+  margin: -5px 0px 15px 10px;
 }
+.make-approve:hover{
+  background-color: #F75C29;
+}
+
 </style>
