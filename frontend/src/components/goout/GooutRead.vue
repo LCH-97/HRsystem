@@ -1,45 +1,90 @@
 <template>
-  <div class="all">
-    <div class="goout-read-page">
-      <h1>휴가 세부 정보</h1>
-      <br><br><br>
+  <div class="container">
+    <table class = "approve">
+    <tr>
+      <th>결재</th>
+      <td>
+        <div class="input-group">
+          <label class="input-label">결재자1 : </label>
+          {{ gooutLine?.confirmer1Name }}
+        </div>
+        <div class="input-group">
+          <label class="input-label">상태 : </label>
+          {{ getStatusText(goout.status) }}
+        </div>
+      </td>
+      <td>
+        <div class="input-group">
+          <label class="input-label">결재자2 : </label>
+          {{ gooutLine?.confirmer2Name }}
+        </div>
+        <div class="input-group">
+          <label class="input-label">상태 : </label>
+          {{ getStatusText(goout.status) }}
+        </div>
+      </td>
+    </tr>
+  </table>
+    <div class="header">
       <div v-if="goout && gooutLine">
-        <h2>{{ goout.gooutTypeName }}</h2>
-        <p>휴가결재 올린사람: {{ gooutLine?.employeeName }}</p>
-        <p>휴가가는 직원: {{ goout.employeeName }}</p>
-        <p>대리인: {{ goout.agentName }}</p>
-        <p>시작 날짜: {{ goout.first }}</p>
-        <p>종료 날짜: {{ goout.last }}</p>
-        <p>휴가 사용일 수: {{ daysUsed }}일</p>
+        <h1 class="title">휴가신청서</h1>
         <br>
-        <p>결재자1 : {{ gooutLine?.confirmer1Name }}</p>
-        <p>결재자2 : {{ gooutLine?.confirmer2Name }}</p>
-        <p>상태: {{ getStatusText(goout.status) }}</p>
+        <table class="table">
+          <tr>
+            <th>휴가결재 올린사람</th>
+            <td>{{ gooutLine?.employeeName }}</td>
+          </tr>
+          <tr>
+            <th>휴가가는 직원</th>
+            <td>{{ goout.employeeName }}</td>
+          </tr>
+          <tr>
+            <th>대리인</th>
+            <td>{{ goout.agentName }}</td>
+          </tr>
+          <tr>
+            <th>신청사항</th>
+            <td>
+              <div class="input-group">
+                <label class="input-label">시작 날짜 : </label>
+                {{ goout.first }}
+              </div>
+              <div class="input-group">
+                <label class="input-label">종료 날짜 : </label>
+                {{ goout.last }}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>휴가 사용일 수</th>
+            <td>{{ daysUsed }}일</td>
+          </tr>
+          <tr class = "vac">
+            <th >휴가 유형</th>
+            <td >{{ goout.gooutTypeName }}</td>
+          </tr>
+        </table>
       </div>
-      <div v-else>
-        <p>정보를 불러오는 중...</p>
-      </div>
-    </div>
-    <br><br>
-      <div class="goout-button">
-        <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0">
-        <!-- Show these buttons if the logged-in user is confirmer1 -->
-          <button @click="confirm1">결재자1 결재</button>
-          <button @click="reject1">결재자1 반려</button>
-        </div>
-        <!-- Show these buttons if the logged-in user is confirmer2 -->
-        <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
-          <button @click="confirm2">결재자2 결재</button>
-          <button @click="reject2">결재자2 반려</button>
-        </div>
-        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-        <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
-          <button @click="updateGoout">수정</button>
-          <button @click="deleteGoout">삭제</button>
-        </div>
-        <!-- If logged-in user's ID does not match any, do not show any buttons -->
     </div>
   </div>
+  <div class="goout-button">
+            <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0">
+              <!-- Show these buttons if the logged-in user is confirmer1 -->
+              <button @click="confirm1">결재자1 결재</button>
+              <button @click="reject1">결재자1 반려</button>
+            </div>
+            <!-- Show these buttons if the logged-in user is confirmer2 -->
+            <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
+              <button @click="confirm2">결재자2 결재</button>
+              <button @click="reject2">결재자2 반려</button>
+            </div>
+            <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+            <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
+              <button @click="updateGoout">수정</button>
+              <button @click="deleteGoout">삭제</button>
+            </div>
+            <!-- If logged-in user's ID does not match any, do not show any buttons -->
+          </div>
 </template>
 
 
@@ -276,4 +321,98 @@ computed: {
 </script>
 
 <style scoped>
+.container {
+  width: 800px;
+  margin: 0 auto;
+}
+.header {
+  text-align: center;
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+th {
+  text-align: center;
+}
+.input-group {
+  margin-bottom: 10px;
+}
+.input-label {
+  display: inline-block;
+  width: 100px;
+  text-align: right;
+}
+.input-field {
+  width: 200px;
+}
+.button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+}
+.input-group {
+  margin-bottom: 10px;
+}
+.input-label {
+  display: inline-block;
+  width: 100px;
+  text-align: right;
+}
+.input-field {
+  width: 200px;
+}
+.input-group.approval {
+  margin-top: 20px;
+}
+.goout-button {
+  text-align: right; /* 오른쪽 정렬 추가 */
+}
+.approve {
+  margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
+}
+.header {
+  margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
+  background-color: white;
+}
+.goout-button {
+  margin-top: 50px; /* 결재 버튼 위쪽에 공백 추가 */
+}
+.approve {
+  display: flex;
+  justify-content: flex-end; /* 부모 요소를 오른쪽으로 정렬합니다. */
+}
+.approve th,
+.approve td {
+  padding: 8px;
+  text-align: right; /* 텍스트를 오른쪽 정렬합니다. */
+}
+.approve .input-group {
+  margin-bottom: 10px;
+}
+.approve .input-label {
+  width: auto; /* 결재자 라벨의 너비를 자동으로 설정합니다. */
+}
+.approve .input-field {
+  width: 200px;
+}
+.approve .table td:nth-last-child(2) {
+  line-height: 2; /* 휴가 유형 칸의 높이를 두 배로 조절 */
+}
+.vac {
+  height: 500px;
+}
 </style>
