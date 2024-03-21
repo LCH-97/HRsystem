@@ -6,10 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Builder
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class ApproveUpdate {
     private Integer id;
 

@@ -125,6 +125,8 @@ public class ApproveService {
 //            confirmer1Name = firstApproveLine.getConfirmer1().getName();
 //            confirmer2Name = firstApproveLine.getConfirmer2().getName();
         }
+        Employee employee = approve.getEmployee();
+        String employeeName = employee != null ? employee.getName() : "Unknown"; // Employee가 null이면 "Unknown"
         return ApproveRead.builder()
                 .id(approve.getId())
                 .title(approve.getTitle())
@@ -134,6 +136,9 @@ public class ApproveService {
                 .confirmer2(confirmer2Name) // confirmer2의 이름 설정
                 .confirmer1Id(confirmer1Id)
                 .confirmer2Id(confirmer2Id)
+                .createAt(approve.getCreateAt())
+                .updateAt(approve.getUpdateAt())
+                .name(employeeName)
                 .build();
     }
 

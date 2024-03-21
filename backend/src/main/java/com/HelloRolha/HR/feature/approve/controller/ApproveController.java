@@ -62,7 +62,7 @@ Approve approve = approveService.create(approveCreateReq);
         return ResponseEntity.ok().body(response);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/update")
+    @PatchMapping("/update")
     public ResponseEntity<BaseRes> update(@RequestBody ApproveUpdate approveUpdate) {
         approveService.update(approveUpdate);
         BaseRes response = BaseRes.builder()
