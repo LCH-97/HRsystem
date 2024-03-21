@@ -20,7 +20,7 @@ public class ApproveController {
 
     @PostMapping("/create")
     public ResponseEntity create(@RequestPart ApproveCreateReq approveCreateReq,
-                                @RequestPart MultipartFile[] uploadFiles) {
+                                @RequestPart(name = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
 Approve approve = approveService.create(approveCreateReq);
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
@@ -62,28 +62,28 @@ Approve approve = approveService.create(approveCreateReq);
         return ResponseEntity.ok().body(response);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/update")
+    @PatchMapping("/update")
     public ResponseEntity<BaseRes> update(@RequestBody ApproveUpdate approveUpdate) {
         approveService.update(approveUpdate);
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("결재 수정 성공")
                 .isSuccess(true)
-                .result(approveUpdate.getId())
+                .result(approveUpdate)
                 .build();
         return ResponseEntity.ok().body(response);
     }
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/return")
     public ResponseEntity<BaseRes> returnStatus(@RequestBody ApproveReturn approveReturn) {
-        approveService.returnStatus(approveReturn.getId(), approveReturn.getApproveLineId());
+        approveService.returnStatus(approveReturn);
         String message;
 
-        if (approveReturn.getApproveLineId() == 1) {
+        if (approveReturn.getStatus() == 1) {
             message = "결재자1 결재 승인 성공";
-        } else if (approveReturn.getApproveLineId() == 2) {
+        } else if (approveReturn.getStatus() == 2) {
             message = "결재자2 결재 승인 성공";
-        } else if (approveReturn.getApproveLineId() == 3) {
+        } else if (approveReturn.getStatus() == 3) {
             message = "결재 반려 성공";
         } else {
             message = "잘못된 상태 값";

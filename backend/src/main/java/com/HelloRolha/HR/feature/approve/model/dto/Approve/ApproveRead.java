@@ -18,8 +18,9 @@ public class ApproveRead {
     private Integer status;
     private String confirmer1; // confirmer1 필드 추가
     private String confirmer2; // confirmer2 필드 추가
-
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
     private Integer confirmer1Id;
     private Integer confirmer2Id;
-
+    private String name;
 }
