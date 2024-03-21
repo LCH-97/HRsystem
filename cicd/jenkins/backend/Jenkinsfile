@@ -11,6 +11,7 @@ pipeline {
                 git branch: 'backend/develop', url: 'https://github.com/jiieunn2/be02-fin-Hello_R_loha-HRsystem'
             }
         }
+
         // 2. maven 빌드
         stage('Build') {
             steps {
@@ -19,6 +20,7 @@ pipeline {
                 }
             }
         }
+
         // 3. Docker 빌드
         stage('Docker Build') {
             steps {
@@ -28,7 +30,32 @@ pipeline {
                     }
                 }
             }
+            post {
+                // Docker 빌드 성공 시 슬랙 채널 ( #알림 ) 으로 성공 알림 발송
+                success {
+                    slackSend(
+                        channel: '#알림',
+                        color: 'good',
+                        message: "Docker image kje12/hrb:1.${BUILD_NUMBER} build success.",
+                        // 자기 슬랙 누르면 '어쩌구.slack.com' 나옴
+                        teamDomain: '어쩌구',
+                        // Jenkins에서 Dashboard > Manage Jenkins > Credentials에서 슬랙정보 넣은 ID
+                        tokenCredentialId: '땡땡땡-땡땡땡-땡땡땡'
+                }
+                // Docker 빌드 실패 시 슬랙 채널 ( #알림 ) 으로 실패 알림 발송
+                failure {
+                    slackSend(
+                        channel: '#알림',
+                        color: 'danger',
+                        message: "Docker image kje12/hrb:1.${BUILD_NUMBER} build failed.",
+                        // 자기 슬랙 누르면 '어쩌구.slack.com' 나옴
+                        teamDomain: '어쩌구',
+                        // Jenkins에서 Dashboard > Manage Jenkins > Credentials에서 슬랙정보 넣은 ID
+                        tokenCredentialId: '땡땡땡-땡땡땡-땡땡땡'
+                }
+            }
         }
+
         // 4. Docker Push
         stage('Docker Push') {
             steps {
@@ -41,27 +68,32 @@ pipeline {
                     sh 'docker push kje12/hrb:1.$BUILD_NUMBER'
                 }
             }
-            // post {
-            //     // Docker Push 성공 시 슬랙 채널 ( #테스트 ) 로 성공 알림 발송❗
-            //     success {
-            //         slackSend(
-            //             channel: '#테스트',
-            //             color: 'good',
-            //             message: "Docker image hyungdoyou/fe:3.${BUILD_NUMBER} push success.",
-            //             teamDomain: 'jenkins-alert-hq',
-            //             tokenCredentialId: 'slack-jenkins-token')
-            //     }
-            //     // Docker Push 실패 시 슬랙 채널 ( #테스트 ) 로 실패 알림 발송❗
-            //     // failure {
-            //     //     slackSend(
-            //     //         channel: '#테스트',
-            //     //         color: 'danger',
-            //     //         message: "Docker image hyungdoyou/fe:3.${BUILD_NUMBER} push failed.",
-            //     //         teamDomain: 'jenkins-alert-hq',
-            //     //         tokenCredentialId: 'slack-jenkins-token')
-            //     }
-            // }
+            post {
+                // Docker Push 성공 시 슬랙 채널 ( #알림 ) 으로 성공 알림 발송:느낌표:
+                success {
+                    slackSend(
+                        channel: '#알림',
+                        color: 'good',
+                        message: "Docker image kje/hrb:1.${BUILD_NUMBER} push success.",
+                        // 자기 슬랙 누르면 '어쩌구.slack.com' 나옴
+                        teamDomain: '어쩌구',
+                        // Jenkins에서 Dashboard > Manage Jenkins > Credentials에서 슬랙정보 넣은 ID
+                        tokenCredentialId: '땡땡땡-땡땡땡-땡땡땡'
+                }
+                // Docker Push 실패 시 슬랙 채널 ( #알림 ) 으로 실패 알림 발송:느낌표:
+                failure {
+                    slackSend(
+                        channel: '#알림',
+                        color: 'danger',
+                        message: "Docker image kje/hrb:1.${BUILD_NUMBER} push failed.",
+                        // 자기 슬랙 누르면 '어쩌구.slack.com' 나옴
+                        teamDomain: '어쩌구',
+                        // Jenkins에서 Dashboard > Manage Jenkins > Credentials에서 슬랙정보 넣은 ID
+                        tokenCredentialId: '땡땡땡-땡땡땡-땡땡땡'
+                }
+            }
         }
+
         // 5. SSH Transfer
         stage('SSH Transfer') {
             steps {
@@ -97,6 +129,23 @@ pipeline {
                                 ]
                             )
                         ]
+                    )
+                }
+            }
+        }
+
+        // 6. 슬랙 알림
+        stage('Slack Notification') {
+            steps {
+                script {
+                    slackSend(
+                        channel: '#알림',
+                        color: 'good',
+                        message: "Build version : kje12/hrb:1.${BUILD_NUMBER} is finally successful!",
+                        // 자기 슬랙 누르면 '어쩌구.slack.com' 나옴
+                        teamDomain: '어쩌구',
+                        // Jenkins에서 Dashboard > Manage Jenkins > Credentials에서 슬랙정보 넣은 ID
+                        tokenCredentialId: '땡땡땡-땡땡땡-땡땡땡'
                     )
                 }
             }
