@@ -1,0 +1,105 @@
+pipeline {
+    agent any
+    // 파이프라인 실행에 필요한 도구로 maven 지정
+    tools {
+        maven "maven-3.9.5"
+    }
+    stages {
+        // 1. 깃 클론
+        stage('git clone') {
+            steps {
+                git branch: 'backend/develop', url: 'https://github.com/jiieunn2/be02-fin-Hello_R_loha-HRsystem'
+            }
+        }
+        // 2. maven 빌드
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    sh "mvn package"
+                }
+            }
+        }
+        // 3. Docker 빌드
+        stage('Docker Build') {
+            steps {
+                script {
+                    dir('backend') {
+                        sh 'docker build --tag kje12/hrb:1.$BUILD_NUMBER -f Dockerfile .'
+                    }
+                }
+            }
+        }
+        // 4. Docker Push
+        stage('Docker Push') {
+            steps {
+                script {
+                    // Docker 로그인
+                    withCredentials([usernamePassword(credentialsId: 'realFinal', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                    }
+                    // Docker Push
+                    sh 'docker push kje12/hrb:1.$BUILD_NUMBER'
+                }
+            }
+            // post {
+            //     // Docker Push 성공 시 슬랙 채널 ( #테스트 ) 로 성공 알림 발송❗
+            //     success {
+            //         slackSend(
+            //             channel: '#테스트',
+            //             color: 'good',
+            //             message: "Docker image hyungdoyou/fe:3.${BUILD_NUMBER} push success.",
+            //             teamDomain: 'jenkins-alert-hq',
+            //             tokenCredentialId: 'slack-jenkins-token')
+            //     }
+            //     // Docker Push 실패 시 슬랙 채널 ( #테스트 ) 로 실패 알림 발송❗
+            //     // failure {
+            //     //     slackSend(
+            //     //         channel: '#테스트',
+            //     //         color: 'danger',
+            //     //         message: "Docker image hyungdoyou/fe:3.${BUILD_NUMBER} push failed.",
+            //     //         teamDomain: 'jenkins-alert-hq',
+            //     //         tokenCredentialId: 'slack-jenkins-token')
+            //     }
+            // }
+        }
+        // 5. SSH Transfer
+        stage('SSH Transfer') {
+            steps {
+                script {
+                    // SSH 전송 플러그인 사용
+                    sshPublisher(
+                        // 오류 발생 시 진행을 멈춤
+                        continueOnError: false,
+                        // 오류 발생 시 파이프라인을 실패시킴
+                        failOnError: true,
+                        // 전송자 목록
+                        publishers: [
+                            // SSH 전송 설명
+                            sshPublisherDesc(
+                                // SSH 서버 설정 이름 지정 ( master 노드 )
+                                configName: "fianl",
+                                // 자세한 출력 모드 활성화
+                                verbose: true,
+                                transfers: [
+                                    sshTransfer(
+                                        // 전송할 파일 지정
+                                        sourceFiles: "backend/backend-deployment.yaml",
+                                        // 원격 디렉토리 지정 ( 원격서버로 파일을 전송할 위치 )
+                                        remoteDirectory: "/root/",
+                                        // 전송 후 야멜 파일의 VERSION을 파이프라인 빌드 숫자로 변경
+                                        // backend-deployment 야멜 파일 실행
+                                        execCommand: '''
+                                        pwd
+                                        sed -i "s/VERSION/$BUILD_NUMBER/g" ./backend/backend-deployment.yaml
+                                        kubectl apply -f ./backend/backend-deployment.yaml
+                                        '''
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+}
