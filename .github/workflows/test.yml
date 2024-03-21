@@ -39,11 +39,16 @@ jobs:
       run: |
         cd ./backend
         mvn test
-
-
-    - name: Save Test Results
-      run: |
-        cd ./backend/surefire-reports
-        ls | grep *.txt
         
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        # Artifact name
+        name: test-report # optional, default is artifact
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./backend/target/surefire-reports/*
+        # The desired behavior if no files are found using the provided path.
+       
+          
+ 
 
