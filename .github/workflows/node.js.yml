@@ -42,7 +42,7 @@ jobs:
     - run: |
         ls
         cd ./frontend
-        npm test
+        npm test:unit
     - name: result
       uses: EnricoMi/publish-unit-test-result-action@v1
       with:
