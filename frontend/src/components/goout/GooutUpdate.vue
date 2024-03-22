@@ -206,4 +206,72 @@ export default {
   
   
   <style scoped>
+  .gooutUpdateBanner {
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    background-color: #f7f8fa;
+  }
+
+  .gooutUpdateBannerTxt {
+    font-size: 40px;
+    font-weight: 600;
+    color: rgb(85, 85, 85);
+  }
+
+  .ReqBox {
+    text-align: center;
+    background-color: #f7f8fa;
+    border: 1px solid #f7f8fa;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .ReqInputBox {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .ReqInput {
+    width: 300px;
+  }
+
+  .ReqInput p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  .ReqInput select,
+  .ReqInput input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .button-container {
+    margin-top: 20px;
+  }
+
+  .button-container button {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    color: white;
+    background-color: #fae14a;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .button-container button:hover {
+    background-color: #ffd700;
+  }
   </style>
