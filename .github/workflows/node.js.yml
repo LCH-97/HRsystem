@@ -9,7 +9,7 @@ on:
     branches: [ "frontend/develop" ]
   pull_request:
     branches: [ "frontend/develop" ]
-
+permissions: write-all
 
 jobs:
   build:
