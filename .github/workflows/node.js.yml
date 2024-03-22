@@ -5,9 +5,11 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+
+    branches: [ "frontend/develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "frontend/develop" ]
+
 
 jobs:
   build:
@@ -16,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -26,6 +28,22 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - run: pwd
+    - run: cd ./frontend
+    - run: pwd
+    - run: |
+        ls
+        cd ./frontend
+        npm i
+    - run: |
+        ls
+        cd ./frontend
+        npm run build
+    - run: |
+        ls
+        cd ./frontend
+        npm test
+    - name: result
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      with:
+        files: 'test-results/*.xml'
