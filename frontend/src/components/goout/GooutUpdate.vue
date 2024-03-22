@@ -149,57 +149,57 @@ export default {
       }
     },
 
-    async updateGoout() {
+        async updateGoout() {
+      console.log("updateData:", this.updateInfo);
+      console.log("updateInfo2:", this.updateInfo2);
 
-      if (this.employeeId === this.agentId) {
-    alert("결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다.");
-    return; // 메소드 실행을 중단
-  }
-      if (this.confirmer1Id === this.confirmer2Id) {
-    alert("결재라인 수정 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
-    return; // 메소드 실행을 중단
-  }
+      if (this.updateInfo.employeeId === this.updateInfo.agentId) {
+        alert("결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다.");
+        return;
+      }
+      if (this.updateInfo2.confirmer1Id === this.updateInfo2.confirmer2Id) {
+        alert("결재라인 수정 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
+        return;
+      }
 
+      try {
+        let updateData = {
+          id: Number(this.updateInfo.id),
+          gooutTypeId: Number(this.updateInfo.gooutTypeId),
+          first: this.updateInfo.first,
+          last: this.updateInfo.last,
+          employeeId: Number(this.updateInfo.employeeId),
+          agentId: Number(this.updateInfo.agentId),
+        };
 
-  try {
-    // 데이터 객체 동적 생성
-    let updateData = { id: this.updateInfo.id };
-    if (this.gooutTypeId) updateData.gooutTypeId = this.gooutTypeId;
-    if (this.first) updateData.first = this.first;
-    if (this.last) updateData.last = this.last;
-    if (this.employeeId) updateData.employeeId = this.employeeId;
-    if (this.agentId) updateData.agentId = this.agentId;
+        await axios.patch(`${this.backend}/goout/update`, updateData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log("Goout 정보 수정 성공");
 
-    // Goout 정보 업데이트 실행
-    await axios.patch(`${this.backend}/goout/update`, updateData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    console.log("Goout 정보 수정 성공");
+        let gooutLineUpdateReq = {
+          gooutId: Number(this.updateInfo.id),
+          confirmer1Id: Number(this.updateInfo2.confirmer1Id),
+          confirmer2Id: Number(this.updateInfo2.confirmer2Id),
+          employeeId: Number(this.loggedInUserId),
+        };
 
-    // GooutLine 업데이트를 위한 동적 데이터 객체 생성
-    let gooutLineUpdateReq = { gooutId: this.updateInfo.id };
-    if (this.confirmer1Id) gooutLineUpdateReq.confirmer1Id = this.confirmer1Id;
-    if (this.confirmer2Id) gooutLineUpdateReq.confirmer2Id = this.confirmer2Id;
-    gooutLineUpdateReq.employeeId = this.loggedInUserId;
+        await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateReq, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log("GooutLine 정보 수정 성공");
 
-    // GooutLine 정보 업데이트 실행
-    await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateReq, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    console.log("GooutLine 정보 수정 성공");
-
-    alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
-    this.$router.push("/goout/list"); // 수정 완료 후, 리스트 페이지로 리다이렉션
-  } catch (error) {
-    console.error("휴가 정보 또는 결재라인 정보 수정 실패:", error);
-    alert("휴가 정보 또는 결재라인 정보 수정에 실패하였습니다.");
-  }
-
-}
+        alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
+        this.$router.push("/goout/list");
+      } catch (error) {
+        console.error("휴가 정보 또는 결재라인 정보 수정 실패:", error);
+        alert("휴가 정보 또는 결재라인 정보 수정에 실패하였습니다.");
+      }
+    }
   }
 };
 </script>

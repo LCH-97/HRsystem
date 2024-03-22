@@ -8,19 +8,23 @@
           <label class="input-label">결재자1 : </label>
           {{ gooutLine?.confirmer1Name }}
         </div>
-        <div class="input-group">
-          <label class="input-label">상태 : </label>
+        <div v-if="goout">
+          <div class="input-group">
+              <label class="input-label">상태 : </label>
           {{ getStatusText(goout.status) }}
-        </div>
+          </div>
+       </div>
       </td>
       <td>
         <div class="input-group">
           <label class="input-label">결재자2 : </label>
           {{ gooutLine?.confirmer2Name }}
         </div>
-        <div class="input-group">
-          <label class="input-label">상태 : </label>
-          {{ getStatusText(goout.status) }}
+        <div v-if="goout">
+          <div class="input-group">
+            <label class="input-label">상태 : </label>
+           {{ getStatusText(goout.status) }}
+         </div>
         </div>
       </td>
     </tr>
@@ -260,11 +264,8 @@ async returnGooutStatus(status) {
   const gooutId = this.$route.params.id;
   localStorage.setItem('updateGooutInfo', JSON.stringify({
     gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
-    gooutTypeName: this.goout.gooutTypeName, // For display purposes
     employeeId: this.goout.employeeId,
-    employeeName: this.goout.employeeName, // For display purposes
     agentId: this.goout.agentId,
-    agentName: this.goout.agentName, // For display purposes
     first: this.goout.first,
     last: this.goout.last,
     id: gooutId
@@ -272,9 +273,7 @@ async returnGooutStatus(status) {
 
   localStorage.setItem('updateGooutLineInfo', JSON.stringify({
     confirmer1Id: this.gooutLine?.confirmer1Id,
-    confirmer1Name: this.gooutLine?.confirmer1Name,
     confirmer2Id: this.gooutLine?.confirmer2Id,
-    confirmer2Name: this.gooutLine?.confirmer2Name,
   }));
   this.$router.push('/goout/update');
 },
