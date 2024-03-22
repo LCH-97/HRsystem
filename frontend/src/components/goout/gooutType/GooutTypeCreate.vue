@@ -25,6 +25,8 @@
   </div>
 </template>
 
+
+
 <script>
 import axios from 'axios';
 
@@ -63,65 +65,59 @@ export default {
 </script>
 
 <style scoped>
-.gooutTypeCreateBanner{
-    margin: 0 auto; /* 수평 중앙 정렬 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    padding-top: 15px;
-    padding-bottom: 20px;
-    background-color: #F7F8FA;
+.container {
+  width: 50%;
+  margin: 0 auto;
 }
 
-.gooutTypeCreateBannerTxt{
-    font-size: 40px;
-    font-weight: 600;
-    color: rgb(85, 85, 85);
+.header {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.ReqBox{
-    margin: 0 auto;
-    text-align: center;
-    background-color: #F7F8FA;
-    border: 1px solid  #F7F8FA;
-    border-radius: 12px;
-}
-
-.ReqInput{
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-basis: 0px;
-    font-size: 20px;
-    font-weight: bold;
-    color: rgb(85, 85, 85);
-    margin-top: 28px;
-    margin-bottom: 28px;
-    text-align: center;
-    width: 30%;
-}
-.nameEx, .detailEx, .maxHolidayEx{
-    text-align: center;
-}
-
-.ReqInputBox{
-    margin: 0 auto;
-    text-align: center;
-    width: 30%;
-    display: flex;
-    justify-content: center;
-}
-
-.button-container button{
-  font-size:18px;
+.header h1 {
+  font-size: 24px;
   font-weight: bold;
-  font-weight:600;
-  padding: 5px 10px;
-  color:white;
-  letter-spacing:0.2px;
-  border: none;
-  background-color: #fae14a;
 }
-.button-container button:hover {
-  color: #555555;
+
+.content {
+  background-color: #F7F8FA;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.input input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button button {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #fae14a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button button:hover {
+  background-color: #ffd700;
 }
 
 </style>

@@ -1,114 +1,129 @@
 <template>
-    <div>
-
-        <HeaderComponent />
+  <div>
+    <HeaderComponent />
       <SideBar />
+    <h1>초과 근무 수정</h1>
 
+    <form @submit.prevent="submitForm" id="overtimeForm">
+      <div class="section-divider"></div>
+      <!-- 초과 근무 수정 -->
+      <div class="flex-container">
+        <label for="id">ID</label>
+        <input type="text" id="id" name="id" v-model="formData.id" required>
+      </div>
+      <div class="flex-container">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" v-model="formData.date">
+      </div>
+      <div class="flex-container">
+        <label for="shift">Shift</label>
+        <select id="shift" name="shift" v-model="formData.shift" @change="handleShiftChange">
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+        </select>
+      </div>
+      <div class="flex-container">
+        <label for="startTime">Start Time</label>
+        <select id="startTime" name="startTime" v-model="formData.startTime">
+          <!-- Options dynamically populated based on shift selection -->
+          <option v-for="time in startTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+        </select>
+      </div>
+      <div class="flex-container">
+        <label for="endTime">End Time</label>
+        <select id="endTime" name="endTime" v-model="formData.endTime">
+          <!-- Options dynamically populated based on shift selection -->
+          <option v-for="time in endTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+        </select>
+      </div>
+      <div class="section-divider">Reason</div>
+      <textarea v-model="formData.reason" id="reason" name="reason" rows="4" cols="50"></textarea>
+      <input type="submit" value="Update">
+      <div id="message" style="color: rgb(50, 216, 228);"></div> <!-- 수정 완료 메시지 출력 영역 -->
+    </form>
+  </div>
+</template>
 
-      <h1>초과 근무 수정</h1>
-  
-      <form id="overtimeForm">
-        <div class="section-divider"></div> 
-        <!-- 초과 근무 수정 -->
-        <div class="flex-container">
-          <label for="id">ID</label>
-          <input type="text" id="id" name="id" required v-model="formData.id">
-        </div>
-        <div class="flex-container">
-          <label for="date">Date</label>
-          <input type="date" id="date" name="date" v-model="formData.date">
-        </div>
-        <div class="flex-container">
-          <label for="shift">Shift</label>
-          <select id="shift" name="shift" v-model="formData.shift" @change="handleShiftChange">
-            <option value="morning">Morning</option>
-            <option value="afternoon">Afternoon</option>
-          </select>
-        </div>
-        <div class="flex-container">
-          <label for="startTime">Start Time</label>
-          <select id="startTime" name="startTime" v-model="formData.startTime">
-            <!-- Options dynamically populated based on shift selection -->
-          </select>
-        </div>
-        <div class="flex-container">
-          <label for="endTime">End Time</label>
-          <select id="endTime" name="endTime" v-model="formData.endTime">
-            <!-- Options dynamically populated based on shift selection -->
-          </select>
-        </div>
-        <div class="section-divider">Reason</div>
-        <textarea id="reason" name="reason" rows="4" cols="50" v-model="formData.reason"></textarea>
-        <input type="submit" value="Update">
-        <div id="message" style="color: rgb(50, 216, 228);"></div> <!-- 수정 완료 메시지 출력 영역 -->
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
+<script>
+import axios from 'axios';
   import SideBar from '../components/SideBar.vue';
   import HeaderComponent from '../components/HeaderComponent.vue';
-  
-  export default {
-    name: 'OvertimeEditPage',
+
+export default {
+  name: 'OvertimeModifyPage',
     components: {
         SideBar,
       HeaderComponent,
     },
-    data() {
-      return {
-        formData: {
-          id: '',
-          date: '',
-          shift: '',
-          startTime: '',
-          endTime: '',
-          reason: ''
-        }
-      };
+  data() {
+    return {
+      formData: {
+        id: '',
+        date: '',
+        shift: '',
+        startTime: '',
+        endTime: '',
+        reason: ''
+      },
+      startTimes: [],
+      endTimes: []
+    };
+  },
+  methods: {
+    async updateData(formData) {
+      try {
+        let response = await axios.patch(`http://localhost:8080/employee/overtime/update/${formData.get('id')}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        console.log("ID:", response.data.id);
+        // Handle response as needed
+        alert("초과 근무 수정이 완료되었습니다."); // 신청 완료 메시지 출력
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
-    methods: {
-      async updateData(formData) {
-        try {
-          let response = await axios.patch(`http://localhost:8080/employee/overtime/update/${formData.id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-  
-          console.log("ID:", response.data.id);
-          alert("초과 근무 수정이 완료되었습니다."); // 신청 완료 메시지 출력
-        } catch (error) {
-          console.error("Error:", error);
+    async submitForm() {
+      try {
+        const formData = new FormData();
+        for (let key in this.formData) {
+          formData.append(key, this.formData[key]);
         }
-      },
-      handleShiftChange() {
-        const startTimeSelect = document.getElementById("startTime");
-        const endTimeSelect = document.getElementById("endTime");
-  
-        if (this.formData.shift === "morning") {
-          this.populateTimeOptions(startTimeSelect, endTimeSelect, 6, 8, true);
-        } else if (this.formData.shift === "afternoon") {
-          this.populateTimeOptions(startTimeSelect, endTimeSelect, 18, 21, false);
-        }
-      },
-      populateTimeOptions(startSelect, endSelect, startHour, endHour, isMorning) {
-        startSelect.innerHTML = "";
-        endSelect.innerHTML = "";
-        const period = isMorning ? "AM" : "PM";
-        for (let i = startHour; i <= endHour; i++) {
-          const option = document.createElement("option");
-          const hour = i < 10 ? `0${i}` : `${i}`;
-          option.text = `${hour}:00 ${period}`;
-          option.value = `${hour}:00`;
-          startSelect.add(option);
-          endSelect.add(option.cloneNode(true));
-        }
+        await this.updateData(formData);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+    handleShiftChange() {
+      if (this.formData.shift === 'morning') {
+        this.startTimes = [
+          { label: '06:00 AM', value: '06:00' },
+          { label: '07:00 AM', value: '07:00' },
+          { label: '08:00 AM', value: '08:00' }
+        ];
+        this.endTimes = [
+          { label: '07:00 AM', value: '07:00' },
+          { label: '08:00 AM', value: '08:00' },
+          { label: '09:00 AM', value: '09:00' }
+        ];
+      } else if (this.formData.shift === 'afternoon') {
+        this.startTimes = [
+          { label: '06:00 PM', value: '18:00' },
+          { label: '07:00 PM', value: '19:00' },
+          { label: '08:00 PM', value: '20:00' }
+        ];
+        this.endTimes = [
+          { label: '07:00 PM', value: '19:00' },
+          { label: '08:00 PM', value: '20:00' },
+          { label: '09:00 PM', value: '21:00' }
+        ];
       }
     }
-  };
-  </script>
-  
-  <style scoped>
+  }
+};
+</script>
+
+<style scoped>
   body {
     font-family: 'Roboto', sans-serif;
     background-color: #fff;

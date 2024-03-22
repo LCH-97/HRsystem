@@ -7,37 +7,46 @@
       <form @submit.prevent="handleFormSubmission">
         <div class="row">
           <div class="label">신청자</div>
-          <select v-model="employeeId">
-            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-          </select><br>
-
+          <div class="input">
+            <select v-model="employeeId">
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+            </select><br>
+          </div>
         </div>
         <div class="row">
           <div class="label">대리인</div>
-          <select v-model="agentId">
-            <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
-          </select><br>
+          <div class="input">
+            <select v-model="agentId">
+              <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
+            </select><br>
+          </div>
         </div>
         <div class="row">
           <div class="label">근태 사유</div>
           <div class="input">
             <select v-model="gooutTypeId">
-            <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
-          </select><br> 
+              <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
+            </select><br>
           </div>
         </div>
         <div class="row">
-          <p>시작 날짜</p>
-          <input type="date" v-model="first"><br>
-          <p>종료 날짜</p>
-          <input type="date" v-model="last"><br>
-        </div>
-          <div class="row">
-            <div class="label">첨부파일</div>
-            <div class="input">
-              <input type="file" multiple @change="handleFilesUpload">
-            </div>
+          <div class="label">시작 날짜</div>
+          <div class="input">
+            <input type="date" v-model="first"><br>
           </div>
+        </div>
+        <div class="row">
+          <div class="label">종료 날짜</div>
+          <div class="input">
+            <input type="date" v-model="last"><br>
+          </div>
+        </div>
+        <div class="row">
+          <div class="label">첨부파일</div>
+          <div class="input">
+            <input type="file" multiple @change="handleFilesUpload">
+          </div>
+        </div>
         <div class="row">
           <div class="label">결재라인</div>
           <div class="input">
@@ -45,7 +54,6 @@
             <select v-model="confirmer1Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
             </select><br>
-
             <p>결재자2</p>
             <select v-model="confirmer2Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
@@ -60,7 +68,7 @@
       </form>
     </div>
   </div>
-  </template>
+</template>
 
 <script>
 import axios from 'axios';
@@ -198,7 +206,7 @@ async createGooutLine(gooutId) {
 
 <style>
 .container {
-  width: 500px;
+  width: 800px;
   margin: 20px auto;
   border: 1px solid #ddd;
   border-radius: 4px;
