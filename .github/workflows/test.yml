@@ -15,7 +15,7 @@ on:
     branches: [ "backend/develop","backend/test/target","backend/test/init" ]
 
 jobs:
-  - build:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -46,12 +46,13 @@ jobs:
         # A file, directory or wildcard pattern that describes what to upload
         path: ./backend/target/surefire-reports/*
         # The desired behavior if no files are found using the provided path.
-  - result:
+
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
         files: |
+          ./backend/target/surefire-reports/*
           test-results/**/*.xml
           test-results/**/*.trx
           test-results/**/*.json
