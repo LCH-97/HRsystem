@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="3.268">
+  <testsuite name="SignUpPage" errors="0" failures="0" skipped="0" timestamp="2024-03-22T03:57:27" time="1.797" tests="1">
+    <testcase classname="SignUpPage renders props.msg when passed" name="SignUpPage renders props.msg when passed" time="0.129">
+    </testcase>
+  </testsuite>
+</testsuites>
