@@ -8,19 +8,27 @@
           <label class="input-label">결재자1 : </label>
           {{ gooutLine?.confirmer1Name }}
         </div>
-        <div class="input-group">
-          <label class="input-label">상태 : </label>
+
+        <div v-if="goout">
+          <div class="input-group">
+              <label class="input-label">상태 : </label>
           {{ getStatusText(goout.status) }}
-        </div>
+          </div>
+       </div>
+
       </td>
       <td>
         <div class="input-group">
           <label class="input-label">결재자2 : </label>
           {{ gooutLine?.confirmer2Name }}
         </div>
-        <div class="input-group">
-          <label class="input-label">상태 : </label>
-          {{ getStatusText(goout.status) }}
+
+        <div v-if="goout">
+          <div class="input-group">
+            <label class="input-label">상태 : </label>
+           {{ getStatusText(goout.status) }}
+         </div>
+
         </div>
       </td>
     </tr>
@@ -88,47 +96,7 @@
 
 
 
-  <!-- <div class="all">
-    <div class="goout-read-page">
-      <h1>휴가 세부 정보</h1>
-      <br><br><br>
-      <div v-if="goout && gooutLine">
-        <h2>{{ goout.gooutTypeName }}</h2>
-        <p>휴가결재 올린사람: {{ gooutLine?.employeeName }}</p>
-        <p>휴가가는 직원: {{ goout.employeeName }}</p>
-        <p>대리인: {{ goout.agentName }}</p>
-        <p>시작 날짜: {{ goout.first }}</p>
-        <p>종료 날짜: {{ goout.last }}</p>
-        <p>휴가 사용일 수: {{ daysUsed }}일</p>
-        <br>
-        <p>결재자1 : {{ gooutLine?.confirmer1Name }}</p>
-        <p>결재자2 : {{ gooutLine?.confirmer2Name }}</p>
-        <p>상태: {{ getStatusText(goout.status) }}</p>
-      </div>
-      <div v-else>
-        <p>정보를 불러오는 중...</p>
-      </div>
-    </div>
-    <br><br>
-    <div class="goout-button">
-      <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0"> -->
-  <!-- Show these buttons if the logged-in user is confirmer1 -->
-  <!-- <button @click="confirm1">결재자1 결재</button>
-        <button @click="reject1">결재자1 반려</button>
-      </div> -->
-  <!-- Show these buttons if the logged-in user is confirmer2 -->
-  <!-- <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
-        <button @click="confirm2">결재자2 결재</button>
-        <button @click="reject2">결재자2 반려</button>
-      </div> -->
-  <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-  <!-- <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
-        <button @click="updateGoout">수정</button>
-        <button @click="deleteGoout">삭제</button>
-      </div> -->
-  <!-- If logged-in user's ID does not match any, do not show any buttons -->
-  <!-- </div>
-  </div> -->
+
 </template>
 
 
@@ -297,33 +265,30 @@ export default {
       return statusMap[status] || '알 수 없음';
     },
     updateGoout() {
-      if (this.goout.status !== 3) {
-        alert("반려상태가 아니면 수정할 수 없습니다.");
-        return;
-      }
-      const gooutId = this.$route.params.id;
-      localStorage.setItem('updateGooutInfo', JSON.stringify({
-        gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
-        gooutTypeName: this.goout.gooutTypeName, // For display purposes
-        employeeId: this.goout.employeeId,
-        employeeName: this.goout.employeeName, // For display purposes
-        agentId: this.goout.agentId,
-        agentName: this.goout.agentName, // For display purposes
-        first: this.goout.first,
-        last: this.goout.last,
-        id: gooutId
-      }));
 
-      localStorage.setItem('updateGooutLineInfo', JSON.stringify({
-        confirmer1Id: this.gooutLine?.confirmer1Id,
-        confirmer1Name: this.gooutLine?.confirmer1Name,
-        confirmer2Id: this.gooutLine?.confirmer2Id,
-        confirmer2Name: this.gooutLine?.confirmer2Name,
-      }));
-      this.$router.push('/goout/update');
-    },
+  if (this.goout.status !== 3) {
+    alert("반려상태가 아니면 수정할 수 없습니다.");
+    return;
+  }
+  const gooutId = this.$route.params.id;
+  localStorage.setItem('updateGooutInfo', JSON.stringify({
+    gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+    employeeId: this.goout.employeeId,
+    agentId: this.goout.agentId,
+    first: this.goout.first,
+    last: this.goout.last,
+    id: gooutId
+  }));
 
-    async deleteGoout() {
+  localStorage.setItem('updateGooutLineInfo', JSON.stringify({
+    confirmer1Id: this.gooutLine?.confirmer1Id,
+    confirmer2Id: this.gooutLine?.confirmer2Id,
+  }));
+  this.$router.push('/goout/update');
+},
+
+      async deleteGoout() {
+
       if (confirm("정말로 이 휴가를 삭제하시겠습니까?")) {
         try {
           // First, delete the approval line associated with this vacation request
@@ -393,7 +358,6 @@ td {
 th {
   text-align: center;
 }
-
 .input-group {
   margin-bottom: 10px;
 }
@@ -417,7 +381,6 @@ th {
   background-color: #fff;
   cursor: pointer;
 }
-
 .input-group {
   margin-bottom: 10px;
 }
@@ -431,15 +394,12 @@ th {
 .input-field {
   width: 200px;
 }
-
 .input-group.approval {
   margin-top: 20px;
 }
-
 .goout-button {
   text-align: right; /* 오른쪽 정렬 추가 */
 }
-
 .approve {
   margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
 }
@@ -448,6 +408,7 @@ th {
   margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
   background-color: white;
 }
+
 
 .goout-button {
   margin-top: 50px; /* 결재 버튼 위쪽에 공백 추가 */
