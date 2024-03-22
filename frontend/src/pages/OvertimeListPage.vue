@@ -114,7 +114,7 @@
     methods: {
       async fetchOvertimeList() {
         try {
-          const response = await axios.get("http://localhost:8080/employee/overtime/list");
+          const response = await axios.get("http://192.168.0.51/api/employee/overtime/list");
           this.overtimeList = response.data.result;
         } catch (error) {
           console.error("Error:", error);

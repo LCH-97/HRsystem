@@ -92,7 +92,7 @@ export default {
     fetchBoardData(page) {
       const itemsPerPage = 6;
       axios
-        .get(`http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
         .then((response) => {
           this.boards = response.data.result;
         })

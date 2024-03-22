@@ -122,7 +122,7 @@ export default {
   },
   methods: {
      async fetchApprovals() {
-  const api = "http://localhost:8080/approve/list";
+  const api = "http://192.168.0.51/api/approve/list";
   try {
         const response = await axios.get(api);
         this.approvals = response.data.result;

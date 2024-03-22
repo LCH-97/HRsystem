@@ -70,7 +70,7 @@
     login() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = 'http://localhost:8080';
+      const api = 'http://192.168.0.51/api';
       console.log(api);
       let formData = new FormData();
       formData.append('username', this.username);
