@@ -29,9 +29,18 @@ jobs:
     - run: pwd
     - run: cd ./frontend
     - run: pwd
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - run: |
+        ls
+        cd ./frontend
+        npm i
+    - run: |
+        ls
+        cd ./frontend
+        npm run build
+    - run: |
+        ls
+        cd ./frontend
+        npm test
     - name: result
       uses: EnricoMi/publish-unit-test-result-action@v1
       with:
