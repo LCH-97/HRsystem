@@ -47,13 +47,7 @@ jobs:
         path: ./backend/target/surefire-reports/*
         # The desired behavior if no files are found using the provided path.
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
+    - name: result
+      uses: EnricoMi/publish-unit-test-result-action@v1
       with:
-        files: |
-          ./backend/target/surefire-reports/*
-          test-results/**/*.xml
-          test-results/**/*.trx
-          test-results/**/*.json
-
+        files: ./backend/target/surefire-reports/*
