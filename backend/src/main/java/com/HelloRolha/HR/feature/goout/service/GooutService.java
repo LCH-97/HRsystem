@@ -54,6 +54,8 @@ public class GooutService {
                 .orElseThrow(() -> new IllegalArgumentException("대리자의 ID가 존재하지 않습니다."));
         Employee employee = employeeRepository.findById(gooutCreateReq.getEmployeeId())
                 .orElseThrow(() -> new IllegalArgumentException("신청직원의 ID가 존재하지 않습니다."));
+        Employee writer = employeeRepository.findById(gooutCreateReq.getWriterId())
+                .orElseThrow(() -> new IllegalArgumentException("글쓴이의 ID가 존재하지 않습니다."));
         GooutType gooutType = gooutTypeRepository.findById(gooutCreateReq.getGooutTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 GooutType이 존재하지 않습니다."));
 
@@ -61,6 +63,7 @@ public class GooutService {
         Goout goout = Goout.builder()
                 .agent(agent)
                 .employee(employee)
+                .writer(writer)
                 .gooutType(gooutType)
                 .first(gooutCreateReq.getFirst())
                 .last(gooutCreateReq.getLast())
@@ -77,11 +80,13 @@ public class GooutService {
 
         for (Goout goout : goouts) {
             Employee employee = goout.getEmployee();
+            Employee writer = goout.getWriter();
             GooutType gooutType = goout.getGooutType();
             if (employee != null) {
                 GooutList gooutList = GooutList.builder()
                         .id(goout.getId())
                         .name(employee.getName())
+                        .writerName(writer.getName())
                         .gooutTypeName(gooutType.getName())
                         .status(goout.getStatus())
                         .first(goout.getFirst())
@@ -114,16 +119,24 @@ public class GooutService {
                 throw new RuntimeException("대리인의 정보를 찾을 수 없습니다.");
             }
 
+            Employee writer = goout.getWriter();
+            if (writer == null) {
+                throw new RuntimeException("글쓴이의 정보를 찾을 수 없습니다.");
+            }
+
             GooutType gooutType = goout.getGooutType();
             if (gooutType == null) {
                 throw new RuntimeException("휴가타입 정보를 찾을 수 없습니다.");
             }
 
             return GooutRead.builder()
+                    .id(goout.getId())
                     .agentId(agent.getId())
                     .agentName(agent.getName())
                     .employeeId(employee.getId())
                     .employeeName(employee.getName())
+                    .writerId(writer.getId())
+                    .writerName(writer.getName())
                     .gooutTypeId(gooutType.getId())
                     .gooutTypeName(gooutType.getName())
                     .status(goout.getStatus())
@@ -156,7 +169,10 @@ public class GooutService {
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 휴가타입이 존재하지 않습니다."));
 
         Employee employee = employeeRepository.findById(gooutUpdateReq.getEmployeeId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 신청직원이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 휴가가는 직원이 존재하지 않습니다."));
+
+        Employee writer = employeeRepository.findById(gooutUpdateReq.getWriterId())
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 글쓴이이 존재하지 않습니다."));
 
         Employee agent = employeeRepository.findById(gooutUpdateReq.getAgentId())
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 대리자가 존재하지 않습니다."));
@@ -166,6 +182,7 @@ public class GooutService {
         goout.setLast(gooutUpdateReq.getLast());
         goout.setGooutType(gooutType);
         goout.setEmployee(employee);
+        goout.setWriter(writer);
         goout.setAgent(agent);
         gooutRepository.save(goout);
 

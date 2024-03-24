@@ -80,12 +80,12 @@ public class GooutLineController {
     @RequestMapping(method = RequestMethod.GET, value = "/2/{id}")
     public ResponseEntity<BaseRes> read2(@PathVariable Integer id) {
         try {
-            GooutLineRead gooutLineRead = gooutLineService.read2(id);
+            List<GooutLineList> gooutLineLists = gooutLineService.read2(id); // List 타입으로 받음
             BaseRes response = BaseRes.builder()
                     .code(1200)
                     .message("결재라인 상세 조회2 성공")
                     .isSuccess(true)
-                    .result(gooutLineRead)
+                    .result(gooutLineLists) // 여기서 List를 결과로 설정
                     .build();
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
