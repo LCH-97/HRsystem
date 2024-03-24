@@ -65,7 +65,7 @@ export default {
     },
     fetchGoouts() {
       // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
-      axios.get('http://localhost:8080/goout/check')
+      axios.get('http://192.168.0.51/api/goout/check')
         .then(response => {
           this.goouts = response.data.result;
           this.filteredGoouts = this.goouts; // fetchGoouts 호출 후 초기 필터링 상태로 설정

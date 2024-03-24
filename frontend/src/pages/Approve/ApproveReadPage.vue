@@ -98,7 +98,7 @@ export default {
       approve: "",
       approveLine: "",
       id: this.$route.params.id,
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
     };
   },
   methods: {
@@ -250,7 +250,7 @@ export default {
     async fetchApprove() {
       try {
         const approveResponse = await axios.get(
-          `http://localhost:8080/approve/read/${this.id}`
+          `http://192.168.0.51/api/approve/read/${this.id}`
         );
 
         if (approveResponse.data.isSuccess) {
@@ -267,7 +267,7 @@ export default {
     async fetchApproveLine(approveId) {
       try {
         const response = await axios.get(
-          `http://localhost:8080/approve/line/2/${approveId}`
+          `http://192.168.0.51/api/approve/line/2/${approveId}`
         );
         if (response.data.isSuccess) {
           this.approveLine = response.data.result;
@@ -308,9 +308,9 @@ export default {
       if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
         try {
           await axios.delete(
-            `http://localhost:8080/approve/line/delete/${this.id}`
+            `http://192.168.0.51/api/approve/line/delete/${this.id}`
           );
-          await axios.delete(`http://localhost:8080/approve/delete/${this.id}`);
+          await axios.delete(`http://192.168.0.51/api/approve/delete/${this.id}`);
 
           alert("결재가 성공적으로 삭제되었습니다.");
           this.$router.push("/approve/list");

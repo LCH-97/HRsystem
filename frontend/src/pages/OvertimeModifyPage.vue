@@ -72,7 +72,7 @@ export default {
   methods: {
     async updateData(formData) {
       try {
-        let response = await axios.patch(`http://localhost:8080/employee/overtime/update/${formData.get('id')}`, formData, {
+        let response = await axios.patch(`http://192.168.0.51/api/employee/overtime/update/${formData.get('id')}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
