@@ -6,41 +6,37 @@
       <td>
         <div class="input-group">
           <label class="input-label">결재자1 : </label>
-          {{ gooutLine?.confirmer1Name }}
+          {{ confirmer1?.confirmerName }}
         </div>
-
         <div v-if="goout">
           <div class="input-group">
               <label class="input-label">상태 : </label>
-          {{ getStatusText(goout.status) }}
+          {{ getStatusText(confirmer1?.status) }}
           </div>
        </div>
-
       </td>
       <td>
         <div class="input-group">
           <label class="input-label">결재자2 : </label>
-          {{ gooutLine?.confirmer2Name }}
+          {{ confirmer2?.confirmerName }}
         </div>
-
         <div v-if="goout">
           <div class="input-group">
             <label class="input-label">상태 : </label>
-           {{ getStatusText(goout.status) }}
+           {{ getStatusText(confirmer2?.status) }}
          </div>
-
         </div>
       </td>
     </tr>
   </table>
     <div class="header">
-      <div v-if="goout && gooutLine">
+      <div v-if="goout">
         <h1 class="title">휴가신청서</h1>
         <br>
         <table class="table">
           <tr>
             <th>휴가결재 올린사람</th>
-            <td>{{ gooutLine?.employeeName }}</td>
+            <td>{{ goout.writerName }}</td>
           </tr>
           <tr>
             <th>휴가가는 직원</th>
@@ -76,27 +72,23 @@
     </div>
   </div>
   <div class="goout-button">
-            <div class="confirm1-button" v-if="gooutLine?.confirmer1Id === loggedInUserId && goout?.status == 0">
+            <div class="confirm1-button" v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0">
               <!-- Show these buttons if the logged-in user is confirmer1 -->
               <button @click="confirm1">결재자1 결재</button>
               <button @click="reject1">결재자1 반려</button>
             </div>
             <!-- Show these buttons if the logged-in user is confirmer2 -->
-            <div class="confirm1-button" v-else-if="gooutLine?.confirmer2Id === loggedInUserId && goout?.status == 1">
+            <div class="confirm1-button" v-else-if="confirmer2?.confirmerId === loggedInUserId && goout?.status == 1">
               <button @click="confirm2">결재자2 결재</button>
               <button @click="reject2">결재자2 반려</button>
             </div>
             <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-            <div class="confirm1-button" v-else-if="gooutLine?.employeeId === loggedInUserId">
+            <div class="confirm1-button" v-else-if="goout?.writerId === loggedInUserId">
               <button @click="updateGoout">수정</button>
               <button @click="deleteGoout">삭제</button>
             </div>
             <!-- If logged-in user's ID does not match any, do not show any buttons -->
           </div>
-
-
-
-
 </template>
 
 
@@ -110,124 +102,131 @@ export default {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
+      confirmer1: null,
+      confirmer2: null,
       backend: "http://192.168.0.51/api", // 백엔드 서버 주소
     };
   },
   methods: {
     setLoggedInUser() {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        const decoded = jwtDecode(token); // Use the correct decoding method
-        this.loggedInUserId = decoded.ID; // Adjust according to your token structure
-      }
-    },
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decoded = jwtDecode(token); // Use the correct decoding method
+      this.loggedInUserId = decoded.ID; // Adjust according to your token structure
+    }
+  },
 
 
     async confirm1() {
-      if (confirm("결재하시겠습니까?")) {
-        try {
-          await axios.patch(`${this.backend}/gooutLine/confirm1`, {
-            gooutId: this.id, // 휴가 ID
-            confirmer1Id: this.gooutLine.confirmer1Id, // 결재자1 ID
-            comment: "결재자1 승인", // 코멘트
-          });
-          console.log("결재라인이 성공적으로 승인되었습니다.");
+  if (confirm("결재하시겠습니까?")) {
+    try {
+      await axios.patch(`${this.backend}/gooutLine/confirm1`, {
+        id: this.confirmer1.id,
+        gooutId: this.id, // 휴가 ID
+        confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
+        comment: "결재자1 승인", // 코멘트
+      });
 
-          await this.returnGooutStatus(1);
-          this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-            this.$router.go(0);
-          });
-        } catch (error) {
-          console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
-          alert("결재자1 결재 처리에 실패했습니다.");
-        }
-      }
-    },
+      console.log("결재라인이 성공적으로 승인되었습니다.");
 
-    async confirm2() {
-      if (confirm("결재하시겠습니까?")) {
-        try {
-          await axios.patch(`${this.backend}/gooutLine/confirm2`, {
-            gooutId: this.id, // 휴가 ID
-            confirmer2Id: this.gooutLine.confirmer2Id, // 결재자1 ID
-            comment: "결재자2 승인", // 코멘트
-          });
-          console.log("결재라인이 성공적으로 승인되었습니다.");
+      await this.returnGooutStatus(1);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+      this.$router.go(0);
+});
+    } catch (error) {
+      console.error("결재자1 결재 처리 중 오류가 발생했습니다:", error);
+      alert("결재자1 결재 처리에 실패했습니다.");
+    }
+  }
+},
 
-          await this.returnGooutStatus(2);
-          this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-            this.$router.go(0);
-          });
-        } catch (error) {
-          console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
-          alert("결재자2 결재 처리에 실패했습니다.");
-        }
-      }
-    },
+async confirm2() {
+  if (confirm("결재하시겠습니까?")) {
+    try {
+      await axios.patch(`${this.backend}/gooutLine/confirm2`, {
+        id: this.confirmer2.id,
+        gooutId: this.id, // 휴가 ID
+        confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
+        comment: "결재자2 승인", // 코멘트
+      });
+      console.log("결재라인이 성공적으로 승인되었습니다.");
 
-    async reject1() {
-      // 반려 사유 입력받기
-      const reason = prompt("반려 사유를 입력해주세요.");
-      if (reason !== null && reason.trim() !== "") {
-        try {
-          await axios.patch(`${this.backend}/gooutLine/reject1`, {
-            gooutId: this.id,
-            confirmer1Id: this.gooutLine.confirmer1Id,
-            comment: reason, // 사용자 입력 반려 사유 사용
-          });
-          console.log("결재라인이 성공적으로 반려되었습니다.");
-          await this.returnGooutStatus(3);
-          this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-            this.$router.go(0);
-          });
-        } catch (error) {
-          console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
-          alert("결재자1 반려 처리에 실패했습니다.");
-        }
-      } else {
-        alert("반려 사유를 입력해주세요.");
-      }
-    },
+      await this.returnGooutStatus(2);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
+    } catch (error) {
+      console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
+      alert("결재자2 결재 처리에 실패했습니다.");
+    }
+  }
+},
 
-    async reject2() {
-      // 반려 사유 입력받기
-      const reason = prompt("반려 사유를 입력해주세요.");
-      if (reason !== null && reason.trim() !== "") {
-        try {
-          await axios.patch(`${this.backend}/gooutLine/reject2`, {
-            gooutId: this.id,
-            confirmer2Id: this.gooutLine.confirmer2Id,
-            comment: reason, // 사용자 입력 반려 사유 사용
-          });
-          console.log("결재라인이 성공적으로 반려되었습니다.");
-          await this.returnGooutStatus(3);
-          this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-            this.$router.go(0);
-          });
-        } catch (error) {
-          console.error("결재자2 반려 처리 중 오류가 발생했습니다:", error);
-          alert("결재자2 반려 처리에 실패했습니다.");
-        }
-      } else {
-        alert("반려 사유를 입력해주세요.");
-      }
-    },
+async reject1() {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
+    try {
+      await axios.patch(`${this.backend}/gooutLine/reject1`, {
+        id: this.confirmer1.id,
+        gooutId: this.id,
+        confirmerId: this.confirmer1.confirmerId,
+        comment: reason, // 사용자 입력 반려 사유 사용
+      });
+      console.log("결재라인이 성공적으로 반려되었습니다.");
+      await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
+    } catch (error) {
+      console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자1 반려 처리에 실패했습니다.");
+    }
+  } else {
+    alert("반려 사유를 입력해주세요.");
+  }
+},
+
+async reject2() {
+  // 반려 사유 입력받기
+  const reason = prompt("반려 사유를 입력해주세요.");
+  if (reason !== null && reason.trim() !== "") {
+    try {
+      await axios.patch(`${this.backend}/gooutLine/reject2`, {
+        id: this.confirmer2.id,
+        gooutId: this.id,
+        confirmerId: this.confirmer2.confirmerId,
+        comment: reason, // 사용자 입력 반려 사유 사용
+      });
+      console.log("결재라인이 성공적으로 반려되었습니다.");
+      await this.returnGooutStatus(3);
+      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
+  this.$router.go(0);
+});
+    } catch (error) {
+      console.error("결재자2 반려 처리 중 오류가 발생했습니다:", error);
+      alert("결재자2 반려 처리에 실패했습니다.");
+    }
+  } else {
+    alert("반려 사유를 입력해주세요.");
+  }
+},
 
 
-    async returnGooutStatus(status) {
-      try {
-        const payload = {
-          id: this.id, // 현재 휴가/외출의 ID
-          status: status, // 변경할 상태
-        };
+async returnGooutStatus(status) {
+  try {
+    const payload = {
+      id: this.id, // 현재 휴가/외출의 ID
+      status: status, // 변경할 상태
+    };
 
-        // 수정된 객체를 사용하여 백엔드에 요청
-        await axios.patch(`${this.backend}/goout/return`, payload);
-        alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
-      } catch (error) {
-        console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
-      }
-    },
+    // 수정된 객체를 사용하여 백엔드에 요청
+    await axios.patch(`${this.backend}/goout/return`, payload);
+    alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
+  } catch (error) {
+    console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
+  }
+},
 
     async fetchGoout() {
       try {
@@ -253,19 +252,18 @@ export default {
         }
       } catch (error) {
         console.error("결재라인 정보를 불러오는 중 오류가 발생했습니다.", error);
-      }
-    },
+  }
+},
     getStatusText(status) {
       const statusMap = {
         '0': '대기중',
-        '1': '결재자1 승인',
-        '2': '최종 승인',
+        '1': '승인',
+        '2': '승인',
         '3': '반려',
       };
       return statusMap[status] || '알 수 없음';
     },
     updateGoout() {
-
   if (this.goout.status !== 3) {
     alert("반려상태가 아니면 수정할 수 없습니다.");
     return;
@@ -281,19 +279,21 @@ export default {
   }));
 
   localStorage.setItem('updateGooutLineInfo', JSON.stringify({
-    confirmer1Id: this.gooutLine?.confirmer1Id,
-    confirmer2Id: this.gooutLine?.confirmer2Id,
+    confirmer1Id: this.confirmer1?.confirmerId,
+    confirmer2Id: this.confirmer2?.confirmerId,
   }));
   this.$router.push('/goout/update');
 },
 
       async deleteGoout() {
-
       if (confirm("정말로 이 휴가를 삭제하시겠습니까?")) {
         try {
           // First, delete the approval line associated with this vacation request
-          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.id}`);
-          console.log("결재라인이 성공적으로 삭제되었습니다.");
+          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer1.id}`);
+          console.log("결재라인1이 성공적으로 삭제되었습니다.");
+
+          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer2.id}`);
+          console.log("결재라인2 성공적으로 삭제되었습니다.");
 
           // After the approval line is successfully deleted, delete the vacation request
           await axios.delete(`http://192.168.0.51/api/goout/delete/${this.id}`);
@@ -310,10 +310,10 @@ export default {
     this.fetchGoout();
   },
   mounted() {
-    this.setLoggedInUser();
-  },
+  this.setLoggedInUser();
+},
 
-  computed: {
+computed: {
     // 휴가 사용일 수를 계산하는 계산된 속성
     daysUsed() {
       if (this.goout && this.goout.first && this.goout.last) {
@@ -334,44 +334,36 @@ export default {
   width: 800px;
   margin: 0 auto;
 }
-
 .header {
   text-align: center;
 }
-
 .title {
   font-size: 24px;
   font-weight: bold;
 }
-
 .table {
   width: 100%;
   border-collapse: collapse;
 }
-
 th,
 td {
   border: 1px solid #ddd;
   padding: 8px;
 }
-
 th {
   text-align: center;
 }
 .input-group {
   margin-bottom: 10px;
 }
-
 .input-label {
   display: inline-block;
   width: 100px;
   text-align: right;
 }
-
 .input-field {
   width: 200px;
 }
-
 .button {
   margin-top: 10px;
   padding: 5px 10px;
@@ -384,13 +376,11 @@ th {
 .input-group {
   margin-bottom: 10px;
 }
-
 .input-label {
   display: inline-block;
   width: 100px;
   text-align: right;
 }
-
 .input-field {
   width: 200px;
 }
@@ -403,40 +393,31 @@ th {
 .approve {
   margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
 }
-
 .header {
   margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
   background-color: white;
 }
-
-
 .goout-button {
   margin-top: 50px; /* 결재 버튼 위쪽에 공백 추가 */
 }
-
 .approve {
   display: flex;
   justify-content: flex-end; /* 부모 요소를 오른쪽으로 정렬합니다. */
 }
-
 .approve th,
 .approve td {
   padding: 8px;
   text-align: right; /* 텍스트를 오른쪽 정렬합니다. */
 }
-
 .approve .input-group {
   margin-bottom: 10px;
 }
-
 .approve .input-label {
   width: auto; /* 결재자 라벨의 너비를 자동으로 설정합니다. */
 }
-
 .approve .input-field {
   width: 200px;
 }
-
 .approve .table td:nth-last-child(2) {
   line-height: 2; /* 휴가 유형 칸의 높이를 두 배로 조절 */
 }

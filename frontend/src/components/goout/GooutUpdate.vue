@@ -27,6 +27,13 @@
           <p>종료 날짜</p>
           <input type="date" v-model="updateInfo.last"><br>
 
+          <div class="row">
+           <div class="label">첨부파일</div>
+           <div class="input">
+            <input type="file" multiple @change="handleFilesUpload">
+           </div>
+          </div>
+
           <p>결재자1</p>
             <select v-model="updateInfo2.confirmer1Id">
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
@@ -59,6 +66,7 @@ export default {
         employeeName: "",
         first: "",
         last: "",
+        writerId: "",
       },
       gooutTypes: [],
       employees: [],  
@@ -66,7 +74,8 @@ export default {
       updateInfo2: {
         confirmer1Id: "",
         confirmer2Id: "",
-      }
+      },
+      files: [] // 여러 파일을 저장할 배열
     };
   },
 
@@ -110,6 +119,9 @@ export default {
       }
     },
 
+    handleFilesUpload(event) {
+      this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
+    },
 
     loadUpdateInfo() {
       const storedInfo = localStorage.getItem('updateGooutInfo');
@@ -150,8 +162,6 @@ export default {
     },
 
         async updateGoout() {
-      console.log("updateData:", this.updateInfo);
-      console.log("updateInfo2:", this.updateInfo2);
 
       if (this.updateInfo.employeeId === this.updateInfo.agentId) {
         alert("결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다.");
@@ -162,45 +172,81 @@ export default {
         return;
       }
 
-      try {
-        let updateData = {
-          id: Number(this.updateInfo.id),
+
+        let formData  = new FormData();
+  formData.append('gooutCreateReq', new Blob([JSON.stringify({
           gooutTypeId: Number(this.updateInfo.gooutTypeId),
           first: this.updateInfo.first,
           last: this.updateInfo.last,
           employeeId: Number(this.updateInfo.employeeId),
           agentId: Number(this.updateInfo.agentId),
-        };
+          writerId:  Number(this.loggedInUserId),
+        })], {type : 'application/json'}));
 
-        await axios.patch(`${this.backend}/goout/update`, updateData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        console.log("Goout 정보 수정 성공");
+          // 여러 파일을 formData에 추가
+          for (let i = 0; i < this.files.length; i++) {
+          formData.append('uploadFiles', this.files[i]); // 'uploadFiles'로 변경
+        }
+        
+        try {
+        const response = await axios.post(`${this.backend}/goout/create`, formData);
+        console.log(response);
+        const gooutId = response.data.result;
+        console.log('Created goout ID:', gooutId);
+        await this.reCreateGooutLine1(gooutId);
+        await this.reCreateGooutLine2(gooutId);
+            } catch (error) {
+            console.error("휴가 등록 실패:", error);
+            if (error.response) {
+              alert("휴가 등록 실패: " + error.response.data.message);
+            } else {
+              alert("휴가 등록 실패: 서버에서 응답이 없습니다.");
+            }
+          }
+        },
 
-        let gooutLineUpdateReq = {
-          gooutId: Number(this.updateInfo.id),
-          confirmer1Id: Number(this.updateInfo2.confirmer1Id),
-          confirmer2Id: Number(this.updateInfo2.confirmer2Id),
-          employeeId: Number(this.loggedInUserId),
-        };
-
-        await axios.patch(`${this.backend}/gooutLine/update`, gooutLineUpdateReq, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        console.log("GooutLine 정보 수정 성공");
-
-        alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
-        this.$router.push("/goout/list");
-      } catch (error) {
-        console.error("휴가 정보 또는 결재라인 정보 수정 실패:", error);
-        alert("휴가 정보 또는 결재라인 정보 수정에 실패하였습니다.");
-      }
+        async reCreateGooutLine1(gooutId) {
+    try {
+      const gooutLineReq = {
+        confirmerId: Number(this.updateInfo2.confirmer1Id),
+        gooutId: gooutId, 
+      };
+      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log("GooutLine1 생성 성공:", response);
+    } catch (error) {
+      console.error("결재라인 생성 실패:", error);
+      alert("결재라인1 생성 실패: " + error.response.data.message);
     }
-  }
+  },
+
+  async reCreateGooutLine2(gooutId) {
+    try {
+      const gooutLineReq = {
+        confirmerId: Number(this.updateInfo2.confirmer2Id),
+        gooutId: gooutId, 
+      };
+      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log("GooutLine2 생성 성공:", response);
+      alert("휴가 등록 및 결재라인1, 2 생성 완료");
+      this.$router.push("/goout/list");
+    } catch (error) {
+      console.error("결재라인 생성 실패:", error);
+      alert("결재라인 생성 실패: " + error.response.data.message);
+    }
+      },
+
+    
+  },
 };
 </script>
   

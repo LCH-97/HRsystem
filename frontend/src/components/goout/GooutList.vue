@@ -12,6 +12,7 @@
         <thead>
           <tr>
             <th>이름</th>
+            <th>작성자 이름</th>
             <th>휴가 유형</th>
             <th>상태</th>
             <th>시작 날짜</th>
@@ -21,6 +22,7 @@
         <tbody>
           <tr v-for="goout in filteredGoouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
             <td>{{ goout.name }}</td>
+            <td>{{ goout.writerName }}</td>
             <td>{{ goout.gooutTypeName }}</td>
             <td>{{ getStatusText(goout.status) }}</td>
             <td>{{ goout.first }}</td>
