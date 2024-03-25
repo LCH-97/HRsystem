@@ -41,7 +41,7 @@ export default {
   },
   methods: {
         updateGooutType() {
-      axios.patch(`http://192.168.0.51/api/gooutType/update`, this.gooutTypeInfo, {
+      axios.patch(`http://localhost:8080/gooutType/update`, this.gooutTypeInfo, {
         headers: {
           'Content-Type': 'application/json'
         }

@@ -77,7 +77,7 @@ import { jwtDecode } from 'jwt-decode';
 export default {
   data() {
     return {
-      backend: "http://192.168.0.51/api",
+      backend: "http://localhost:8080",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",
@@ -133,17 +133,18 @@ export default {
       const response = await axios.get(`${this.backend}/employee/list`);
       this.employees = response.data;
     },
-    async getGooutCreate() {
+    async createGooutRequest() {
 
       if (this.confirmer1Id === this.confirmer2Id) {
     alert("결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다.");
     return; // 메소드 실행을 중단
   }
-
+  this.setLoggedInUser();
   let formData = new FormData();
   formData.append('gooutCreateReq', new Blob([JSON.stringify({
     agentId: this.agentId,
     employeeId: this.employeeId,
+    writerId: this.loggedInUserId,
     gooutTypeId: this.gooutTypeId,
     first: this.first,
     last: this.last,
@@ -159,29 +160,47 @@ export default {
     console.log(response);
     const gooutId = response.data.result;
     console.log('Created goout ID:', gooutId);
-    await this.createGooutLine(gooutId);
+    await this.createGooutLine1(gooutId);
+    await this.createGooutLine2(gooutId);
   } catch (error) {
-    console.error("등록 실패:", error);
+    console.error("휴가 등록 실패:", error);
     alert("휴가 등록 실패: " + error.response.data.message); // 서버에서 반환한 오류 메시지를 사용자에게 보여줌
   }
 },
 
-async createGooutLine(gooutId) {
-  this.setLoggedInUser();
+async createGooutLine1(gooutId) {
   try {
     const gooutLineReq = {
-      confirmer1Id: this.confirmer1Id,
-      confirmer2Id: this.confirmer2Id,
-      gooutId: gooutId,
-      employeeId: this.loggedInUserId,  
+      confirmerId: this.confirmer1Id,
+      gooutId: gooutId, 
     };
     const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    console.log("GooutLine 생성 성공:", response);
-    alert("휴가 등록 및 결재라인 생성 완료");
+    
+    console.log("GooutLine1 생성 성공:", response);
+  } catch (error) {
+    console.error("결재라인 생성 실패:", error);
+    alert("결재라인 생성 실패: " + error.response.data.message);
+  }
+},
+
+async createGooutLine2(gooutId) {
+  try {
+    const gooutLineReq = {
+      confirmerId: this.confirmer2Id,
+      gooutId: gooutId, 
+    };
+    const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log("GooutLine2 생성 성공:", response);
+    alert("휴가 등록 및 결재라인1, 2 생성 완료");
     this.$router.push("/goout/list");
   } catch (error) {
     console.error("결재라인 생성 실패:", error);
@@ -190,7 +209,7 @@ async createGooutLine(gooutId) {
 },
 
     async handleFormSubmission() {
-        await this.getGooutCreate();
+        await this.createGooutRequest();
     }
   },
 
@@ -204,7 +223,7 @@ async createGooutLine(gooutId) {
 
 </script>
 
-<style>
+<style scoped>
 .container {
   width: 800px;
   margin: 20px auto;
