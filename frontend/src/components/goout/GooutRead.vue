@@ -104,7 +104,7 @@ export default {
       id: this.$route.params.id,
       confirmer1: null,
       confirmer2: null,
-      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
+      backend: "http://localhost:8080", // 백엔드 서버 주소
     };
   },
   methods: {
@@ -230,7 +230,7 @@ async returnGooutStatus(status) {
 
     async fetchGoout() {
       try {
-        const gooutResponse = await axios.get(`http://192.168.0.51/api/goout/check/${this.id}`);
+        const gooutResponse = await axios.get(`http://localhost:8080/goout/check/${this.id}`);
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
           await this.fetchGooutLine(this.id); // 결재라인 정보 조회
@@ -243,7 +243,7 @@ async returnGooutStatus(status) {
     },
     async fetchGooutLine(gooutId) {
       try {
-        const response = await axios.get(`http://192.168.0.51/api/gooutLine/2/${gooutId}`);
+        const response = await axios.get(`http://localhost:8080/gooutLine/2/${gooutId}`);
         if (response.data.isSuccess) {
           // Assuming response.data.result directly contains the GooutLineRead object
           this.gooutLine = response.data.result;
@@ -289,14 +289,14 @@ async returnGooutStatus(status) {
       if (confirm("정말로 이 휴가를 삭제하시겠습니까?")) {
         try {
           // First, delete the approval line associated with this vacation request
-          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer1.id}`);
+          await axios.delete(`http://localhost:8080/gooutLine/delete/${this.confirmer1.id}`);
           console.log("결재라인1이 성공적으로 삭제되었습니다.");
 
-          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer2.id}`);
+          await axios.delete(`http://localhost:8080/gooutLine/delete/${this.confirmer2.id}`);
           console.log("결재라인2 성공적으로 삭제되었습니다.");
 
           // After the approval line is successfully deleted, delete the vacation request
-          await axios.delete(`http://192.168.0.51/api/goout/delete/${this.id}`);
+          await axios.delete(`http://localhost:8080/goout/delete/${this.id}`);
           alert("휴가가 성공적으로 삭제되었습니다.");
           this.$router.push("/goout/list"); // Redirect to the list of vacation requests
         } catch (error) {

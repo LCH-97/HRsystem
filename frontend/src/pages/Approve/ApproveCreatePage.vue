@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      backend: "http://192.168.0.51/api",
+      backend: "http://localhost:8080",
       title: '제목을 입력하세요.',
       content: "내용을 입력하세요.",
       confirmer1Id: "",

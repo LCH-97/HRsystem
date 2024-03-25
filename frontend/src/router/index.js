@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-
+import VueJwtDecode from "vue-jwt-decode";
 
 
 import OvertimeCreatePage from '../pages/OvertimeCreatePage.vue';
@@ -32,7 +32,7 @@ import GooutTypePage from "@/pages/goout/GooutTypePage.vue";
 
 import BoardListPage from "@/pages/BoardListPage.vue";
 import BoardReadPage from "@/pages/BoardReadPage.vue";
-
+import ManagerPage from "@/pages/ManagerPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -42,7 +42,7 @@ const router = createRouter({
     { path: "/login", component: LoginPage },
 
     { path: "/main", component: MainPage },
-
+    { path: "/manager", component: ManagerPage },
     { path: "/overtimecreate", component: OvertimeCreatePage},
     { path: "/overtimelist", component: OvertimeListPage},
     { path: "/overtimemodify", component: OvertimeModifyPage},
@@ -85,4 +85,44 @@ const router = createRouter({
 );
 
 export default router;
+
+router.beforeEach((to, from, next) => {
+  // 로그인이 필요한 페이지
+  const authPages = [
+    "/main",
+    "/manager",
+    "/overtimecreate",
+    "/overtimelist",
+    "/overtimemodify",
+    "/overtimeapprovea",
+    "/overtime",
+    "/approve",
+    "/goout",
+    "/gooutType",
+    
+  ];
+
+  if (authPages.includes(to.fullPath)) {
+    const storedToken = sessionStorage.getItem("token");
+    if (storedToken === null) {
+      next("/UserLogIn");
+    } else {
+      const tokenData = VueJwtDecode.decode(storedToken);
+
+      console.log(tokenData);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (tokenData.exp < currentTime) {
+        sessionStorage.removeItem("token");
+        next("/UserLogIn");
+      } else {
+        next();
+      }
+    }
+  } else { // 권한이 필요한 페이지가 아니라면
+    
+
+    next();
+  }
+});
+
 

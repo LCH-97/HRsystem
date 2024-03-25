@@ -78,7 +78,7 @@ export default {
   methods: {
     async sendData(formData) {
       try {
-        let response = await axios.post("http://192.168.0.51/api/employee/overtime/create", formData, {
+        let response = await axios.post("http://localhost:8080/employee/overtime/create", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
