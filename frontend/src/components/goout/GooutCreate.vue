@@ -223,7 +223,7 @@ async createGooutLine2(gooutId) {
 
 </script>
 
-<style>
+<style scoped>
 .container {
   width: 800px;
   margin: 20px auto;

@@ -209,7 +209,17 @@
         // isCommute: false,
         // isLeave: true,
         // commuteId: "",
-        authorizeResult: null,
+        authorizeResult: {result:[
+
+          {
+            "id": 0,
+            "name": "",
+            "employmentDate": "",
+            "department": "",
+            "position": "",
+            "salary": ""
+        },
+        ]},
   
         // 공지사항
         notices: "",
@@ -232,7 +242,7 @@
         // formData.append('password', this.password);
         const token = sessionStorage.getItem("token");
         axios
-          .post(api + "/manager/authorize", null, {
+          .get(api + "/manager/authorize", {
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + token,
