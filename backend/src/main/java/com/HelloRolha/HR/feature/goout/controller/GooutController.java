@@ -2,6 +2,7 @@ package com.HelloRolha.HR.feature.goout.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.goout.model.Goout;
+import com.HelloRolha.HR.feature.goout.model.GooutFile;
 import com.HelloRolha.HR.feature.goout.model.dto.*;
 import com.HelloRolha.HR.feature.goout.service.GooutService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/goout")
@@ -26,8 +28,8 @@ public class GooutController {
         Goout goout = gooutService.create(gooutCreateReq);
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
-                String uploadPath = gooutService.uploadFile(uploadFile);
-                gooutService.saveFile(goout.getId(), uploadPath);
+                // 파일 업로드 메소드 호출 시 gooutId 전달
+                String uploadPath = gooutService.uploadFile(uploadFile, goout.getId());
             }
         }
 
@@ -115,5 +117,11 @@ public class GooutController {
                 .result("삭제한 id : " + id)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/files/{gooutId}")
+    public ResponseEntity<List<GooutFileDto>> listFilesByGooutId(@PathVariable Integer gooutId) {
+        List<GooutFileDto> files = gooutService.listFilesByGooutId(gooutId);
+        return ResponseEntity.ok().body(files);
     }
 }
