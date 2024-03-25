@@ -25,11 +25,12 @@ public class GooutController {
     @RequestMapping(method = RequestMethod.POST, value = "/create")
     public ResponseEntity create(@RequestPart GooutCreateReq gooutCreateReq,
                                  @RequestPart(name = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
-        Goout goout = gooutService.create(gooutCreateReq);
+        GooutCreateRes gooutCreateRes = gooutService.create(gooutCreateReq);
+
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
                 // 파일 업로드 메소드 호출 시 gooutId 전달
-                String uploadPath = gooutService.uploadFile(uploadFile, goout.getId());
+                String uploadPath = gooutService.uploadFile(uploadFile, gooutCreateRes.getGooutId());
             }
         }
 
@@ -37,7 +38,7 @@ public class GooutController {
                 .code(1200)
                 .message("휴가/외출 신청 성공")
                 .isSuccess(true)
-                .result(goout.getId())
+                .result(gooutCreateRes.getGooutId())
                 .build();
         return ResponseEntity.ok().body(response);
     }
