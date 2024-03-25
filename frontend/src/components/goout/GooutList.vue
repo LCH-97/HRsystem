@@ -12,6 +12,7 @@
         <thead>
           <tr>
             <th>이름</th>
+            <th>작성자 이름</th>
             <th>휴가 유형</th>
             <th>상태</th>
             <th>시작 날짜</th>
@@ -21,6 +22,7 @@
         <tbody>
           <tr v-for="goout in filteredGoouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
             <td>{{ goout.name }}</td>
+            <td>{{ goout.writerName }}</td>
             <td>{{ goout.gooutTypeName }}</td>
             <td>{{ getStatusText(goout.status) }}</td>
             <td>{{ goout.first }}</td>
@@ -63,7 +65,7 @@ export default {
     },
     fetchGoouts() {
       // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
-      axios.get('http://localhost:8080/goout/check')
+      axios.get('http://192.168.0.51/api/goout/check')
         .then(response => {
           this.goouts = response.data.result;
           this.filteredGoouts = this.goouts; // fetchGoouts 호출 후 초기 필터링 상태로 설정
