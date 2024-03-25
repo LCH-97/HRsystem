@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class GooutList {
     private Integer id;
     private String name;
+    private String writerName;
     private String gooutTypeName;
     private Integer status;
     private LocalDate first;

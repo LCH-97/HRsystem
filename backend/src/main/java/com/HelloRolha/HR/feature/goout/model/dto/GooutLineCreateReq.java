@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class GooutLineCreateReq {
-    private Integer confirmer1Id;
-    private Integer confirmer2Id;
+    private Integer confirmerId;
     private Integer gooutId;
-    private Integer EmployeeId;
 }
