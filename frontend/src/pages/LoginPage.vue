@@ -1,13 +1,10 @@
-<template>
-    <HeaderComponent />
-    <SideBar />
-  
+<template>  
     <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
                     <div class="container">
                         <div class="row justify-content-center">
-                            <div class="col-lg-5">
+                            <div class="col-lg-10">
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                                     <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
                                     <div class="card-body">
@@ -31,7 +28,7 @@
                                         </form>
                                     </div>
                                     <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="register.html" >Need an account? Sign up!</a></div>
+                                        <div class="small"><a href="/signup" >Need an account? Sign up!</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -49,15 +46,13 @@
   </template>
   
   
-  <script>
-  import SideBar from '../components/SideBar.vue'
-  import HeaderComponent from '../components/HeaderComponent.vue'
+  <script scope>
+
   import axios from 'axios';
   export default {
     name: 'LoginPage',
     components: {
-      SideBar,
-      HeaderComponent,
+
     },
     data() {
     return {
@@ -70,7 +65,7 @@
     login() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = 'http://192.168.0.51/api';
+      const api = 'http://localhost:8080';
       console.log(api);
       let formData = new FormData();
       formData.append('username', this.username);

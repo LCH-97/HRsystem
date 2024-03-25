@@ -275,7 +275,7 @@ export default {
     commute() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://localhost:8080";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -303,7 +303,7 @@ export default {
     leave() {
       console.log(" leave click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://localhost:8080";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -330,7 +330,7 @@ export default {
     check() {
       console.log("check");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://localhost:8080";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -369,7 +369,7 @@ export default {
       const itemsPerPage = 6;
       axios
         .get(
-          `http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`
+          `http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`
         )
         .then((response) => {
           this.notices = response.data.result;

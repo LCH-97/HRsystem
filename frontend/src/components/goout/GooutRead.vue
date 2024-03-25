@@ -113,7 +113,11 @@ export default {
       backend: "http://localhost:8080", // 백엔드 서버 주소
       confirmer1: null,
       confirmer2: null,
+
+      backend: "http://localhost:8080", // 백엔드 서버 주소
+
       files: [], // 파일 목록을 저장할 배열
+
     };
   },
   methods: {
@@ -252,6 +256,7 @@ export default {
     async fetchGoout() {
       try {
         const gooutResponse = await axios.get(`${this.backend}/goout/check/${this.id}`);
+
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
           await this.fetchGooutLine(this.id); // 결재라인 정보 조회
@@ -266,10 +271,12 @@ export default {
     async fetchGooutLine(gooutId) {
       try {
         const response = await axios.get(`http://localhost:8080/gooutLine/2/${gooutId}`);
+
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
           this.confirmer1 = response.data.result[0];
           this.confirmer2 = response.data.result[1];
+
         } else {
           console.error("결재라인 정보를 불러오는데 실패했습니다.");
         }
