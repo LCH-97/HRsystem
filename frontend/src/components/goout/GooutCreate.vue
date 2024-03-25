@@ -160,6 +160,7 @@ export default {
   try {
     const response = await axios.post(`${this.backend}/goout/create`, formData);
     console.log(response);
+    alert("휴가가 등록되었습니다.");
     this.$router.push(`/goout/list`);
   } catch (error) {
     console.error("휴가 등록 실패:", error);
