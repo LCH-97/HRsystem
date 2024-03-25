@@ -77,7 +77,7 @@ import { jwtDecode } from 'jwt-decode';
 export default {
   data() {
     return {
-      backend: "http://192.168.0.51/api",
+      backend: "http://localhost:8080",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",
@@ -179,7 +179,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .container {
   width: 800px;
   margin: 20px auto;
