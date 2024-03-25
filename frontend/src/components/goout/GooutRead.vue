@@ -114,7 +114,7 @@ export default {
       confirmer1: null,
       confirmer2: null,
 
-      backend: "http://localhost:8080", // 백엔드 서버 주소
+     
 
       files: [], // 파일 목록을 저장할 배열
 
