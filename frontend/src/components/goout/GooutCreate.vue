@@ -148,6 +148,8 @@ export default {
     gooutTypeId: this.gooutTypeId,
     first: this.first,
     last: this.last,
+    confirmer1Id: this.confirmer1Id,
+    confirmer2Id: this.confirmer2Id,
   })], {type : 'application/json'}));
 
   // 여러 파일을 formData에 추가
@@ -158,53 +160,11 @@ export default {
   try {
     const response = await axios.post(`${this.backend}/goout/create`, formData);
     console.log(response);
-    const gooutId = response.data.result;
-    console.log('Created goout ID:', gooutId);
-    await this.createGooutLine1(gooutId);
-    await this.createGooutLine2(gooutId);
+    alert("휴가가 등록되었습니다.");
+    this.$router.push(`/goout/list`);
   } catch (error) {
     console.error("휴가 등록 실패:", error);
     alert("휴가 등록 실패: " + error.response.data.message); // 서버에서 반환한 오류 메시지를 사용자에게 보여줌
-  }
-},
-
-async createGooutLine1(gooutId) {
-  try {
-    const gooutLineReq = {
-      confirmerId: this.confirmer1Id,
-      gooutId: gooutId, 
-    };
-    const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    console.log("GooutLine1 생성 성공:", response);
-  } catch (error) {
-    console.error("결재라인 생성 실패:", error);
-    alert("결재라인 생성 실패: " + error.response.data.message);
-  }
-},
-
-async createGooutLine2(gooutId) {
-  try {
-    const gooutLineReq = {
-      confirmerId: this.confirmer2Id,
-      gooutId: gooutId, 
-    };
-    const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    console.log("GooutLine2 생성 성공:", response);
-    alert("휴가 등록 및 결재라인1, 2 생성 완료");
-    this.$router.push("/goout/list");
-  } catch (error) {
-    console.error("결재라인 생성 실패:", error);
-    alert("결재라인 생성 실패: " + error.response.data.message);
   }
 },
 
@@ -212,11 +172,7 @@ async createGooutLine2(gooutId) {
         await this.createGooutRequest();
     }
   },
-
-  
 }
-
-
 
 
 
