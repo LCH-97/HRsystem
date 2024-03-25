@@ -41,36 +41,42 @@ public class GooutService {
     private final GooutLineRepository gooutLineRepository;
     private final EmployeeRepository employeeRepository;
     private final AmazonS3 s3;
-
+    private final GooutLineService gooutLineService;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public Goout create(GooutCreateReq gooutCreateReq) {
+    public GooutCreateRes create(GooutCreateReq gooutCreateReq) {
         if (gooutCreateReq.getAgentId().equals(gooutCreateReq.getEmployeeId())) {
             throw new IllegalArgumentException("대리자의 ID와 신청직원의 ID는 같을 수 없습니다.");
         }
 
-        Employee agent = employeeRepository.findById(gooutCreateReq.getAgentId())
-                .orElseThrow(() -> new IllegalArgumentException("대리자의 ID가 존재하지 않습니다."));
-        Employee employee = employeeRepository.findById(gooutCreateReq.getEmployeeId())
-                .orElseThrow(() -> new IllegalArgumentException("신청직원의 ID가 존재하지 않습니다."));
-        Employee writer = employeeRepository.findById(gooutCreateReq.getWriterId())
-                .orElseThrow(() -> new IllegalArgumentException("글쓴이의 ID가 존재하지 않습니다."));
-        GooutType gooutType = gooutTypeRepository.findById(gooutCreateReq.getGooutTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 GooutType이 존재하지 않습니다."));
-
+        GooutCreateRes gooutCreateRes = GooutCreateRes.builder().build();
 
         Goout goout = Goout.builder()
-                .agent(agent)
-                .employee(employee)
-                .writer(writer)
-                .gooutType(gooutType)
+                .agent(Employee.builder().id(gooutCreateReq.getAgentId()).build())
+                .employee(Employee.builder().id(gooutCreateReq.getEmployeeId()).build())
+                .writer(Employee.builder().id(gooutCreateReq.getWriterId()).build())
+                .gooutType(GooutType.builder().id(gooutCreateReq.getGooutTypeId()).build())
                 .first(gooutCreateReq.getFirst())
                 .last(gooutCreateReq.getLast())
                 .status(0)
                 .build();
 
-        return gooutRepository.save(goout);
+        gooutCreateRes.setGooutId(gooutRepository.save(goout).getId()) ;
+
+        GooutLineCreateReq gooutLine1 = GooutLineCreateReq.builder()
+                .confirmerId(gooutCreateReq.getConfirmer1Id())
+                .gooutId(goout.getId())
+                .build();
+        gooutCreateRes.setGooutLine1Id(gooutLineService.create(gooutLine1).getId());
+
+
+        GooutLineCreateReq gooutLine2 = GooutLineCreateReq.builder()
+                .confirmerId(gooutCreateReq.getConfirmer2Id())
+                .gooutId(goout.getId())
+                .build();
+        gooutCreateRes.setGooutLine2Id( gooutLineService.create(gooutLine2).getId());
+        return gooutCreateRes;
     }
 
     @Transactional
