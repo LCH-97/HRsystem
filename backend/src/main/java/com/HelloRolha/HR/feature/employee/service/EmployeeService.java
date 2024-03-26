@@ -126,4 +126,29 @@ public class EmployeeService {
                 .position(employee.getPosition().getPositionName())
                 .build();
     }
+
+
+    public Object createAdmin(SignUpReq signUpReq) {
+
+        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("USER_ADMIN");
+
+        Employee employee= Employee.builder()
+                .username(signUpReq.getUsername())
+                .password(passwordEncoder.encode(signUpReq.getPassword()))
+                .name(signUpReq.getName())
+                .phoneNum(signUpReq.getPhoneNum())
+                .birth(signUpReq.getBirth())
+                .age(signUpReq.getAge())
+                .address(signUpReq.getAddress())
+                .employmentDate(LocalDate.now())
+                .department(Department.builder().id(signUpReq.getDepartmentId()).build())
+                .position(Position.builder().id(signUpReq.getPositionId()).build())
+                .authority("USER_ADMIN")
+                .build();
+        employeeRepository.save(employee);
+
+        return SignUpRes.builder()
+                .result(true)
+                .build();
+    }
 }

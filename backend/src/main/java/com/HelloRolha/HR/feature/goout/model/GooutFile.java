@@ -15,7 +15,8 @@ public class GooutFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String filename;
+    private String filename; // S3에 저장된 파일명 (UUID 포함)
+    private String originalFilename; // 원본 파일 이름을 저장할 필드 추가
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Goout_id")

@@ -7,9 +7,9 @@ spring:
     active: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/HR_system
-    username: root
-    password: qwer1234
+    url: jdbc:mysql://${DB_ADDR}:3306/HR_system
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
