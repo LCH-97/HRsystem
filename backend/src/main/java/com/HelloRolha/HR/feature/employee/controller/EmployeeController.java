@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,20 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+
+    @RequestMapping(method = RequestMethod.POST, value = "/init")
+    public ResponseEntity init(SignUpReq signUpReq) {
+
+        BaseRes res = BaseRes.builder()
+                .code(1200)
+                .isSuccess(true)
+                .message("첫 관리자 생성 성공")
+                .result(employeeService.createAdmin(signUpReq))
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
     @RequestMapping(method = RequestMethod.POST, value = "/signup")
     public ResponseEntity signUp(SignUpReq signUpReq) {
 

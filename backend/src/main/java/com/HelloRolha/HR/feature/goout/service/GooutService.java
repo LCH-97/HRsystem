@@ -14,9 +14,11 @@ import com.HelloRolha.HR.feature.goout.repo.GooutLineRepository;
 import com.HelloRolha.HR.feature.goout.repo.GooutRepository;
 import com.HelloRolha.HR.feature.goout.repo.GooutTypeRepository;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +26,10 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,36 +41,42 @@ public class GooutService {
     private final GooutLineRepository gooutLineRepository;
     private final EmployeeRepository employeeRepository;
     private final AmazonS3 s3;
-
+    private final GooutLineService gooutLineService;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public Goout create(GooutCreateReq gooutCreateReq) {
+    public GooutCreateRes create(GooutCreateReq gooutCreateReq) {
         if (gooutCreateReq.getAgentId().equals(gooutCreateReq.getEmployeeId())) {
             throw new IllegalArgumentException("대리자의 ID와 신청직원의 ID는 같을 수 없습니다.");
         }
 
-        Employee agent = employeeRepository.findById(gooutCreateReq.getAgentId())
-                .orElseThrow(() -> new IllegalArgumentException("대리자의 ID가 존재하지 않습니다."));
-        Employee employee = employeeRepository.findById(gooutCreateReq.getEmployeeId())
-                .orElseThrow(() -> new IllegalArgumentException("신청직원의 ID가 존재하지 않습니다."));
-        Employee writer = employeeRepository.findById(gooutCreateReq.getWriterId())
-                .orElseThrow(() -> new IllegalArgumentException("글쓴이의 ID가 존재하지 않습니다."));
-        GooutType gooutType = gooutTypeRepository.findById(gooutCreateReq.getGooutTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 GooutType이 존재하지 않습니다."));
-
+        GooutCreateRes gooutCreateRes = GooutCreateRes.builder().build();
 
         Goout goout = Goout.builder()
-                .agent(agent)
-                .employee(employee)
-                .writer(writer)
-                .gooutType(gooutType)
+                .agent(Employee.builder().id(gooutCreateReq.getAgentId()).build())
+                .employee(Employee.builder().id(gooutCreateReq.getEmployeeId()).build())
+                .writer(Employee.builder().id(gooutCreateReq.getWriterId()).build())
+                .gooutType(GooutType.builder().id(gooutCreateReq.getGooutTypeId()).build())
                 .first(gooutCreateReq.getFirst())
                 .last(gooutCreateReq.getLast())
                 .status(0)
                 .build();
 
-        return gooutRepository.save(goout);
+        gooutCreateRes.setGooutId(gooutRepository.save(goout).getId()) ;
+
+        GooutLineCreateReq gooutLine1 = GooutLineCreateReq.builder()
+                .confirmerId(gooutCreateReq.getConfirmer1Id())
+                .gooutId(goout.getId())
+                .build();
+        gooutCreateRes.setGooutLine1Id(gooutLineService.create(gooutLine1).getId());
+
+
+        GooutLineCreateReq gooutLine2 = GooutLineCreateReq.builder()
+                .confirmerId(gooutCreateReq.getConfirmer2Id())
+                .gooutId(goout.getId())
+                .build();
+        gooutCreateRes.setGooutLine2Id( gooutLineService.create(gooutLine2).getId());
+        return gooutCreateRes;
     }
 
     @Transactional
@@ -185,24 +191,6 @@ public class GooutService {
         goout.setWriter(writer);
         goout.setAgent(agent);
         gooutRepository.save(goout);
-
-//        // 첨부파일 추가
-//        if (gooutUpdateReq.getNewFiles() != null) {
-//            for (MultipartFile file : gooutUpdateReq.getNewFiles()) {
-//                String uploadPath = uploadFile(file);
-//                GooutFile gooutFile = new GooutFile();
-//                gooutFile.setFilename(uploadPath);
-//                gooutFile.setGoout(goout);
-//                gooutFileRepository.save(gooutFile);
-//            }
-//        }
-//
-//        // 첨부파일 삭제
-//        if (gooutUpdateReq.getDeleteFileIds() != null) {
-//            for (Integer fileId : gooutUpdateReq.getDeleteFileIds()) {
-//                gooutFileRepository.deleteById(fileId);
-//            }
-//        }
     }
 
     @Transactional
@@ -215,6 +203,7 @@ public class GooutService {
         gooutRepository.delete(goout);
     }
 
+    @Transactional
     public String makeFolder() {
         String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         String folderPath = str.replace("/", File.separator);
@@ -223,34 +212,46 @@ public class GooutService {
     }
 
 
-    public String uploadFile(MultipartFile file) {
+    @Transactional
+    public String uploadFile(MultipartFile file, Integer gooutId) {
         String originalName = file.getOriginalFilename();
         String folderPath = makeFolder();
         String uuid = UUID.randomUUID().toString();
-        String saveFileName = folderPath + File.separator + uuid + "_" + originalName;
+        String saveFileName = folderPath + "/" + uuid + "_" + originalName;
         InputStream input = null;
+
         try {
             input = file.getInputStream();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
+            s3.putObject(bucket, saveFileName, input, metadata);
 
+            Goout goout = gooutRepository.findById(gooutId)
+                    .orElseThrow(() -> new RuntimeException("해당 휴가/외출 신청이 존재하지 않습니다."));
 
-            s3.putObject(bucket, saveFileName.replace(File.separator, "/"), input, metadata);
+            GooutFile gooutFile = new GooutFile();
+            gooutFile.setFilename(saveFileName);
+            gooutFile.setOriginalFilename(originalName);
+            gooutFile.setGoout(goout); // 찾아온 Goout 엔티티 사용
+            gooutFileRepository.save(gooutFile);
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("S3 파일 업로드 중 오류 발생", e);
         } finally {
             try {
-                input.close();
+                if (input != null) {
+                    input.close();
+                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("입력 스트림 닫기 실패", e);
             }
         }
 
-        return s3.getUrl(bucket, saveFileName.replace(File.separator, "/")).toString();
+        return s3.getUrl(bucket, saveFileName).toString();
     }
 
+    @Transactional
     public void saveFile(Integer id, String uploadPath) {
         gooutFileRepository.save(GooutFile.builder()
                 .goout(Goout.builder().id(id).build())
@@ -258,6 +259,7 @@ public class GooutService {
                 .build());
     }
 
+    @Transactional
     public Integer getPaidVacationCount(LocalDate startDate, LocalDate endDate, EmployeeDto employee) {
         Integer counter = 0;
         //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
@@ -278,6 +280,40 @@ public class GooutService {
             }
         }
         return counter;
+    }
+
+    @Transactional
+    public String generatePresignedUrl(String fileKey, String fileName) {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime() + 1000 * 60 * 10; // 10분 후 만료
+        expiration.setTime(expTimeMillis);
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
+                .withMethod(com.amazonaws.HttpMethod.GET)
+                .withExpiration(expiration);
+
+        // 파일 다운로드를 위한 Content-Disposition 설정 추가
+        generatePresignedUrlRequest.addRequestParameter("response-content-disposition", "attachment; filename=\"" + fileName + "\"");
+
+        URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+        return url.toString();
+    }
+
+    @Transactional
+    public List<GooutFileDto> listFilesByGooutId(Integer gooutId) {
+        // Goout 엔티티의 ID를 기반으로 파일 목록 조회
+        List<GooutFile> gooutFiles = gooutFileRepository.findByGooutId(gooutId);
+
+        // 조회된 파일 목록을 GooutFileDto 리스트로 변환
+        List<GooutFileDto> fileDtos = gooutFiles.stream().map(file -> {
+            // 각 파일에 대한 Presigned URL 생성
+            String downloadUrl = generatePresignedUrl(file.getFilename(), file.getOriginalFilename());
+
+            // 파일의 원본 이름과 다운로드 URL을 사용하여 GooutFileDto 객체 생성
+            return new GooutFileDto(file.getOriginalFilename(), downloadUrl);
+        }).collect(Collectors.toList());
+
+        return fileDtos;
     }
 
 }

@@ -36,8 +36,8 @@ public class GooutLineService {
                 .orElseThrow(() -> new IllegalArgumentException("휴가의 ID가 존재하지 않습니다."));
 
         GooutLine gooutLine = GooutLine.builder()
-                .confirmer(confirmer)
-                .goout(goout)
+                .confirmer(Employee.builder().id(gooutLineCreateReq.getConfirmerId()).build())
+                .goout(Goout.builder().id(gooutLineCreateReq.getGooutId()).build())
                 .approveTime(localDateTimeInKorea)
                 .status(0)
                 .build();
