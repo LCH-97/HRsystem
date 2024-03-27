@@ -22,11 +22,11 @@
               내 결재들
             </div>
             <div class="card-body">
-              <button @click="filterApprovalsByStatus(null)">전체 {{ statusCounts.total }}</button>
+              <button @click="filterApprovalsByStatus(null)">전체</button>
               <button @click="filterApprovalsByStatus(0)">기안중 {{ statusCounts.대기중 }}</button>
               <button @click="filterApprovalsByStatus(1)">진행중 {{ statusCounts.결재자1승인 }}</button>
               <button @click="filterApprovalsByStatus(3)">반려 {{ statusCounts.반려 }}</button>
-              <button @click="filterApprovalsByStatus(2)">결제 완료 {{ statusCounts.최종승인 }}</button>
+              <button @click="filterApprovalsByStatus(2)">결재 완료</button>
               <table id="datatablesSimple">
                 <thead>
                   <tr>
@@ -40,7 +40,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(approve, index) in filteredApprovals" :key="index" @click="goToApproveReadPage(approve.id)">
+                  <tr v-for="(approve, index) in filteredApprovals" :key="index"
+                   @click="goToApproveReadPage(approve.id)" class="approvelist">
                     <td>{{ approve.id }}</td>
                     <td>{{ approve.createAt }}</td>
                     <td>{{ approve.title }}</td>
@@ -50,34 +51,11 @@
                     <td>{{ getStatusText(approve.status) }}</td>
                   </tr>
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th>순번</th>
-                    <th>기안일자</th>
-                    <th>제목</th>
-                    <th>기안자</th>
-                    <th>결재자1</th>
-                    <th>결재자2</th>
-                    <th>진행상태</th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           </div>
         </div>
       </main>
-      <footer class="py-4 bg-light mt-auto">
-        <div class="container-fluid px-4">
-          <div class="d-flex align-items-center justify-content-between small">
-            <div class="text-muted">Copyright &copy; Your Website 2023</div>
-            <div>
-              <a href="#">Privacy Policy</a>
-              &middot;
-              <a href="#">Terms &amp; Conditions</a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   </div>
 </template>
@@ -121,6 +99,15 @@ export default {
     await this.fetchApprovals();
   },
   methods: {
+    filterApprovalsByStatus(status) {
+    this.currentFilterStatus = status;
+    if(status === null) {
+      this.filteredApprovals = this.approvals;
+    } else {
+      this.filteredApprovals = this.approvals.filter(approve => approve.status === status);
+    }
+  },
+
      async fetchApprovals() {
   const api = "http://localhost:8080/approve/list";
   try {
@@ -131,8 +118,6 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
-
-  
 
     goToApproveReadPage(id) {
     if (id) {
@@ -150,16 +135,8 @@ export default {
       };
       return statusMap[status] || "알 수 없음";
   },
-  filterApprovalsByStatus(status) {
-    this.currentFilterStatus = status;
-    if(status === null) {
-      this.filteredApprovals = this.approvals;
-    } else {
-      this.filteredApprovals = this.approvals.filter(approve => approve.status === status);
-    }
-  },
-},
   
+},
 };
 </script>
 
@@ -248,5 +225,12 @@ button:hover {
 .make-approve:hover{
   background-color: #F75C29;
 }
-
+.approvelist{
+  cursor: pointer;
+  margin: 10px 0;
+  transition: color 0.3s ease;
+}
+.approvelist:hover{
+  color: #007BFF;
+}
 </style>
