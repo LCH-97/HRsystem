@@ -1,6 +1,75 @@
 <template>
   <HeaderComponent />
-  <SideBar />
+  <div class="sb-nav-fixed">
+    <div id="layoutSidenav">
+      <SideBar />
+      <div id="layoutSidenav_content">
+        <main>
+          <div id="container-fluid px-4">
+            <!-- <h1 class="mt-4">MAIN PAGE</h1> -->
+            <div class="row" style="width: 100%">
+
+              <div class="col-xl-10">
+                <div class="card mb-6" style="margin-left: 100px;">
+                  <div class="card-header">
+                    휴가페이지
+                  </div>
+                  <div class="card-body">
+                    <div class="chartjs-size-monitor">
+                      <div class="chartjs-size-monitor-expand">
+
+
+
+                        <div class="all">
+
+                          <router-view></router-view>
+                        </div>
+
+
+
+                      </div>
+                      <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </main>
+
+      </div>
+
+
+
+
+    </div>
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <!-- <SideBar />
 
   <div class="all">
       <div class="gooutTypeBanner">
@@ -12,7 +81,7 @@
   
       </div>
       <router-view></router-view>
-    </div>
+    </div> -->
 </template>
 
 <script>

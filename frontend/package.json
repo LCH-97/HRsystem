@@ -2,11 +2,15 @@
   "name": "hr_system",
   "version": "0.1.0",
   "private": true,
+  "description": "```\r npm install\r ```",
+  "author": "",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
+  "main": "babel.config.js",
   "dependencies": {
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
@@ -14,7 +18,10 @@
     "@fullcalendar/vue3": "^6.1.11",
     "axios": "^1.6.7",
     "core-js": "^3.8.3",
+    "jest-junit": "^16.0.0",
+    "jwt-decode": "^3.1.2",
     "vue": "^3.2.13",
+    "vue-jwt-decode": "^0.1.0",
     "vue-router": "^4.3.0",
     "vue-simple-calendar": "^7.1.0"
   },
@@ -23,9 +30,14 @@
     "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-unit-jest": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
+    "@vue/test-utils": "^2.4.5",
+    "@vue/vue3-jest": "^27.0.0-alpha.1",
+    "babel-jest": "^27.0.6",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "jest": "^27.0.5"
   },
   "eslintConfig": {
     "root": true,
@@ -39,7 +51,23 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {},
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/node/axios.cjs"
+    }
   },
   "browserslist": [
     "> 1%",
@@ -47,9 +75,6 @@
     "not dead",
     "not ie 11"
   ],
-  "description": "```\r npm install\r ```",
-  "main": "babel.config.js",
   "keywords": [],
-  "author": "",
   "license": "ISC"
 }
