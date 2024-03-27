@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 public class GooutService {
     private final GooutRepository gooutRepository;
     private final GooutFileRepository gooutFileRepository;
+    private final GooutLineRepository gooutLineRepository;
     private final GooutTypeRepository gooutTypeRepository;
     private final EmployeeRepository employeeRepository;
     private final AmazonS3 s3;
@@ -199,6 +200,20 @@ public class GooutService {
         gooutFileRepository.deleteAllByGoout(goout);
 
         gooutRepository.delete(goout);
+    }
+
+    @Transactional
+    public void cancel(Integer id) {
+        Goout goout = gooutRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 휴가/외출 정보를 찾을 수 없습니다."));
+        goout.setStatus(4);
+        gooutRepository.save(goout);
+
+        List<GooutLine> gooutLines = gooutLineRepository.findByGooutId(id);
+        gooutLines.get(0).setStatus(4);
+        gooutLines.get(1).setStatus(4);
+        gooutLineRepository.save(gooutLines.get(0));
+        gooutLineRepository.save(gooutLines.get(1));
     }
 
     @Transactional

@@ -120,6 +120,18 @@ public class GooutController {
         return ResponseEntity.ok(response);
     }
 
+    @RequestMapping(method = RequestMethod.PATCH, value = "/cancel/{id}")
+    public ResponseEntity<BaseRes> cancel(@PathVariable Integer id) {
+        gooutService.cancel(id);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("휴가/외출 정보 삭제 성공")
+                .isSuccess(true)
+                .result("결재취소한 id : " + id)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/files/{gooutId}")
     public ResponseEntity<List<GooutFileDto>> listFilesByGooutId(@PathVariable Integer gooutId) {
         List<GooutFileDto> files = gooutService.listFilesByGooutId(gooutId);
