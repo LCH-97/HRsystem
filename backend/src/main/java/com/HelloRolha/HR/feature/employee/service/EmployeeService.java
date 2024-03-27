@@ -89,6 +89,12 @@ public class EmployeeService {
         }
         return employeeDtos;
     }
+    public List<Employee> getEmployeeListByEntity() {
+
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        return employeeList;
+    }
 
     public Boolean authorize(Integer employeeId) {
         Optional<Employee> optionalEmployee =  employeeRepository.findById(employeeId);
