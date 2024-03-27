@@ -2,6 +2,7 @@ package com.HelloRolha.HR.feature.salary.model.entity;
 
 import com.HelloRolha.HR.common.entity.BaseEntity;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
+import com.HelloRolha.HR.feature.salary.model.dto.SalaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,4 +36,20 @@ public class Salary extends BaseEntity {
     private Integer paidVacationCount; //전 월 휴가 일수
     private Long overTime; // 전 월 초과근무 시간
     private Long totalSalary;
+
+    public SalaryDto toDto () {
+        return SalaryDto.builder()
+                .employeeId(employee.getId())
+                .employeeName(employee.getName())
+                .employmentDate(employee.getEmploymentDate())
+                .employeeSalary(employee.getSalary())
+                .department(employee.getDepartment().getDepartmentName())
+                .position(employee.getPosition().getPositionName())
+                .batchDate(salaryDate)
+                .commuteCount(commuteCount)
+                .overTime(overTime)
+                .paidVacationCount(paidVacationCount)
+                .totalSalary(totalSalary)
+        .build();
+    }
 }

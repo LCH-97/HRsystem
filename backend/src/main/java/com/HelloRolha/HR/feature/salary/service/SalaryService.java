@@ -2,10 +2,12 @@ package com.HelloRolha.HR.feature.salary.service;
 
 import com.HelloRolha.HR.feature.commute.service.CommuteService;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
+import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.service.EmployeeService;
 import com.HelloRolha.HR.feature.goout.service.GooutService;
 import com.HelloRolha.HR.feature.overtime.service.OvertimeService;
 import com.HelloRolha.HR.feature.salary.model.dto.SalaryDto;
+import com.HelloRolha.HR.feature.salary.model.dto.getSalaryListRes;
 import com.HelloRolha.HR.feature.salary.model.entity.Salary;
 import com.HelloRolha.HR.feature.salary.repo.SalaryRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class SalaryService {
         LocalDate lastDay = batchDate.withDayOfMonth(batchDate.lengthOfMonth());;
 
 
-        List<SalaryDto> list = getSalaryList(firstDay,lastDay);
+        List<SalaryDto> list = createAllEmployeeSalary(firstDay,lastDay);
         List<Salary> entityList = new ArrayList<>();
         for(SalaryDto salaryDto : list){
             salaryDto.setBatchDate(batchDate);
@@ -47,41 +49,47 @@ public class SalaryService {
 
 
     // 시작일자에서 종료일자까지 급여 계산
-    public List<SalaryDto> getSalaryList(LocalDate startDate, LocalDate endDate){
+    public List<SalaryDto> createAllEmployeeSalary(LocalDate startDate, LocalDate endDate){
         List<SalaryDto> salaryDtoList = new ArrayList<>();
         // 전직원 리스트 가져오기
-        List<EmployeeDto> employeeList = employeeService.listEmployee();
+        List<Employee> employeeList = employeeService.getEmployeeListByEntity();
+
         // 반복문 //직원마다 총 월급 계산
-        for(EmployeeDto employee: employeeList){
-            Long commuteCount = commuteService.getWorkTimeByMinutes(startDate,endDate,employee);
-            Integer paidVacation = gooutService.getPaidVacationCount(startDate,endDate,employee);
-            Long overtime = overtimeService.getOverTime(startDate,endDate,employee);
-            salaryDtoList.add(SalaryDto.builder()
-                    ///개인 정보
-                            .employeeId(employee.getId())
-                            .employeeName(employee.getName())
-                            .employmentDate(employee.getEmploymentDate())
-                            .position(employee.getPosition())
-                            .department(employee.getDepartment())
-                            .employeeSalary(employee.getSalary())
-                    // 출근 일수 // 이 직원의 해당 월의 출근 일 수 가져오기
-                            .commuteCount(commuteCount)
-                    // 유급 휴가 일수
-                            .paidVacationCount(paidVacation)
-                    //초과근무 시간
-                            .overTime(overtime)
-                    //그래서 총 급여
-                            .totalSalary(getTotalSalary(startDate,endDate,commuteCount,paidVacation,overtime,employee))
-                    .build());
+        for(Employee employee: employeeList){
+
+            salaryDtoList.add(createEmployeeSalary(employee,startDate,endDate));
 
         }
         return salaryDtoList;
     }
 
-    private Long getTotalSalary(LocalDate startDate, LocalDate endDate,Long commuteCount, Integer paidVacation, Long overtime, EmployeeDto employee) {
+    public SalaryDto createEmployeeSalary(Employee employee,LocalDate startDate, LocalDate endDate){
+        Long commuteCount = employee.getWorkTimeByMinutes(startDate,endDate);
+        Integer paidVacation = employee.getPaidVacationCount(startDate,endDate);
+        Long overtime = overtimeService.getOverTimeOf(employee,startDate,endDate);
+        return SalaryDto.builder()
+                ///개인 정보
+                .employeeId(employee.getId())
+                .employeeName(employee.getName())
+                .employmentDate(employee.getEmploymentDate())
+                .position(employee.getPosition().getPositionName())
+                .department(employee.getDepartment().getDepartmentName())
+                .employeeSalary(employee.getSalary())
+                // 출근 일수 // 이 직원의 해당 월의 출근 일 수 가져오기
+                .commuteCount(commuteCount)
+                // 유급 휴가 일수
+                .paidVacationCount(paidVacation)
+                //초과근무 시간
+                .overTime(overtime)
+                //그래서 총 급여
+                .totalSalary(calculateTotalSalary(employee.getSalary(),startDate,endDate,commuteCount,paidVacation,overtime))
+                .build();
+    }
+
+    private Long calculateTotalSalary(Long salary, LocalDate startDate, LocalDate endDate,Long commuteCount, Integer paidVacation, Long overtime) {
         // 총 근무 일을 구하자
         Long total = 0L;
-        Long salaryHourly = employee.getSalary()/209;
+        Long salaryHourly = salary/209;
 
         //Duration duration = Duration.between(startDate,endDate);
 
@@ -108,4 +116,17 @@ public class SalaryService {
     }
 
 
+    public List<getSalaryListRes> getSalaryList() {
+        List<getSalaryListRes> res = new ArrayList<>();
+        List<SalaryDto> dtoList = new ArrayList<>();
+        List<Salary> salaries = salaryRepository.findAll();
+        for (Salary salary:salaries) {
+            dtoList.add(salary.toDto());
+        }
+        res.add(getSalaryListRes.builder()
+                .month(1)
+                .salaryDtoList(dtoList)
+                .build());
+        return res;
+    }
 }

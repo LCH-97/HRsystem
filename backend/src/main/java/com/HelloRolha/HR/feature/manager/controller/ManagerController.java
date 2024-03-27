@@ -89,7 +89,20 @@ public class ManagerController {
         return ResponseEntity.ok().body(res);
     }
 
+    // 전체 내역 조회
+    @RequestMapping(method = RequestMethod.GET, value = "/salary/list")
+    public ResponseEntity<BaseRes> getSalaryList() {
 
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("직원 정보 성공")
+                .result(salaryService.getSalaryList())
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
 
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/attend")
