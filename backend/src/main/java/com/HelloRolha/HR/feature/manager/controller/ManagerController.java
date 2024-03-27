@@ -96,8 +96,36 @@ public class ManagerController {
         BaseRes res = BaseRes.builder()
                 .code(200)
                 .isSuccess(true)
-                .message("직원 정보 성공")
+                .message("전체 월급 정보 성공")
                 .result(salaryService.getSalaryList())
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/salary/list/{year}/{month}")
+    public ResponseEntity<BaseRes> getSalaryList(@PathVariable Integer year,@PathVariable Integer month) {
+
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message(String.format("get [ %s ]-[ %s ] salary list Request Success", year ,month))
+                .result(salaryService.getSalaryList(year,month))
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/salary/last")
+    public ResponseEntity<BaseRes> getLastestDateOfSalary() {
+
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("getLastDateOfSalary Request is Success")
+                .result(salaryService.getLastDateOfSalary())
                 .build();
 
 

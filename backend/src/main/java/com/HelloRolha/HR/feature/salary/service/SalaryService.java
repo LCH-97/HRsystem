@@ -115,7 +115,7 @@ public class SalaryService {
         return total;
     }
 
-
+// 그냥 다 가져오기
     public List<getSalaryListRes> getSalaryList() {
         List<getSalaryListRes> res = new ArrayList<>();
         List<SalaryDto> dtoList = new ArrayList<>();
@@ -128,5 +128,28 @@ public class SalaryService {
                 .salaryDtoList(dtoList)
                 .build());
         return res;
+    }
+// 해당 월의 월급 리스트만 가져오기
+    public List<getSalaryListRes> getSalaryList(Integer year, Integer month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+        List<getSalaryListRes> res = new ArrayList<>();
+        List<SalaryDto> dtoList = new ArrayList<>();
+        List<Salary> salaries = salaryRepository.readSalaryListBetween(startDate,endDate);
+        for (Salary salary:salaries) {
+            dtoList.add(salary.toDto());
+        }
+        res.add(getSalaryListRes.builder()
+                .month(month)
+                .salaryDtoList(dtoList)
+                .build());
+        return res;
+    }
+
+    public LocalDate getLastDateOfSalary() {
+        return salaryRepository.readLastDateOfSalary().get(0).getSalaryDate();
+    }
+    public LocalDate getFirstDateOfSalary() {
+        return salaryRepository.readFirstDateOfSalary().get(0).getSalaryDate();
     }
 }
