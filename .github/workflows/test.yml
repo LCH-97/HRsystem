@@ -1,0 +1,54 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "backend/develop","backend/test/target","backend/test/init" ]
+  pull_request:
+    branches: [ "backend/develop","backend/test/target","backend/test/init" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: 
+        actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: list file
+      run: ls
+    - name: cd backend
+      run: cd ./backend
+    - name: 현재 경로
+      run: pwd
+    - name: Run Tests
+      run: |
+        cd ./backend
+        mvn test
+        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        # Artifact name
+        name: test-report # optional, default is artifact
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./backend/target/surefire-reports/*
+        # The desired behavior if no files are found using the provided path.
+       
+          
+ 
+

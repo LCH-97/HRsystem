@@ -27,6 +27,7 @@
             <select v-model="gooutTypeId">
               <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">{{ gooutType.name }}</option>
             </select><br>
+
           </div>
         </div>
         <div class="row">
@@ -47,6 +48,7 @@
             <input type="file" multiple @change="handleFilesUpload">
           </div>
         </div>
+
         <div class="row">
           <div class="label">결재라인</div>
           <div class="input">
@@ -148,6 +150,8 @@ export default {
     gooutTypeId: this.gooutTypeId,
     first: this.first,
     last: this.last,
+    confirmer1Id: this.confirmer1Id,
+    confirmer2Id: this.confirmer2Id,
   })], {type : 'application/json'}));
 
   // 여러 파일을 formData에 추가
@@ -158,15 +162,21 @@ export default {
   try {
     const response = await axios.post(`${this.backend}/goout/create`, formData);
     console.log(response);
+
     const gooutId = response.data.result;
     console.log('Created goout ID:', gooutId);
     await this.createGooutLine1(gooutId);
     await this.createGooutLine2(gooutId);
+
+    alert("휴가가 등록되었습니다.");
+    this.$router.push(`/goout/list`);
+
   } catch (error) {
     console.error("휴가 등록 실패:", error);
     alert("휴가 등록 실패: " + error.response.data.message); // 서버에서 반환한 오류 메시지를 사용자에게 보여줌
   }
 },
+
 
 async createGooutLine1(gooutId) {
   try {
@@ -208,22 +218,19 @@ async createGooutLine2(gooutId) {
   }
 },
 
+
     async handleFormSubmission() {
         await this.createGooutRequest();
     }
   },
-
-  
 }
-
-
 
 
 
 
 </script>
 
-<style>
+<style scoped>
 .container {
   width: 800px;
   margin: 20px auto;

@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <table class = "approve">
+
     <tr>
       <th>결재</th>
       <td>
@@ -29,10 +30,12 @@
       </td>
     </tr>
   </table>
+
     <div class="header">
       <div v-if="goout">
         <h1 class="title">휴가신청서</h1>
         <br>
+
         <table class="table">
           <tr>
             <th>휴가결재 올린사람</th>
@@ -70,6 +73,12 @@
         </table>
       </div>
     </div>
+    <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+    <div class="confirm1-button" v-else-if="goout?.writerId === loggedInUserId">
+      <button @click="updateGoout">수정</button>
+      <button @click="deleteGoout">삭제</button>
+    </div>
+    <!-- If logged-in user's ID does not match any, do not show any buttons -->
   </div>
   <div class="goout-button">
             <div class="confirm1-button" v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0">
@@ -102,22 +111,39 @@ export default {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
+
       confirmer1: null,
       confirmer2: null,
       backend: "http://192.168.0.51/api", // 백엔드 서버 주소
+      files: [], // 파일 목록을 저장할 배열
+
+
     };
   },
   methods: {
+    fetchFiles() {
+      // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
+      axios.get(`${this.backend}/goout/files/${this.id}`)
+          .then(response => {
+            this.files = response.data; // 파일 목록 업데이트
+          })
+          .catch(error => {
+            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+          });
+    },
+
+
     setLoggedInUser() {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      const decoded = jwtDecode(token); // Use the correct decoding method
-      this.loggedInUserId = decoded.ID; // Adjust according to your token structure
-    }
-  },
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        const decoded = jwtDecode(token); // Use the correct decoding method
+        this.loggedInUserId = decoded.ID; // Adjust according to your token structure
+      }
+    },
 
 
     async confirm1() {
+
   if (confirm("결재하시겠습니까?")) {
     try {
       await axios.patch(`${this.backend}/gooutLine/confirm1`, {
@@ -151,16 +177,18 @@ async confirm2() {
       });
       console.log("결재라인이 성공적으로 승인되었습니다.");
 
-      await this.returnGooutStatus(2);
-      this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-  this.$router.go(0);
-});
-    } catch (error) {
-      console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
-      alert("결재자2 결재 처리에 실패했습니다.");
-    }
-  }
-},
+
+    async confirm2() {
+      if (confirm("결재하시겠습니까?")) {
+        try {
+          await axios.patch(`${this.backend}/gooutLine/confirm2`, {
+            id: this.confirmer2.id,
+            gooutId: this.id, // 휴가 ID
+            confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
+            comment: "결재자2 승인", // 코멘트
+          });
+          console.log("결재라인이 성공적으로 승인되었습니다.");
+
 
 async reject1() {
   // 반려 사유 입력받기
@@ -213,27 +241,30 @@ async reject2() {
 },
 
 
-async returnGooutStatus(status) {
-  try {
-    const payload = {
-      id: this.id, // 현재 휴가/외출의 ID
-      status: status, // 변경할 상태
-    };
 
-    // 수정된 객체를 사용하여 백엔드에 요청
-    await axios.patch(`${this.backend}/goout/return`, payload);
-    alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
-  } catch (error) {
-    console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
-  }
-},
+    async returnGooutStatus(status) {
+      try {
+        const payload = {
+          id: this.id, // 현재 휴가/외출의 ID
+          status: status, // 변경할 상태
+        };
+
+        // 수정된 객체를 사용하여 백엔드에 요청
+        await axios.patch(`${this.backend}/goout/return`, payload);
+        alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
+      } catch (error) {
+        console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
+      }
+    },
 
     async fetchGoout() {
       try {
+
         const gooutResponse = await axios.get(`http://192.168.0.51/api/goout/check/${this.id}`);
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
           await this.fetchGooutLine(this.id); // 결재라인 정보 조회
+
         } else {
           alert("휴가 정보를 불러오는데 실패했습니다.");
         }
@@ -243,17 +274,21 @@ async returnGooutStatus(status) {
     },
     async fetchGooutLine(gooutId) {
       try {
+
         const response = await axios.get(`http://192.168.0.51/api/gooutLine/2/${gooutId}`);
         if (response.data.isSuccess) {
           // Assuming response.data.result directly contains the GooutLineRead object
           this.gooutLine = response.data.result;
+
         } else {
           console.error("결재라인 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
         console.error("결재라인 정보를 불러오는 중 오류가 발생했습니다.", error);
+
   }
 },
+
     getStatusText(status) {
       const statusMap = {
         '0': '대기중',
@@ -264,6 +299,7 @@ async returnGooutStatus(status) {
       return statusMap[status] || '알 수 없음';
     },
     updateGoout() {
+
   if (this.goout.status !== 3) {
     alert("반려상태가 아니면 수정할 수 없습니다.");
     return;
@@ -285,7 +321,8 @@ async returnGooutStatus(status) {
   this.$router.push('/goout/update');
 },
 
-      async deleteGoout() {
+
+    async deleteGoout() {
       if (confirm("정말로 이 휴가를 삭제하시겠습니까?")) {
         try {
           // First, delete the approval line associated with this vacation request
@@ -308,12 +345,13 @@ async returnGooutStatus(status) {
   },
   created() {
     this.fetchGoout();
+    this.fetchFiles();
   },
   mounted() {
-  this.setLoggedInUser();
-},
+    this.setLoggedInUser();
+  },
 
-computed: {
+  computed: {
     // 휴가 사용일 수를 계산하는 계산된 속성
     daysUsed() {
       if (this.goout && this.goout.first && this.goout.last) {
