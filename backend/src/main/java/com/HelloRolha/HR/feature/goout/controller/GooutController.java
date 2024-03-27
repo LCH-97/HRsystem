@@ -43,8 +43,8 @@ public class GooutController {
         return ResponseEntity.ok().body(response);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/check")
-    public ResponseEntity<BaseRes> list() {
-        List<GooutList> gooutLists = gooutService.list();
+    public ResponseEntity<BaseRes> list(Integer page, Integer size) {
+        List<GooutList> gooutLists = gooutService.list(page, size);
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("휴가/외출 확인 성공")

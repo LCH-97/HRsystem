@@ -13,13 +13,4 @@ public class GooutFileDto {
         this.name = name;
         this.downloadUrl = downloadUrl;
     }
-
-    // Getter 메소드 필요
-    public String getName() {
-        return name;
-    }
-
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
 }

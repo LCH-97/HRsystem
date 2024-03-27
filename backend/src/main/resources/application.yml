@@ -1,5 +1,5 @@
 jwt:
-  secret-key: abcdefghijklmnopqrstuvwxyz0123456789
+  secret-key: ${JWT_SECRET_KEY}
   token:
     expired-time-ms: 3000000
 spring:
@@ -18,22 +18,15 @@ spring:
       hibernate.show_sql: true
       hibernate.format_sql: true
 
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
 cloud:
   aws:
     s3:
-      bucket: lch2023-s3
+      bucket: ${AWS_S3_BUCKET}
     credentials:
-      access-key: AKIA2H67JGHVCOYRJA54
-      secret-key: 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
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
     region:
-      static: ap-northeast-2
+      static: ${AWS_REGION}
       auto: false
     stack:
       auto: false
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
-#  삭제된 버킷이라 괜찮아요!! 실행되나 해서 넣어봤어요. 여기부분은 나중에 처리할게요..ㅎ
-
