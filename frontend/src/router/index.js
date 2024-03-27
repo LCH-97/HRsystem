@@ -29,6 +29,7 @@ import GooutTypePage from "@/pages/goout/GooutTypePage.vue";
 import BoardListPage from "@/pages/BoardListPage.vue";
 import BoardReadPage from "@/pages/BoardReadPage.vue";
 import ManagerPage from "@/pages/ManagerPage.vue";
+import SalaryListPage from "@/pages/Salary/SalaryListPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,6 +53,8 @@ const router = createRouter({
 
     { path: "/board", component: BoardListPage },
     { path: "/board/read/:id", component: BoardReadPage },
+
+    { path: "/salary/list", component: SalaryListPage },
 
     {
       path: "/goout",
