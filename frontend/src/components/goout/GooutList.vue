@@ -6,7 +6,7 @@
       <button @click="filterGoouts(1)">기안중</button>
       <button @click="filterGoouts(2)">최종 승인</button>
       <button @click="filterGoouts(3)">반려</button>
-      <button @click="filterGoouts(4)">등록 취소</button>080
+      <button @click="filterGoouts(4)">등록 취소</button>
     </div>
     <div class="gooutList">
       <table>
