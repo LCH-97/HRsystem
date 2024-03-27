@@ -9,21 +9,21 @@
           <td>
             <div class="input-group">
               <label class="input-label">결재자1 : </label>
-              {{ this.approve.confirmer1 }}
+              {{ confirmer1?.confirmerName }}
             </div>
             <div class="input-group">
               <label class="input-label"
-                >상태 : {{ getStatusText1(this.approve.status) }}</label>
+                >상태 : {{ getStatusText(confirmer1?.status) }}</label>
             </div>
           </td>
           <td>
             <div class="input-group">
               <label class="input-label">결재자2 : </label>
-              {{ this.approve.confirmer2 }}
+              {{ confirmer2?.confirmerName }}
             </div>
             <div class="input-group">
               <label class="input-label"
-                >상태 : {{ getStatusText2(this.approve.status) }}</label>
+              >상태 : {{ getStatusText(confirmer2?.status) }}</label>
             </div>
           </td>
         </tr>
@@ -34,11 +34,11 @@
         <table class="table">
           <tr>
             <th>기안자</th>
-            <td>{{ approve.name }}</td>
+            <td>{{ approve.employeeName }}</td>
           </tr>
           <tr>
             <th>상태</th>
-            <td>{{ getStatusText(this.approve.status) }}</td>
+            <td>{{ getStatusText1(this.approve.status) }}</td>
           </tr>
           <tr>
             <th>기안일자</th>
@@ -51,15 +51,15 @@
         </table>
       </div>
       <div class="approve-button">
-        <div class="confirm1-button" v-if=" approveLine?.confirmer1Id === loggedInUserId && approve.status == 0">
+        <div class="confirm1-button" v-if=" confirmer1?.confirmerId === loggedInUserId && approve.status == 0">
           <button @click="confirm1">결 재</button>
           <button @click="reject1">반 려</button>
         </div>
-        <div class="confirm1-button" v-else-if=" approveLine?.confirmer2Id === loggedInUserId && approveLine?.status == 1">
+        <div class="confirm1-button" v-else-if=" confirmer2?.confirmerId === loggedInUserId && approve?.status == 1">
           <button @click="confirm2">결 재</button>
           <button @click="reject2">반 려</button>
         </div>
-        <div class="confirm1-button" v-else-if="approveLine?.employeeId === loggedInUserId">
+        <div class="confirm1-button" v-else-if="approve?.employeeId === loggedInUserId">
           <button @click="updateApprove">수 정</button>
           <button @click="deleteApprove">삭 제</button>
         </div>
@@ -85,6 +85,9 @@ export default {
       approve: "",
       approveLine: "",
       id: this.$route.params.id,
+
+      confirmer1: "",
+      confirmer2: "",
       backend: "http://localhost:8080",
     };
   },
@@ -101,19 +104,16 @@ export default {
     
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
-        console.log("approveLine:", this.approveLine);
-        console.log("confirmer1Id:", this.approve.confirmer1Id);
         try {
           await axios.patch(`${this.backend}/approve/line/confirm1`, {
             approveId: this.id,
-            confirmer1Id: this.approveLine.confirmer1Id, // 결재자1 ID
+            confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
             comment: "결재자1 승인", // 코멘트
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
           await this.returnApproveStatus(1);
-          this.$router
-            .push(`/approve/read/` + this.$route.params.id)
+          this.$router.push(`/approve/read/` + this.$route.params.id)
             .then(() => {
               this.$router.go(0);
             });
@@ -127,8 +127,8 @@ export default {
       if (confirm("결재하시겠습니까?")) {
         try {
           await axios.patch(`${this.backend}/approve/line/confirm2`, {
-            approveId: this.$route.params.id,
-            confirmer2Id: this.approveLine.confirmer2Id,
+            approveId: this.id,
+            confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
             comment: "결재자2 승인",
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
@@ -141,7 +141,7 @@ export default {
             });
         } catch (error) {
           console.error("결재자2 결재 처리 중 오류가 발생했습니다:", error);
-          alert("결재자1 결재 처리에 실패했습니다.");
+          alert("결재자2 결재 처리에 실패했습니다.");
         }
       }
     },
@@ -152,7 +152,7 @@ export default {
         try {
           await axios.patch(`${this.backend}/approve/line/reject1`, {
             approveId: this.id,
-            confirmer1Id: this.approveLine.confirmer1Id,
+            confirmerId: this.confirmer1.confirmerId,
             comment: reason,
           });
           console.log("결재라인이 반려되었습니다.");
@@ -177,7 +177,7 @@ export default {
         try {
           await axios.patch(`${this.backend}/approve/line/reject2`, {
             approveId: this.id,
-            confirmer2Id: this.approveLine.confirmer2Id,
+            confirmerId: this.confirmer2.confirmerId,
             comment: reason,
           });
           console.log("결재라인이 반려되었습니다.");
@@ -193,32 +193,6 @@ export default {
         }
       } else {
         alert("반려 사유를 입력해주세요.");
-      }
-    },
-
-    async createApproveLine() {
-      const approveLineReq = {
-        confirmer1Id: this.confirmer1Id,
-        confirmer2Id: this.confirmer2Id,
-        employeeId: this.employeeId,
-        approveId: this.id,
-      };
-      try {
-        const response = await axios.post(
-          `${this.backend}/approve/line/create`,
-          approveLineReq,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("ApproveLine 생성 성공:", response);
-        alert("결재 등록 및 결재라인 생성 완료");
-        this.$router.push("/approve/list");
-      } catch (error) {
-        console.error("결재라인 생성 실패", error);
-        alert("결재라인 생성 실패: " + error.response.data.message);
       }
     },
 
@@ -257,8 +231,9 @@ export default {
         const response = await axios.get(
           `http://localhost:8080/approve/line/2/${approveId}`
         );
-        if (response.data.isSuccess) {
-          this.approveLine = response.data.result;
+        if (response.data.isSuccess && response.data.result.length >=2) {
+          this.confirmer1 = response.data.result[0];
+          this.confirmer2 = response.data.result[1];
         } else {
           console.error("결재라인 정보를 불러오는데 실패했습니다.");
         }
@@ -273,8 +248,8 @@ export default {
     getStatusText(status) {
       const statusMap = {
         0: "대기중",
-        1: "결재자1 승인",
-        2: "최종 승인",
+        1: "승인",
+        2: "승인",
         3: "반려",
       };
       return statusMap[status] || "알 수 없음";
@@ -282,17 +257,8 @@ export default {
     getStatusText1(status) {
       const statusMap = {
         0: "대기중",
-        1: "승인",
-        2: "승인",
-        3: "반려",
-      };
-      return statusMap[status] || "알 수 없음";
-    },
-    getStatusText2(status) {
-      const statusMap = {
-        0: "대기중",
-        1: "대기중",
-        2: "승인",
+        1: "결재자1 승인",
+        2: "최종 승인",
         3: "반려",
       };
       return statusMap[status] || "알 수 없음";
@@ -305,8 +271,15 @@ export default {
       const approveId = this.$route.params.id;
       localStorage.setItem(
         "updateApproveInfo",
-        JSON.stringify({ ...this.approve, id: approveId })
-      );
+        JSON.stringify({
+        id: approveId,
+        title: this.approve.title,
+        content: this.approve.content
+      }));
+      localStorage.setItem('updateAPproveLineInfo', JSON.stringify({
+        confirmer1Id: this.confirmer1?.confirmerId,
+        confirmer2Id: this.confirmer2?.confirmerId,
+      }));
       this.$router.push("/approve/update");
     },
 
@@ -314,7 +287,10 @@ export default {
       if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
         try {
           await axios.delete(
-            `http://localhost:8080/approve/line/delete/${this.id}`
+            `http://localhost:8080/approve/line/delete/${this.confirmer1.id}`
+          );
+          await axios.delete(
+            `http://localhost:8080/approve/line/delete/${this.confirmer2.id}`
           );
           await axios.delete(`http://localhost:8080/approve/delete/${this.id}`);
 
