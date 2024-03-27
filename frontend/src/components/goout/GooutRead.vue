@@ -4,25 +4,23 @@
       <tr>
         <th>결재</th>
         <td>
-          <div class="input-group">
+          <div class="input-group" v-if="confirmer1 && confirmer1.status !== 4">
             <label class="input-label">결재자1 : </label>
             {{ confirmer1?.confirmerName }}
           </div>
           <div v-if="goout">
             <div class="input-group">
-              <label class="input-label">상태 : </label>
               {{ getStatusText(confirmer1?.status) }}
             </div>
           </div>
         </td>
         <td>
-          <div class="input-group">
+          <div class="input-group" v-if="confirmer2 && confirmer2.status !== 4">
             <label class="input-label">결재자2 : </label>
             {{ confirmer2?.confirmerName }}
           </div>
           <div v-if="goout">
             <div class="input-group">
-              <label class="input-label">상태 : </label>
               {{ getStatusText(confirmer2?.status) }}
             </div>
           </div>
@@ -93,7 +91,7 @@
     <!-- Show these buttons if the logged-in user is the one who requested the leave -->
     <div class="confirm1-button" v-else-if="goout?.writerId === loggedInUserId">
       <button @click="updateGoout">수정</button>
-      <button @click="deleteGoout">삭제</button>
+      <button @click="deleteGoout">등록취소</button>
     </div>
     <!-- If logged-in user's ID does not match any, do not show any buttons -->
   </div>
@@ -102,14 +100,14 @@
 
 <script>
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 export default {
   data() {
     return {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
-      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
+      backend: "http://localhost:8080", // 백엔드 서버 주소
       confirmer1: null,
       confirmer2: null,
       files: [], // 파일 목록을 저장할 배열
@@ -250,7 +248,7 @@ export default {
     },
     async fetchGooutLine(gooutId) {
       try {
-        const response = await axios.get(`http://192.168.0.51/api/gooutLine/2/${gooutId}`);
+        const response = await axios.get(`http://localhost:8080/gooutLine/2/${gooutId}`);
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
           this.confirmer1 = response.data.result[0];
@@ -264,10 +262,11 @@ export default {
     },
     getStatusText(status) {
       const statusMap = {
-        '0': '대기중',
-        '1': '승인',
-        '2': '승인',
-        '3': '반려',
+        '0': '상태 : 대기중',
+        '1': '상태 : 승인',
+        '2': '상태 : 승인',
+        '3': '상태 : 반려',
+        '4': '등록 취소',
       };
       return statusMap[status] || '알 수 없음';
     },
@@ -292,20 +291,16 @@ export default {
       this.$router.push('/goout/update');
     },
     async deleteGoout() {
-      if (confirm("정말로 이 휴가를 삭제하시겠습니까?")) {
+      if (confirm("휴가 등록을 취소하시겠습니까?")) {
         try {
-          // First, delete the approval line associated with this vacation request
-          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer1.id}`);
-          console.log("결재라인1이 성공적으로 삭제되었습니다.");
-          await axios.delete(`http://192.168.0.51/api/gooutLine/delete/${this.confirmer2.id}`);
-          console.log("결재라인2 성공적으로 삭제되었습니다.");
-          // After the approval line is successfully deleted, delete the vacation request
-          await axios.delete(`http://192.168.0.51/api/goout/delete/${this.id}`);
-          alert("휴가가 성공적으로 삭제되었습니다.");
-          this.$router.push("/goout/list"); // Redirect to the list of vacation requests
+          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {
+          });
+          console.log("휴가 등록을 취소하였습니다.");
+          alert("휴가 등록을 취소하였습니다.");
+          this.$router.push(`/goout/list`)
         } catch (error) {
-          console.error("휴가 또는 결재라인 삭제 중 오류 발생:", error);
-          alert("휴가 또는 결재라인 삭제 중 오류가 발생했습니다.");
+          console.error("휴가 등록 취소 중 오류가 발생했습니다:", error);
+          alert("휴가 등록 취소 중 오류가 발생했습니다.");
         }
       }
     }

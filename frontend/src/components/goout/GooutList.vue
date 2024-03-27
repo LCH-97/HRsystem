@@ -3,9 +3,10 @@
     <div class="button-container">
       <button @click="filterGoouts(null)">전체 보기</button>
       <button @click="filterGoouts(0)">대기중</button>
-      <button @click="filterGoouts(1)">결재자1 승인</button>
+      <button @click="filterGoouts(1)">기안중</button>
       <button @click="filterGoouts(2)">최종 승인</button>
       <button @click="filterGoouts(3)">반려</button>
+      <button @click="filterGoouts(4)">등록 취소</button>080
     </div>
     <div class="gooutList">
       <table>
@@ -106,9 +107,10 @@ export default {
     getStatusText(status) {
       const statusMap = {
         0: '대기중',
-        1: '결재자1 승인',
+        1: '기안중',
         2: '최종 승인',
         3: '반려',
+        4: '등록 취소'
         // 필요한 다른 상태들...
       };
       return statusMap[status] || '알 수 없음';
@@ -118,7 +120,7 @@ export default {
     },
     async fetchGoouts() {
       try {
-        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
+        const response = await axios.get(`http://localhost:8080/goout/check`, {
           params: {
             page: this.currentPage,
             size: this.pageSize,
