@@ -14,6 +14,7 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -48,6 +51,16 @@ public class GooutService {
     private String bucket;
 
     public GooutCreateRes create(GooutCreateReq gooutCreateReq) {
+        Objects.requireNonNull(gooutCreateReq, "gooutCreateReq는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getAgentId(), "대리자 ID는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getEmployeeId(), "직원 ID는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getWriterId(), "작성자 ID는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getGooutTypeId(), "휴가타입 ID는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getFirst(), "시작날짜는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getLast(), "종료날짜는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getConfirmer1Id(), "결재자1은 null일 수 없습니다.");
+        Objects.requireNonNull(gooutCreateReq.getConfirmer2Id(), "결재자2는 null일 수 없습니다.");
+
         if (gooutCreateReq.getAgentId().equals(gooutCreateReq.getEmployeeId())) {
             throw new IllegalArgumentException("대리자의 ID와 신청직원의 ID는 같을 수 없습니다.");
         }
@@ -301,15 +314,28 @@ public class GooutService {
         long expTimeMillis = expiration.getTime() + 1000 * 60 * 10; // 10분 후 만료
         expiration.setTime(expTimeMillis);
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
-                .withMethod(com.amazonaws.HttpMethod.GET)
-                .withExpiration(expiration);
+        try {
+            // 파일 이름을 URL 인코딩합니다.
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
 
-        // 파일 다운로드를 위한 Content-Disposition 설정 추가
-        generatePresignedUrlRequest.addRequestParameter("response-content-disposition", "attachment; filename=\"" + fileName + "\"");
+            // 파일 다운로드를 위한 Content-Disposition 설정
+            String contentDisposition = String.format("attachment; filename*=UTF-8''%s", encodedFileName);
 
-        URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
-        return url.toString();
+            // 응답 헤더를 설정합니다.
+            ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides()
+                    .withContentDisposition(contentDisposition);
+
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
+                    .withMethod(HttpMethod.GET)
+                    .withExpiration(expiration)
+                    .withResponseHeaders(headerOverrides); // 응답 헤더를 포함시킵니다.
+
+            URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+            return url.toString();
+        } catch (Exception e) {
+            // 예외 처리
+            throw new RuntimeException("URL 생성 중 오류 발생", e);
+        }
     }
 
     @Transactional
