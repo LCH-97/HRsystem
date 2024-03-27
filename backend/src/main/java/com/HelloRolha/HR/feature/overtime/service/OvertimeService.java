@@ -45,7 +45,7 @@ public class OvertimeService {
     }
 
     public List<OvertimeDto> list() {
-        List<Overtime> overtimes = overtimeRepository.findAll();
+        List<Overtime> overtimes = overtimeRepository.findList();
         List<OvertimeDto> overtimeDtos = new ArrayList<>();
 
         for (Overtime overtime : overtimes) {
@@ -64,6 +64,7 @@ public class OvertimeService {
         }
         return overtimeDtos;
     }
+
 
     public OvertimeDto read(Integer id) {
         Overtime overtime = overtimeRepository.findById(id).orElseThrow(()->new OvertimeNotFoundException(""));

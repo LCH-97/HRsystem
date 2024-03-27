@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface OvertimeRepository extends JpaRepository<Overtime, Integer> {
+public interface OvertimeRepository extends JpaRepository<Overtime, Integer>, OvertimeRepositoryCustom {
     List<Overtime> findAllByEmployee(Employee employee);
 }
