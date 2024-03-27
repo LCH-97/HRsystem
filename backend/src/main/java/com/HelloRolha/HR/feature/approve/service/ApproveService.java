@@ -87,19 +87,19 @@ public class ApproveService {
 
             if (employee != null) {
                 ApproveList approveList = ApproveList.builder()
-                    .id(approve.getId())
-                    .name(employeeName)
-                    .title(approve.getTitle())
-                    .content(approve.getContent())
-                    .createAt(approve.getCreateAt())
-                    .updateAt(approve.getUpdateAt())
-                    .confirmer1(confirmer1Name) // confirmer1의 이름 설정
-                    .confirmer2(confirmer2Name) // confirmer2의 이름 설정
-                    .status(approve.getApproveLines().get(0).getStatus())
-                    .build();
+                        .id(approve.getId())
+                        .name(employeeName)
+                        .title(approve.getTitle())
+                        .content(approve.getContent())
+                        .createAt(approve.getCreateAt())
+                        .updateAt(approve.getUpdateAt())
+                        .confirmer1(confirmer1Name) // confirmer1의 이름 설정
+                        .confirmer2(confirmer2Name) // confirmer2의 이름 설정
+                        .status(approve.getApproveLines().get(0).getStatus())
+                        .build();
 
-            approveLists.add(approveList);
-        }
+                approveLists.add(approveList);
+            }
         }
         return approveLists;
     }
