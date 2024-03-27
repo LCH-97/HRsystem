@@ -67,7 +67,10 @@ public class EmployeeService {
 
 
         } else {
-            throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            if(employee.getStatus().equals(true))
+                throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            else
+                throw UserAccountException.forInvalidStatus(employee.getStatus());
         }
     }
 

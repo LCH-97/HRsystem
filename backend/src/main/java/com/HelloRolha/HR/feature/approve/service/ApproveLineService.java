@@ -51,13 +51,13 @@ public class ApproveLineService {
 
 
         ApproveLine approveLine =ApproveLine.builder()
-                        .approve(approve)
-                        .confirmer1(confirmer1)
-                        .confirmer2(confirmer2)
-                        .confirmer(employee)
-                        .approveTime(localDateTimeInKorea)
-                        .status(0)
-                        .build();
+                .approve(approve)
+                .confirmer1(confirmer1)
+                .confirmer2(confirmer2)
+                .confirmer(employee)
+                .approveTime(localDateTimeInKorea)
+                .status(0)
+                .build();
 
         return approveLineRepository.save(approveLine);
     }
@@ -233,4 +233,3 @@ public class ApproveLineService {
     }
 
 }
-

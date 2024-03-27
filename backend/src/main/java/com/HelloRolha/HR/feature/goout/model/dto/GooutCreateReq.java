@@ -22,4 +22,3 @@ public class GooutCreateReq {
     private Integer confirmer2Id;
 }
 
-

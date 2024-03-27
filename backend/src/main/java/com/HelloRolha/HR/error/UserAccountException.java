@@ -19,6 +19,9 @@ public class UserAccountException extends BusinessException {
         return new UserAccountException(ErrorCode.DIFFERENT_USER_PASSWORD, String.format("User Password [ %s ] is different.", password));
     }
 
+    public static UserAccountException forInvalidStatus(Boolean status) {
+        return new UserAccountException(ErrorCode.USER_UNCERTIFIED, String.format("User CERTIFIED Status  is false", status));
+    }
     public static UserAccountException forExpiredToken(String token) {
         return new UserAccountException(ErrorCode.EXPIRED_VERIFICATION_TOKEN, String.format("Verification Token [ %s ] is expired.", token));
     }

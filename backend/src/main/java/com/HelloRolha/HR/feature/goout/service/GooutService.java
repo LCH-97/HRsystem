@@ -302,7 +302,7 @@ public class GooutService {
         expiration.setTime(expTimeMillis);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
-                .withMethod(HttpMethod.GET)
+                .withMethod(com.amazonaws.HttpMethod.GET)
                 .withExpiration(expiration);
 
         // 파일 다운로드를 위한 Content-Disposition 설정 추가
@@ -328,5 +328,5 @@ public class GooutService {
 
         return fileDtos;
     }
-
 }
+
