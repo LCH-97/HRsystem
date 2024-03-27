@@ -9,16 +9,17 @@ import com.HelloRolha.HR.feature.goout.model.GooutFile;
 import com.HelloRolha.HR.feature.goout.model.GooutLine;
 import com.HelloRolha.HR.feature.goout.model.GooutType;
 import com.HelloRolha.HR.feature.goout.model.dto.*;
-import com.HelloRolha.HR.feature.goout.repo.GooutFileRepository;
-import com.HelloRolha.HR.feature.goout.repo.GooutLineRepository;
-import com.HelloRolha.HR.feature.goout.repo.GooutRepository;
-import com.HelloRolha.HR.feature.goout.repo.GooutTypeRepository;
+import com.HelloRolha.HR.feature.goout.repo.*;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,13 +33,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class GooutService {
     private final GooutRepository gooutRepository;
     private final GooutFileRepository gooutFileRepository;
     private final GooutTypeRepository gooutTypeRepository;
-    private final GooutLineRepository gooutLineRepository;
     private final EmployeeRepository employeeRepository;
     private final AmazonS3 s3;
     private final GooutLineService gooutLineService;
@@ -80,11 +81,14 @@ public class GooutService {
     }
 
     @Transactional
-    public List<GooutList> list() {
-        List<Goout> goouts = gooutRepository.findAll();
-        List<GooutList> gooutLists = new ArrayList<>();
+    public List<GooutList> list(Integer page, Integer size) {
 
-        for (Goout goout : goouts) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Goout> gooutPage = gooutRepository.findList(pageable);
+
+            List<GooutList> gooutLists = new ArrayList<>();
+
+        for (Goout goout : gooutPage) {
             Employee employee = goout.getEmployee();
             Employee writer = goout.getWriter();
             GooutType gooutType = goout.getGooutType();
@@ -101,20 +105,14 @@ public class GooutService {
                 gooutLists.add(gooutList);
             }
         }
-
         return gooutLists;
     }
 
     @Transactional
     public GooutRead read(Integer id) {
-        Optional<Goout> optionalGoout = gooutRepository.findById(id);
+        Optional<Goout> optionalGoout = gooutRepository.findByIdWithDetails(id);
 
         return optionalGoout.map(goout -> {
-            List<GooutFile> gooutFiles = goout.getGooutFiles();
-            String filenames = gooutFiles.stream()
-                    .map(GooutFile::getFilename)
-                    .collect(Collectors.joining(","));
-
             Employee employee = goout.getEmployee();
             if (employee == null) {
                 throw new RuntimeException("휴가 신청 직원의 정보를 찾을 수 없습니다.");
@@ -262,7 +260,7 @@ public class GooutService {
     @Transactional
     public Integer getPaidVacationCount(LocalDate startDate, LocalDate endDate, EmployeeDto employee) {
         Integer counter = 0;
-        //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
+        //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.a
         //sql 문을 month 에 맞는 데이터만 가져오도록 만들 수 있다.
         List<Goout> gooutList = gooutRepository.findAllByEmployee(Employee.builder().id(employee.getId()).build());
         if(gooutList.isEmpty()){
@@ -281,7 +279,6 @@ public class GooutService {
         }
         return counter;
     }
-
 
     @Transactional
     public String generatePresignedUrl(String fileKey, String fileName) {
@@ -316,5 +313,5 @@ public class GooutService {
 
         return fileDtos;
     }
-
 }
+
