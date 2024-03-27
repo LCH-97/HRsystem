@@ -21,5 +21,3 @@ public class GooutCreateReq {
     private Integer confirmer1Id;
     private Integer confirmer2Id;
 }
-
-
