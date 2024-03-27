@@ -59,7 +59,7 @@ public class BoardService {
     }
 
     public List<BoardListDto> list() {
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findList();
         List<BoardListDto> boardListDtos = new ArrayList<>();
 
         for (Board board : boards) {
@@ -68,7 +68,7 @@ public class BoardService {
                         .id(board.getId())
                         .name(board.getName())
                         .text(board.getText())
-//                      .filename(boardListDtos)
+//                      .filename(boerardListDtos)
                         .title(board.getTitle())
                         .date(board.getDate())
                         .build();
