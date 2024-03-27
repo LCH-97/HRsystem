@@ -8,11 +8,8 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class ApproveLineRead {
-    private Integer confirmer1Id;
-    private String confirmer1Name;
-    private Integer confirmer2Id;
-    private String confirmer2Name;
-    private Integer employeeId;
+    private Integer confirmerId;
+    private String confirmerName;
     private Integer approveId;
     private String comment;
     private LocalDateTime approveTime;

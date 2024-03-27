@@ -14,8 +14,7 @@ public class ApproveFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String filename;
-    private String title;
-    private String content;
+    private String originalFilename;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "approve_id")
     private Approve approve;
 

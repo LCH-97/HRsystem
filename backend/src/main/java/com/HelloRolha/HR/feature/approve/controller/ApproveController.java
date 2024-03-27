@@ -1,8 +1,8 @@
 package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
-import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.dto.Approve.*;
+import com.HelloRolha.HR.feature.approve.service.ApproveLineService;
 import com.HelloRolha.HR.feature.approve.service.ApproveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,23 +17,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApproveController {
     private final ApproveService approveService;
+    private final ApproveLineService approveLineService;
 
     @PostMapping("/create")
     public ResponseEntity create(@RequestPart ApproveCreateReq approveCreateReq,
                                  @RequestPart(name = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
-        Approve approve = approveService.create(approveCreateReq);
+        ApproveCreateRes approveCreateRes = approveService.create(approveCreateReq);
+
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
-                String uploadPath = approveService.uploadFile(uploadFile);
-                approveService.saveFile(approve.getId(), uploadPath);
+                String uploadPath = approveService.uploadFile(uploadFile, approveCreateRes.getApproveId());
             }
         }
-
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("결재 생성")
                 .isSuccess(true)
-                .result(approve.getId())
+                .result(approveCreateRes.getApproveId())
                 .build();
         return ResponseEntity.ok().body(response);
     }

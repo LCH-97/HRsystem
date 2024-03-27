@@ -15,17 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApproveLine extends ApproveLineBaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "confirmer1_id")
-    private Employee confirmer1;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "confirmer2_id")
-    private Employee confirmer2;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "approve_id")

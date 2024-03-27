@@ -1,8 +1,10 @@
 package com.HelloRolha.HR.feature.approve.model.dto.Approve;
 
+import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.ApproveLineList;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
@@ -11,13 +13,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ApproveList {
     private Integer id;
-    private String name;
+    private String employeeName;
     private String title;
     private String content;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
-    private String confirmer1; // confirmer1 필드 추가
-    private String confirmer2; // confirmer2 필드 추가
     private int status;
+    private LocalDateTime createAt;
+    private String confirmer1Name;
+    private String confirmer2Name;
 
 }
