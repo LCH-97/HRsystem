@@ -7,6 +7,10 @@ import lombok.Data;
 @Data
 public class ApproveLineList {
     private Integer id;
-    private String confirmer1Name;
-    private String confirmer2Name;
+    private String confirmerName;
+    private Integer confirmerId;
+    private Integer approveId;
+    private Integer status;
+    private String comment;
+
 }

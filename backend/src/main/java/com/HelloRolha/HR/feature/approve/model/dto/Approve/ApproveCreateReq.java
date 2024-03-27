@@ -10,5 +10,6 @@ public class ApproveCreateReq {
     private String title;
     private String content;
     private Integer employeeId;
-
+    private Integer confirmer1Id;
+    private Integer confirmer2Id;
 }
