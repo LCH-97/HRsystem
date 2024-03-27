@@ -59,7 +59,7 @@ public class BoardService {
     }
 
     public List<BoardListDto> list() {
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findList();
         List<BoardListDto> boardListDtos = new ArrayList<>();
 
         for (Board board : boards) {
