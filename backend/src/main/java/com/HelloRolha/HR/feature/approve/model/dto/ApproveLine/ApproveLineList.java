@@ -12,4 +12,5 @@ public class ApproveLineList {
     private Integer approveId;
     private Integer status;
     private String comment;
+
 }

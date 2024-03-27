@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface ApproveRepository extends JpaRepository<Approve, Integer> {
     List<Approve> findAllByEmployee(Employee employee);
+
 }

@@ -45,7 +45,6 @@ public class ApproveService {
                 .orElseThrow(() -> new IllegalArgumentException("기안자의 ID가 존재하지 않습니다."));
 
         ApproveCreateRes approveCreateRes = ApproveCreateRes.builder().build();
-
         Approve approve = Approve.builder()
                 .content(approveCreateReq.getContent())
                 .title(approveCreateReq.getTitle())

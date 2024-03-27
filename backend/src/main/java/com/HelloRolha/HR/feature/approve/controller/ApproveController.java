@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApproveController {
     private final ApproveService approveService;
-    private final ApproveLineService approveLineService;
 
     @PostMapping("/create")
     public ResponseEntity create(@RequestPart ApproveCreateReq approveCreateReq,

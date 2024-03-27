@@ -10,4 +10,5 @@ public class ApproveLineConfirm {
     private Integer confirmerId;
     private Integer approveId;
     private String comment;
+
 }

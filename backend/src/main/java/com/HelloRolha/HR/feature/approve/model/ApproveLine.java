@@ -19,7 +19,4 @@ public class ApproveLine extends ApproveLineBaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "approve_id")
     private Approve approve;
-
-
-
-}
+    }

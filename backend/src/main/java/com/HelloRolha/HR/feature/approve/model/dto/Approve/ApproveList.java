@@ -20,5 +20,4 @@ public class ApproveList {
     private LocalDateTime createAt;
     private String confirmer1Name;
     private String confirmer2Name;
-
 }

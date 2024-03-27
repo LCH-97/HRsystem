@@ -8,5 +8,4 @@ import lombok.Data;
 public class ApproveLineCreateReq {
     private Integer confirmerId;
     private Integer approveId;
-
 }

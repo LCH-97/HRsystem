@@ -19,5 +19,4 @@ public class ApproveRead {
     private String employeeName;
     private Integer employeeId;
     private LocalDateTime createAt;
-
 }

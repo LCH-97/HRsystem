@@ -43,7 +43,6 @@ public class ApproveLineService {
         return approveLineRepository.save(approveLine);
     }
 
-
     @Transactional
     public List<ApproveLineList> list() {
         List<ApproveLine> approveLines = approveLineRepository.findAll();

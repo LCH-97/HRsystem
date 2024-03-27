@@ -151,7 +151,6 @@ public class ApproveLineController {
                     .build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
     @PatchMapping("/reject1")

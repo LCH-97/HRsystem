@@ -13,5 +13,4 @@ public interface ApproveFileRepository extends JpaRepository<ApproveFile, Intege
     List<ApproveFile> findAllByApproveId(Integer approve_id);
     void deleteByApprove(Approve approve);
 
-
 }

@@ -9,4 +9,5 @@ public class ApproveCreateRes {
     private Integer approveId;
     private Integer approveLine1Id;
     private Integer approveLine2Id;
+
 }

@@ -17,5 +17,4 @@ public class ApproveFile {
     private String originalFilename;
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "approve_id")
     private Approve approve;
-
 }

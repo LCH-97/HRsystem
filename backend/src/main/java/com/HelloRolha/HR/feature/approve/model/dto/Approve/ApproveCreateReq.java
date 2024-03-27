@@ -12,5 +12,4 @@ public class ApproveCreateReq {
     private Integer employeeId;
     private Integer confirmer1Id;
     private Integer confirmer2Id;
-
 }

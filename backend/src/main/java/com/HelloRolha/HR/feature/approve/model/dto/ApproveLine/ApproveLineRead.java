@@ -15,4 +15,5 @@ public class ApproveLineRead {
     private LocalDateTime approveTime;
     private LocalDateTime applyTime;
     private Integer status;
+
 }

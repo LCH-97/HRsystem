@@ -24,7 +24,6 @@ public class Approve extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "employee_id")
     private Employee employee; //작성자
-
     @OneToMany(mappedBy = "approve")
     private List<ApproveFile> approveFiles = new ArrayList<>();
     @OneToMany(mappedBy = "approve")

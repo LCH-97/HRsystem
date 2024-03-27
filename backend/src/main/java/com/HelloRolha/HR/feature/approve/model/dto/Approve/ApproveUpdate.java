@@ -11,6 +11,4 @@ public class ApproveUpdate {
     private Integer id;
     private String content;
     private Integer employeeId;
-
-
 }

@@ -8,11 +8,5 @@ import lombok.Data;
 @Builder
 public class ReturnStatusRes {
 
-
     private Integer status;
-
-
-
-
-
 }

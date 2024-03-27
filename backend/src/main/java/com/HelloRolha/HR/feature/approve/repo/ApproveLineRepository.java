@@ -8,5 +8,4 @@ import java.util.List;
 public interface ApproveLineRepository extends JpaRepository<ApproveLine, Integer> {
     List<ApproveLine> findByApproveId(Integer approveId);
     List<ApproveLine> findByApproveIdAndConfirmerId(Integer approveId, Integer confirmerId);
-
 }
