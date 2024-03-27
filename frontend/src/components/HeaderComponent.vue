@@ -1,4 +1,5 @@
 <template>
+
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-3" href="/main">Start Bootstrap</a>
@@ -11,6 +12,7 @@
         </path>
       </svg><!-- <i class="fas fa-bars"></i> Font Awesome fontawesome.com --></button>
     <!-- Navbar Search-->
+
 
     <a class="navbar-brand ps-3" href="/manager" v-if="isAdmin">인사관리</a>
 

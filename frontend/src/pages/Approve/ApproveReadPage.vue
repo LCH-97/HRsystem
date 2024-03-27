@@ -1,6 +1,6 @@
 <template>
-  <!-- <HeaderComponent />
-    <SideBar /> -->
+  <HeaderComponent />
+  <SideBar />
   <div class="approve-read-all">
     <div class="container">
       <table class="approve">
@@ -12,8 +12,8 @@
               {{ this.approve.confirmer1 }}
             </div>
             <div class="input-group">
-              <label class="input-label">상태 : </label>
-              {{ getStatusText(this.approve.status) }}
+              <label class="input-label"
+                >상태 : {{ getStatusText1(this.approve.status) }}</label>
             </div>
           </td>
           <td>
@@ -22,8 +22,8 @@
               {{ this.approve.confirmer2 }}
             </div>
             <div class="input-group">
-              <label class="input-label">상태 : </label>
-              {{ getStatusText(this.approve.status) }}
+              <label class="input-label"
+                >상태 : {{ getStatusText2(this.approve.status) }}</label>
             </div>
           </td>
         </tr>
@@ -44,43 +44,25 @@
             <th>기안일자</th>
             <td>{{ approve.createAt }}</td>
           </tr>
-          <tr>
+          <tr class="contenttable">
             <th>내용</th>
-            <td>{{ this.approve.content }}</td>
+            <td class="content">{{ this.approve.content }}</td>
           </tr>
         </table>
       </div>
       <div class="approve-button">
-        <div
-          class="confirm1-button"
-          v-if="
-            approveLine?.confirmer1Id === loggedInUserId && approve.status == 0
-          "
-        >
-          <!-- Show these buttons if the logged-in user is confirmer1 -->
+        <div class="confirm1-button" v-if=" approveLine?.confirmer1Id === loggedInUserId && approve.status == 0">
           <button @click="confirm1">결 재</button>
           <button @click="reject1">반 려</button>
         </div>
-        <!-- Show these buttons if the logged-in user is confirmer2 -->
-        <div
-          class="confirm1-button"
-          v-else-if="
-            approveLine?.confirmer2Id === loggedInUserId &&
-            approveLine?.status == 1
-          "
-        >
+        <div class="confirm1-button" v-else-if=" approveLine?.confirmer2Id === loggedInUserId && approveLine?.status == 1">
           <button @click="confirm2">결 재</button>
           <button @click="reject2">반 려</button>
         </div>
-        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-        <div
-          class="confirm1-button"
-          v-else-if="approveLine?.employeeId === loggedInUserId"
-        >
+        <div class="confirm1-button" v-else-if="approveLine?.employeeId === loggedInUserId">
           <button @click="updateApprove">수 정</button>
           <button @click="deleteApprove">삭 제</button>
         </div>
-        <!-- <button @click="createApproveLine">상신</button> -->
       </div>
     </div>
   </div>
@@ -89,10 +71,15 @@
 <script>
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import SideBar from "@/components/SideBar.vue";
 
 export default {
   name: "ApproveReadPage",
-
+  components: {
+    SideBar,
+    HeaderComponent,
+  },
   data() {
     return {
       approve: "",
@@ -111,6 +98,7 @@ export default {
         console.log("Logged In User ID:", this.loggedInUserId); // 사용자 ID 출력
       }
     },
+    
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
         console.log("approveLine:", this.approveLine);
@@ -291,6 +279,24 @@ export default {
       };
       return statusMap[status] || "알 수 없음";
     },
+    getStatusText1(status) {
+      const statusMap = {
+        0: "대기중",
+        1: "승인",
+        2: "승인",
+        3: "반려",
+      };
+      return statusMap[status] || "알 수 없음";
+    },
+    getStatusText2(status) {
+      const statusMap = {
+        0: "대기중",
+        1: "대기중",
+        2: "승인",
+        3: "반려",
+      };
+      return statusMap[status] || "알 수 없음";
+    },
     updateApprove() {
       if (this.approve.status !== 3) {
         alert("반려상태가 아니면 수정을 할 수 없습니다. 없습니다.");
@@ -356,9 +362,6 @@ button:hover {
   width: 800px;
   margin: 0 auto;
 }
-.header {
-  text-align: center;
-}
 .title {
   font-size: 24px;
   font-weight: bold;
@@ -375,42 +378,44 @@ td {
 th {
   text-align: center;
 }
-.input-group {
-  margin-bottom: 10px;
-}
 .input-label {
   display: inline-block;
   width: 100px;
-  text-align: right;
+  text-align: center;
+}
+.contenttable {
+  height: 600px;
+}
+.content {
+  text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+  vertical-align: top; /* 콘텐츠를 셀의 상단으로 정렬 */
 }
 .input-field {
   width: 200px;
 }
-.button {
+button {
+  color: white;
   margin-top: 10px;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: bold;
   border: 1px solid #ddd;
-  background-color: #fff;
+  background-color: #111111;
   cursor: pointer;
+}
+button:hover {
+  background-color: #f75c29;
 }
 .input-group {
   margin-bottom: 10px;
 }
-.input-label {
-  display: inline-block;
-  width: 100px;
-  text-align: right;
-}
-.input-field {
-  width: 200px;
-}
+
 .input-group.approval {
   margin-top: 20px;
 }
 .approve-button {
-  text-align: right; /* 오른쪽 정렬 추가 */
+  text-align: right;
+  margin-top: 50px;
 }
 .approve {
   margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
@@ -418,9 +423,7 @@ th {
 .header {
   margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
   background-color: white;
-}
-.approve-button {
-  margin-top: 50px; /* 결재 버튼 위쪽에 공백 추가 */
+  text-align: center;
 }
 .approve {
   display: flex;
