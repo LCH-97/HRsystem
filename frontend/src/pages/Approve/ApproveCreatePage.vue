@@ -95,11 +95,7 @@ export default {
       const response = await axios.get(`${this.backend}/employee/list`);
       this.employees = response.data;
     },
-    async getApproveCreate() {
-      if (!this.title || !this.content) {
-        alert("제목과 내용을 입력해주세요.");
-        return;
-      }
+    async ApproveCreate() {
       if (!this.confirmer1Id || !this.confirmer2Id) {
         alert("결재자 1과 결재자 2 모두 선택해야 합니다.");
         return;
@@ -108,7 +104,7 @@ export default {
         alert("결재자1과 결재자2는 동일할 수 없습니다.");
         return;
       }
-
+      this.setLoggedInUser();
       let formData = new FormData();
       formData.append(
         "approveCreateReq",
@@ -118,6 +114,8 @@ export default {
               title: this.title,
               content: this.content,
               employeeId: this.loggedInUserId,
+              confirmer1Id: this.confirmer1Id,
+              confirmer2Id: this.confirmer2Id
             }),
           ],
           { type: "application/json" }
@@ -156,42 +154,47 @@ export default {
         alert("결재 생성에 실패했습니다.");
       }
     },
-
-    async createApproveLine(approveId) {
-      if (!approveId) {
-        alert("결재 ID가 제공되지 않았습니다.");
-        return;
-      }
-      this.setLoggedInUser();
-      try {
+    async createApproveLine1(approveId) {
+      try{
         const approveLineReq = {
-          confirmer1Id: this.confirmer1Id,
-          confirmer2Id: this.confirmer2Id,
-          employeeId: this.loggedInUserId,
+          confirmerId: this.confirmer1Id,
           approveId: approveId,
         };
-
-        const response = await axios.post(
-          `${this.backend}/approve/line/create`,
-          approveLineReq,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("ApproveLine 생성 성공:", response);
-        this.$router.push("/approve/list").then(() => {
-          location.reload();
-        });
-      } catch (error) {
-        console.error("결재라인 생성 실패", error);
-        alert("결재라인 생성 실패: " + error.response.data.message);
+        const response = await axios.post(`${this.backend}/approve/line/create`, approveLineReq, {
+      headers: {
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    
+    console.log("ApproveLine1 생성 성공:", response);
+  } catch (error) {
+    console.error("결재라인 생성 실패:", error);
+    alert("결재라인 생성 실패: " + error.response.data.message);
+  }
+},
+async createApproveLine2(approveId) {
+      try{
+        const approveLineReq = {
+          confirmerId: this.confirmer2Id,
+          approveId: approveId,
+        };
+        const response = await axios.post(`${this.backend}/approve/line/create`, approveLineReq, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log("ApproveLine2 생성 성공:", response);
+    alert("휴가 등록 및 결재라인1, 2 생성 완료");
+    this.$router.push("/approve/list");
+  } catch (error) {
+    console.error("결재라인 생성 실패:", error);
+    alert("결재라인 생성 실패: " + error.response.data.message);
+  }
+},
+    
     async handleFormSubmission() {
-      await this.getApproveCreate();
-      await this.createApproveLine(this.id);
+      await this.ApproveCreate();
     },
   },
 };
