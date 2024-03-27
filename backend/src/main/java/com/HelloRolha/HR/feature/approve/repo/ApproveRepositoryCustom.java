@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.approve.repo;
 
 import com.HelloRolha.HR.feature.approve.model.Approve;
+import com.HelloRolha.HR.feature.approve.model.ApproveLine;
 
 
 import java.util.List;
@@ -11,7 +12,6 @@ public interface ApproveRepositoryCustom {
     public List<Approve> findList();
 
     Optional<Approve> findByIdWithDetails(Integer id);
-
 
     org.springframework.data.domain.Page<Approve> findList(org.springframework.data.domain.Pageable pageable);
 }
