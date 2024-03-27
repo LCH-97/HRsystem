@@ -39,7 +39,7 @@ public class SecurityConfig{
             http.csrf().disable()
                     .authorizeHttpRequests()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // CORS 해결하기 위한 OPTION 메서드 허용
-                    //.antMatchers("/manager/**").hasAnyRole( "ADMIN")
+                    .antMatchers("/manager/**").hasAnyRole( "ADMIN")
                     .anyRequest().permitAll()
                     .and()
                     .exceptionHandling()
