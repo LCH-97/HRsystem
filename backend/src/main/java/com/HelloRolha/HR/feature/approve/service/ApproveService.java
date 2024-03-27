@@ -59,7 +59,7 @@ public class ApproveService {
 
     @Transactional
     public List<ApproveList> list() {
-        List<Approve> approves = approveRepository.findAll();
+        List<Approve> approves = approveRepository.findList();
         List<ApproveList> approveLists = new ArrayList<>();
 
         for (Approve approve : approves) {

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
-public interface ApproveRepository extends JpaRepository<Approve, Integer> {
+public interface ApproveRepository extends JpaRepository<Approve, Integer>, ApproveRepositoryCustom {
 }
