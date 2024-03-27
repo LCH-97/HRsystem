@@ -79,7 +79,7 @@
                     </div>
                   </div>
                   <div class="card mb-3">
-                    <div class="card-header">Bar Chart Example</div>
+                    <div class="card-header"><a href="/salary/list">직원 월급</a></div>
                     <div class="card-body">
                       <div class="chartjs-size-monitor">
                         <div class="chartjs-size-monitor-expand">
