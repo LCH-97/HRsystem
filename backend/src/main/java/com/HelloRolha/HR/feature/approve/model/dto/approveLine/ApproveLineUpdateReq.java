@@ -1,4 +1,4 @@
-package com.HelloRolha.HR.feature.approve.model.dto.ApproveLine;
+package com.HelloRolha.HR.feature.approve.model.dto.approveLine;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

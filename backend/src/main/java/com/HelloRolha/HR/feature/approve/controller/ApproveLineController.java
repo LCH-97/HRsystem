@@ -2,7 +2,7 @@ package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.approve.model.ApproveLine;
-import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.*;
+import com.HelloRolha.HR.feature.approve.model.dto.approveLine.*;
 import com.HelloRolha.HR.feature.approve.service.ApproveLineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
