@@ -264,14 +264,14 @@ export default {
         });
 
       console.log("Response:", response.data);
-      this.isLoading = false;
+      
       // this.responseData = response.data;
       this.startTime = response.data.result.startTime;
       this.commuteId = response.data.result.id;
       this.isCommute = true;
       this.isLeave = false;
 
-
+      this.isLoading = false;
     },
     async leave() {
       console.log(" leave click");
@@ -298,10 +298,12 @@ export default {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
         });
-      this.isLoading = false;
+      
       this.endTime = response.data.result.endTime;
       this.sumTime = response.data.result.sumTime;
       this.isLeave = true;
+
+      this.isLoading = false;
     },
     async check() {
       console.log("check START");
@@ -336,6 +338,7 @@ export default {
         this.endTime = response.data.result.endTime;
         this.sumTime = response.data.result.sumTime;
       }
+      this.isLoading = false;
     },
 
     async fetchNoticeData(page) {
@@ -353,6 +356,8 @@ export default {
         });
       this.notices = response.data.result;
       console.log("fetchNoticeData END");
+
+      this.isLoading = false;
     },
   },
   mounted() {
