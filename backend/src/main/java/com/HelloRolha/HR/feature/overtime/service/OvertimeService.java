@@ -45,7 +45,7 @@ public class OvertimeService {
     }
 
     public List<OvertimeDto> list() {
-        List<Overtime> overtimes = overtimeRepository.findAll();
+        List<Overtime> overtimes = overtimeRepository.findList();
         List<OvertimeDto> overtimeDtos = new ArrayList<>();
 
         for (Overtime overtime : overtimes) {
@@ -64,6 +64,7 @@ public class OvertimeService {
         }
         return overtimeDtos;
     }
+
 
     public OvertimeDto read(Integer id) {
         Overtime overtime = overtimeRepository.findById(id).orElseThrow(()->new OvertimeNotFoundException(""));
@@ -104,12 +105,12 @@ public class OvertimeService {
     }
 
 
-    public Long getOverTime(LocalDate startDate, LocalDate endDate, EmployeeDto employee) {
-        List<Overtime> overtimeList = overtimeRepository.findAllByEmployee(Employee.builder().id(employee.getId()).build());
+    public Long getOverTimeOf(Employee employee, LocalDate startDate, LocalDate endDate ) {
+
 
         //Todo 예외 처리 : 결과가 비어있다면
         Long totalMinutes = 0L;
-        for(Overtime overtime:overtimeList){
+        for(Overtime overtime:employee.getOvertimes()){
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate overtimeDate = LocalDate.parse(overtime.getDate(), formatter);

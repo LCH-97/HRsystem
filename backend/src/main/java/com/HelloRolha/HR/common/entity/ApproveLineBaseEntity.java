@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class ApproveLineBaseEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
-    private Employee confirmer;
+    private Employee confirmer; // 결재자
     private String comment;
     private LocalDateTime approveTime;
     private LocalDateTime applyTime;

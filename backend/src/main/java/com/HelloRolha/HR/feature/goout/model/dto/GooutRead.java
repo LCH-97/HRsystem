@@ -1,3 +1,4 @@
+
 package com.HelloRolha.HR.feature.goout.model.dto;
 
 import lombok.Builder;
@@ -13,6 +14,8 @@ public class GooutRead {
     private String agentName;
     private Integer employeeId;
     private String employeeName;
+    private Integer writerId;
+    private String writerName;
     private Integer gooutTypeId;
     private String gooutTypeName;
     private Integer status;

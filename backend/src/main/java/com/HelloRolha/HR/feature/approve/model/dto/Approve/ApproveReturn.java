@@ -6,4 +6,5 @@ import lombok.Data;
 public class ApproveReturn {
     private Integer id;
     private Integer status;
+
 }

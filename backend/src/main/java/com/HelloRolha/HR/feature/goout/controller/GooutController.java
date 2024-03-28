@@ -2,6 +2,7 @@ package com.HelloRolha.HR.feature.goout.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.goout.model.Goout;
+import com.HelloRolha.HR.feature.goout.model.GooutFile;
 import com.HelloRolha.HR.feature.goout.model.dto.*;
 import com.HelloRolha.HR.feature.goout.service.GooutService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/goout")
@@ -23,11 +25,12 @@ public class GooutController {
     @RequestMapping(method = RequestMethod.POST, value = "/create")
     public ResponseEntity create(@RequestPart GooutCreateReq gooutCreateReq,
                                  @RequestPart(name = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
-        Goout goout = gooutService.create(gooutCreateReq);
+        GooutCreateRes gooutCreateRes = gooutService.create(gooutCreateReq);
+
         if (uploadFiles != null) {
             for (MultipartFile uploadFile : uploadFiles) {
-                String uploadPath = gooutService.uploadFile(uploadFile);
-                gooutService.saveFile(goout.getId(), uploadPath);
+                // 파일 업로드 메소드 호출 시 gooutId 전달
+                String uploadPath = gooutService.uploadFile(uploadFile, gooutCreateRes.getGooutId());
             }
         }
 
@@ -35,13 +38,13 @@ public class GooutController {
                 .code(1200)
                 .message("휴가/외출 신청 성공")
                 .isSuccess(true)
-                .result(goout.getId())
+                .result(gooutCreateRes.getGooutId())
                 .build();
         return ResponseEntity.ok().body(response);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/check")
-    public ResponseEntity<BaseRes> list() {
-        List<GooutList> gooutLists = gooutService.list();
+    public ResponseEntity<BaseRes> list(Integer page, Integer size) {
+        List<GooutList> gooutLists = gooutService.list(page, size);
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("휴가/외출 확인 성공")
@@ -115,5 +118,23 @@ public class GooutController {
                 .result("삭제한 id : " + id)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/cancel/{id}")
+    public ResponseEntity<BaseRes> cancel(@PathVariable Integer id) {
+        gooutService.cancel(id);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("휴가/외출 정보 삭제 성공")
+                .isSuccess(true)
+                .result("결재취소한 id : " + id)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/files/{gooutId}")
+    public ResponseEntity<List<GooutFileDto>> listFilesByGooutId(@PathVariable Integer gooutId) {
+        List<GooutFileDto> files = gooutService.listFilesByGooutId(gooutId);
+        return ResponseEntity.ok().body(files);
     }
 }

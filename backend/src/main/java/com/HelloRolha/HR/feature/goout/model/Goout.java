@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Goout extends BaseEntity {
     private Integer status;
-
     private LocalDate first;
     private LocalDate last;
 
@@ -36,6 +35,10 @@ public class Goout extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "agent_id")
     private Employee agent;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "writer_id")
+    private Employee writer;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gooutType_id")

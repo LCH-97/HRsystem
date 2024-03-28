@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class GooutLineConfirm {
-    private Integer confirmer1Id;
-    private Integer confirmer2Id;
+    private Integer id;
+    private Integer confirmerId;
     private Integer gooutId;
     private String comment;
 }

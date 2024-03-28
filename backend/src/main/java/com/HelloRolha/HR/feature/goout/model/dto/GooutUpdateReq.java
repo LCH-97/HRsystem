@@ -14,6 +14,7 @@ public class GooutUpdateReq {
     private LocalDate last;
     private Integer gooutTypeId;
     private Integer employeeId;
+    private Integer writerId;
     private Integer agentId;
 //    private List<MultipartFile> newFiles;  // 추가할 파일들
 //    private List<Integer> deleteFileIds;   // 삭제할 파일의 ID들

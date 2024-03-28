@@ -67,7 +67,10 @@ public class EmployeeService {
 
 
         } else {
-            throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            if(employee.getStatus().equals(true))
+                throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            else
+                throw UserAccountException.forInvalidStatus(employee.getStatus());
         }
     }
 
@@ -85,6 +88,12 @@ public class EmployeeService {
                     .build());
         }
         return employeeDtos;
+    }
+    public List<Employee> getEmployeeListByEntity() {
+
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        return employeeList;
     }
 
     public Boolean authorize(Integer employeeId) {
@@ -124,6 +133,31 @@ public class EmployeeService {
                 .employmentDate(employee.getEmploymentDate())
                 .department(employee.getDepartment().getDepartmentName())
                 .position(employee.getPosition().getPositionName())
+                .build();
+    }
+
+
+    public Object createAdmin(SignUpReq signUpReq) {
+
+        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("USER_ADMIN");
+
+        Employee employee= Employee.builder()
+                .username(signUpReq.getUsername())
+                .password(passwordEncoder.encode(signUpReq.getPassword()))
+                .name(signUpReq.getName())
+                .phoneNum(signUpReq.getPhoneNum())
+                .birth(signUpReq.getBirth())
+                .age(signUpReq.getAge())
+                .address(signUpReq.getAddress())
+                .employmentDate(LocalDate.now())
+                .department(Department.builder().id(signUpReq.getDepartmentId()).build())
+                .position(Position.builder().id(signUpReq.getPositionId()).build())
+                .authority("USER_ADMIN")
+                .build();
+        employeeRepository.save(employee);
+
+        return SignUpRes.builder()
+                .result(true)
                 .build();
     }
 }

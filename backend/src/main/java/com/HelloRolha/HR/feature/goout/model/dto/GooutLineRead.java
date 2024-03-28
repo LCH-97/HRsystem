@@ -8,12 +8,8 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class GooutLineRead {
-    private Integer confirmer1Id;
-    private String confirmer1Name;
-    private Integer confirmer2Id;
-    private String confirmer2Name;
-    private Integer employeeId;
-    private String employeeName;
+    private Integer confirmerId;
+    private String confirmerName;
     private Integer gooutId;
     private String comment;
     private LocalDateTime approveTime;

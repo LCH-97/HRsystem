@@ -3,11 +3,10 @@ package com.HelloRolha.HR.feature.goout.model.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
-@Builder
 @Data
-public class GooutLineCreateReq {
-    private Integer confirmerId;
+@Builder
+public class GooutCreateRes {
     private Integer gooutId;
+    private Integer gooutLine1Id;
+    private Integer gooutLine2Id;
 }
