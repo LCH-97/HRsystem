@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 public interface BoardFileRepository  extends JpaRepository<BoardFile, Integer>, BoardRepositoryCustom {
     List<BoardFile> findAllByBoardId(Integer id);
-    void deleteAllByBoard(Board board);
+    void deleteAllByBoard(Board board); //o
 }

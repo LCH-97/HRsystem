@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+public class Board { //o
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -58,7 +58,7 @@ public class BoardService {
 
     }
 
-    public List<BoardListDto> list() {
+    public List<BoardListDto> list() { //수정
         List<Board> boards = boardRepository.findList();
         List<BoardListDto> boardListDtos = new ArrayList<>();
 

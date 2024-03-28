@@ -20,7 +20,7 @@ public class BoardRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     public BoardRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         super(Board.class);
         this.queryFactory = queryFactory;
-    }
+    } //o
 
     @Override
     public List<Board> findList() {
