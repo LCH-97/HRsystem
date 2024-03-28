@@ -1,7 +1,4 @@
 <template>
-  <HeaderComponent />
-  <SideBar />
-
   <div id="layoutSidenav_content">
     <main>
       <div class="container-fluid px-4">
@@ -57,13 +54,13 @@
               </div>
               <div class="form-group">
                 <label for="inputPasswordConfirm">주소</label>
-                <input type="password" class="form-control" id="inputPasswordConfirm" placeholder="주소를 입력하세요"
+                <input type="text" class="form-control" id="inputPasswordConfirm" placeholder="주소를 입력하세요"
                   v-model="address">
               </div>
               <h2 class="sub-heading">직원 커스텀 필드</h2>
               <div class="form-group">
                 <label for="inputEmail">아이디</label>
-                <input type="email" class="form-control" id="inputEmail" placeholder="이메일 주소를 입력하세요" v-model="username">
+                <input type="email" class="form-control" id="inputEmail" placeholder="아이디를 입력하세요" v-model="username">
               </div>
               <div class="form-group">
                 <label for="inputPassword">비밀번호</label>
@@ -115,26 +112,22 @@
 
 
 <script>
-import SideBar from '../components/SideBar.vue'
-import HeaderComponent from '../components/HeaderComponent.vue'
 import axios from 'axios';
 export default {
   name: 'SignUpPage',
   components: {
-    SideBar,
-    HeaderComponent,
+
   },
   data() {
     return {
       responseData: null,
-      name: '등록 중',
-      birth: '1999-11-11',
-      address: 'test',
-      age: '18',
-      apositionId: '1',
-      departmentId: '1',
-      username: 'test1',
-      password: 'qwer1234',
+      name: null,
+      birth: null,
+      address: null,
+      positionId: "",
+      departmentId: "",
+      username: null,
+      password: null,
 
       popUpStatus: false,
     };
@@ -150,14 +143,19 @@ export default {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = 'http://localhost:8080';
+      const today = new Date();
+      const birthDate = new Date(this.birth);
+      let age = today.getFullYear()
+          - birthDate.getFullYear()
+          + 1;
       console.log(api);
       let formData = new FormData();
       formData.append('name', this.name);
       formData.append('phoneNum', this.phoneNum);
-      formData.append('birth', this.birth);
+      formData.append('birth', ""+this.birth);
       formData.append('address', this.address);
-      formData.append('age', this.age);
-      formData.append('positionId', this.apositionId);
+      formData.append('age', age);
+      formData.append('positionId', this.positionId);
       formData.append('departmentId', this.departmentId);
       formData.append('username', this.username);
       formData.append('password', this.password);
@@ -179,6 +177,10 @@ export default {
         })
         .catch(error => {
           console.error('Error updating data:', error);
+          
+          this.popTitle="회원가입에 실패하였습니다.";
+          this.popText="다시 시도해주세요.";
+          
         });
     }
   },

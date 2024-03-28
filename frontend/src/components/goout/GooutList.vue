@@ -3,15 +3,17 @@
     <div class="button-container">
       <button @click="filterGoouts(null)">전체 보기</button>
       <button @click="filterGoouts(0)">대기중</button>
-      <button @click="filterGoouts(1)">결재자1 승인</button>
+      <button @click="filterGoouts(1)">기안중</button>
       <button @click="filterGoouts(2)">최종 승인</button>
       <button @click="filterGoouts(3)">반려</button>
+      <button @click="filterGoouts(4)">등록 취소</button>
     </div>
     <div class="gooutList">
       <table>
         <thead>
           <tr>
             <th>이름</th>
+            <th>작성자 이름</th>
             <th>휴가 유형</th>
             <th>상태</th>
             <th>시작 날짜</th>
@@ -21,6 +23,7 @@
         <tbody>
           <tr v-for="goout in filteredGoouts" :key="goout.id" @click="goToGooutReadPage(goout.id)" class="gooutItem">
             <td>{{ goout.name }}</td>
+            <td>{{ goout.writerName }}</td>
             <td>{{ goout.gooutTypeName }}</td>
             <td>{{ getStatusText(goout.status) }}</td>
             <td>{{ goout.first }}</td>
@@ -29,6 +32,19 @@
         </tbody>
       </table>
   </div>
+  <div class="pagination">
+    <button @click="prevGroup">이전</button>
+    <button
+      v-for="page in pageGroup"
+      :key="page"
+      :class="{ 'active': page === currentPage }"
+      @click="changePage(page)"
+    >
+      {{ page }}
+    </button>
+    <button @click="nextGroup">이후</button>
+  </div>
+
    <div class="button-container2">
       <button @click="goToGooutCreate">휴가 등록</button>
     </div>
@@ -41,19 +57,60 @@ export default {
   data() {
     return {
       goouts: [],
-      filteredGoouts: [], // 필터링된 휴가 목록
+      filteredGoouts: [],
+      currentPage: 1,
+      pageSize: 10,
+      pagesToShow: 5,
+      pageGroupStart: 1, // 페이지 그룹의 시작 페이지 번호
     }
   },
   created() {
     this.fetchGoouts();
   },
+  computed: {
+    pageGroup() {
+    // 현재 페이지가 포함된 페이지 그룹의 시작 페이지를 계산합니다.
+    let startPage = Math.floor((this.currentPage - 1) / this.pagesToShow) * this.pagesToShow + 1;
+    // 시작 페이지를 기준으로 pagesToShow만큼의 페이지 번호를 생성합니다.
+    // 단, 전체 페이지 수를 초과하지 않도록 주의합니다.
+    let pages = [];
+    for (let i = 0; i < this.pagesToShow; i++) {
+      let page = startPage + i;
+      if (page > this.totalPages) break; // 전체 페이지 수를 초과하지 않도록 합니다.
+      pages.push(page);
+    }
+    return pages;
+  },
+  },
   methods: {
+    changePage(page) {
+      // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
+      this.currentPage = page;
+      this.fetchGoouts();
+    },
+
+    prevGroup() {
+      // 이전 그룹으로 이동 (페이지 번호 배열만 -5)
+      this.pageGroupStart = Math.max(1, this.pageGroupStart - this.pagesToShow);
+      // 현재 페이지도 페이지 그룹의 첫 페이지로 설정
+      this.changePage(this.pageGroupStart);
+    },
+    nextGroup() {
+      // 다음 그룹으로 이동 (페이지 번호 배열만 +5)
+      if (this.pageGroupStart + this.pagesToShow <= 100) {
+        this.pageGroupStart += this.pagesToShow;
+        // 현재 페이지도 페이지 그룹의 첫 페이지로 설정
+        this.changePage(this.pageGroupStart);
+      }
+    },
+
     getStatusText(status) {
       const statusMap = {
         0: '대기중',
-        1: '결재자1 승인',
+        1: '기안중',
         2: '최종 승인',
         3: '반려',
+        4: '등록 취소'
         // 필요한 다른 상태들...
       };
       return statusMap[status] || '알 수 없음';
@@ -61,16 +118,21 @@ export default {
     goToGooutCreate() {
       this.$router.push("/goout/create");
     },
-    fetchGoouts() {
-      // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
-      axios.get('http://localhost:8080/goout/check')
-        .then(response => {
-          this.goouts = response.data.result;
-          this.filteredGoouts = this.goouts; // fetchGoouts 호출 후 초기 필터링 상태로 설정
-        })
-        .catch(error => {
-          console.error("휴가 목록 가져오기 실패:", error);
+    async fetchGoouts() {
+      try {
+        const response = await axios.get(`http://localhost:8080/goout/check`, {
+          params: {
+            page: this.currentPage,
+            size: this.pageSize,
+          },
         });
+        this.goouts = response.data.result;
+        this.filteredGoouts = this.goouts;
+        // Assuming the response includes total pages information
+        this.totalPages = response.data.totalPages;
+      } catch (error) {
+        console.error("Failed to fetch goouts:", error);
+      }
     },
     goToGooutReadPage(id) {
       if (id) {
@@ -90,6 +152,10 @@ export default {
 };
 </script>
 <style scoped>
+.active {
+  font-weight: bold;
+  color: red;
+}
 .button-container {
   text-align: left;
   padding-right: 40px;

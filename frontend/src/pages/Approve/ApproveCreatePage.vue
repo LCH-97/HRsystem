@@ -3,60 +3,46 @@
   <SideBar />
   <main>
     <div class="approve-create-all">
-      <h1 class="mt-4">결재 만들기</h1>
+      <h2 class="mt-4">결재 만들기</h2>
       <br />
       <div class="row">
         <div class="form-group">
-        <label for="title">제목</label>
-          <textarea
-            id="title"
-            class="form-control"
-            rows="1"
-            v-model="title"
-            required
-          ></textarea>
-        <br /><br />
+          <label for="title">제목</label>
+          <textarea id="title" class="form-control" rows="1" v-model="title" required></textarea>
+          <br /><br />
           <label for="content">내용:</label>
-          <textarea
-            id="content"
-            class="form-control"
-            rows="10"
-            v-model="content"
-            required
-          >내용을 입력하세요.</textarea>
+          <textarea id="content" class="form-control" rows="10" v-model="content" required>
+            내용을 입력하세요.</textarea>
         </div>
         <br /><br />
-        <br /><br />
         <div class="confirmer">
-        결재자1
-        <select v-model="confirmer1Id">
-          <option value="">선택하세요</option>
-          <option
-            v-for="employee in employees"
-            :key="employee.id"
-            :value="employee.id">
-            {{ employee.name }}
-          </option></select><br/><br/>
-        결재자2
-        <select v-model="confirmer2Id">
-          <option value="">선택하세요</option>
-          <option
-            v-for="employee in employees"
-            :key="employee.id"
-            :value="employee.id">
-            {{ employee.name }}
-          </option></select>
-        </div><br/>
-          <p>첨부파일</p>
-          <input
-            type="file"
-            @change="handleFilesUpload"
-            class="upload"
-            multiple
-          />
-      
-
-          <button @click="handleFormSubmission">제 출</button>
+          결재자1
+          <select v-model="confirmer1Id">
+            <option value="">선택하세요</option>
+            <option
+              v-for="employee in employees"
+              :key="employee.id"
+              :value="employee.id"
+            >
+              {{ employee.name }}
+            </option></select
+          ><br /><br />
+          결재자2
+          <select v-model="confirmer2Id">
+            <option value="">선택하세요</option>
+            <option
+              v-for="employee in employees"
+              :key="employee.id"
+              :value="employee.id"
+            >
+              {{ employee.name }}
+            </option>
+          </select>
+        </div>
+        <br />
+        <p>첨부파일</p>
+        <input type="file" @change="handleFilesUpload" class="upload" multiple/>
+        <button @click="handleFormSubmission">제 출</button>
       </div>
     </div>
   </main>
@@ -76,7 +62,7 @@ export default {
   data() {
     return {
       backend: "http://localhost:8080",
-      title: '제목을 입력하세요.',
+      title: "제목을 입력하세요.",
       content: "내용을 입력하세요.",
       confirmer1Id: "",
       confirmer2Id: "",
@@ -109,16 +95,16 @@ export default {
       const response = await axios.get(`${this.backend}/employee/list`);
       this.employees = response.data;
     },
-    async getApproveCreate() {
-      if (!this.title || !this.content) {
-        alert("제목과 내용을 입력해주세요.");
+    async ApproveCreate() {
+      if (!this.confirmer1Id || !this.confirmer2Id) {
+        alert("결재자 1과 결재자 2 모두 선택해야 합니다.");
         return;
       }
       if (this.confirmer1Id === this.confirmer2Id) {
         alert("결재자1과 결재자2는 동일할 수 없습니다.");
         return;
       }
-
+      this.setLoggedInUser();
       let formData = new FormData();
       formData.append(
         "approveCreateReq",
@@ -128,6 +114,8 @@ export default {
               title: this.title,
               content: this.content,
               employeeId: this.loggedInUserId,
+              confirmer1Id: this.confirmer1Id,
+              confirmer2Id: this.confirmer2Id
             }),
           ],
           { type: "application/json" }
@@ -166,48 +154,52 @@ export default {
         alert("결재 생성에 실패했습니다.");
       }
     },
-
-    async createApproveLine(approveId) {
-      if (!approveId) {
-        alert("결재 ID가 제공되지 않았습니다.");
-        return;
-      }
-      this.setLoggedInUser();
-      try {
+    async createApproveLine1(approveId) {
+      try{
         const approveLineReq = {
-          confirmer1Id: this.confirmer1Id,
-          confirmer2Id: this.confirmer2Id,
-          employeeId: this.loggedInUserId,
+          confirmerId: this.confirmer1Id,
           approveId: approveId,
         };
-
-        const response = await axios.post(
-          `${this.backend}/approve/line/create`,
-          approveLineReq,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("ApproveLine 생성 성공:", response);
-        this.$router.push("/approve/list").then(() => {
-          location.reload();
-        });
-      } catch (error) {
-        console.error("결재라인 생성 실패", error);
-        alert("결재라인 생성 실패: " + error.response.data.message);
+        const response = await axios.post(`${this.backend}/approve/line/create`, approveLineReq, {
+      headers: {
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    
+    console.log("ApproveLine1 생성 성공:", response);
+  } catch (error) {
+    console.error("결재라인 생성 실패:", error);
+    alert("결재라인 생성 실패: " + error.response.data.message);
+  }
+},
+async createApproveLine2(approveId) {
+      try{
+        const approveLineReq = {
+          confirmerId: this.confirmer2Id,
+          approveId: approveId,
+        };
+        const response = await axios.post(`${this.backend}/approve/line/create`, approveLineReq, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log("ApproveLine2 생성 성공:", response);
+    alert("휴가 등록 및 결재라인1, 2 생성 완료");
+    this.$router.push("/approve/list");
+  } catch (error) {
+    console.error("결재라인 생성 실패:", error);
+    alert("결재라인 생성 실패: " + error.response.data.message);
+  }
+},
+    
     async handleFormSubmission() {
-      await this.getApproveCreate();
-      await this.createApproveLine(this.id);
+      await this.ApproveCreate();
     },
   },
 };
 </script>
 <style scoped>
-
 .approve-create-all {
   margin-left: 320px;
   width: 80%;
@@ -224,21 +216,20 @@ button {
   margin: 15px 0px 15px 10px;
   width: 100px;
 }
-button:hover{
-  background-color: #F75C29;
+button:hover {
+  background-color: #f75c29;
 }
-.form-control{
+.form-control {
   width: 50%;
   resize: none;
-
 }
 
-.confirmer{
+.confirmer {
   margin-top: 50px;
   width: 100px;
   margin-bottom: 10px;
 }
-.upload{
+.upload {
   margin-top: -12px;
 }
 </style>
