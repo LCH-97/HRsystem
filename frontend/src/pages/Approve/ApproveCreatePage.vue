@@ -40,8 +40,13 @@
           </select>
         </div>
         <br />
-        <p>첨부파일</p>
-        <input type="file" @change="handleFilesUpload" class="upload" multiple/>
+        <div class="row">
+          <div class="label">첨부파일</div>
+          <div class="input">
+            <input type="file" multiple @change="handleFilesUpload">
+          </div>
+        </div>
+        <br/>
         <button @click="handleFormSubmission">제 출</button>
       </div>
     </div>
@@ -49,7 +54,7 @@
 </template>
 <script>
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import  jwtDecode  from "jwt-decode";
 import SideBar from "@/components/SideBar.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 
@@ -96,10 +101,10 @@ export default {
       this.employees = response.data;
     },
     async ApproveCreate() {
-      if (!this.confirmer1Id || !this.confirmer2Id) {
-        alert("결재자 1과 결재자 2 모두 선택해야 합니다.");
-        return;
-      }
+      // if (!this.confirmer1Id || !this.confirmer2Id) {
+      //   alert("결재자 1과 결재자 2 모두 선택해야 합니다.");
+      //   return;
+      // }
       if (this.confirmer1Id === this.confirmer2Id) {
         alert("결재자1과 결재자2는 동일할 수 없습니다.");
         return;
