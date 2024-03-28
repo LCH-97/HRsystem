@@ -80,6 +80,7 @@ export default {
           alert("권한 확인 실패");
           
         });
+      console.log(response);
       if (response.data.code == 200) {
         this.isAdmin = true;
       }

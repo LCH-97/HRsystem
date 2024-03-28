@@ -264,7 +264,7 @@ export default {
         });
 
       console.log("Response:", response.data);
-      
+
       // this.responseData = response.data;
       this.startTime = response.data.result.startTime;
       this.commuteId = response.data.result.id;
@@ -298,7 +298,7 @@ export default {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
         });
-      
+      console.log("Resposne:"+response);
       this.endTime = response.data.result.endTime;
       this.sumTime = response.data.result.sumTime;
       this.isLeave = true;
@@ -362,8 +362,15 @@ export default {
   },
   mounted() {
     // 출근한 상태인지 확인해야함.
-    this.check();
-    this.fetchNoticeData(1);
+    try {
+      this.check();
+      this.fetchNoticeData(1);
+    } catch (error) {
+      console.log("init fail:"+error);
+    }finally{
+      this.isLoading = false;
+    }
+
   },
 };
 </script>
