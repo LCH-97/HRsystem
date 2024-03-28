@@ -263,11 +263,11 @@ export default {
           // this.popUpStatus = true;
         });
 
-      console.log("Response:", response.data);
+      console.log("Response:", response);
 
       // this.responseData = response.data;
-      this.startTime = response.data.result.startTime;
-      this.commuteId = response.data.result.id;
+      this.startTime = response.result.startTime;
+      this.commuteId = response.result.id;
       this.isCommute = true;
       this.isLeave = false;
 
@@ -298,9 +298,9 @@ export default {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
         });
-      console.log("Resposne:"+response);
-      this.endTime = response.data.result.endTime;
-      this.sumTime = response.data.result.sumTime;
+      console.log("Resposne:",response);
+      this.endTime = response.result.endTime;
+      this.sumTime = response.result.sumTime;
       this.isLeave = true;
 
       this.isLoading = false;
