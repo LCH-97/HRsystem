@@ -10,7 +10,7 @@
           <div id="container-fluid px-4">
             <!-- <h1 class="mt-4">MAIN PAGE</h1> -->
             <div class="row" style="width: 100%">
-
+              <div class="realzz"></div>
               <div class="col-xl-10">
                 <div class="card mb-6" style="margin-left: 100px;">
                   <div class="card-header">
@@ -122,7 +122,8 @@ export default {
   /* 텍스트 중앙 정렬 */
 }
 
-.all {
-  /* padding-left: 225px; */
+.realzz{
+  padding-bottom: 30px;
 }
+
 </style>

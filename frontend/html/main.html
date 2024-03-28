@@ -479,7 +479,7 @@
                     
                         function fetchNoticeData(page) {
                             // 서버에서 공지사항 데이터 가져오는 Axios 요청
-                            axios.get(`http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`)
+                            axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
                             .then(response => {
                                 const notices = response.data.result;
                                 totalItems = response.data.total;

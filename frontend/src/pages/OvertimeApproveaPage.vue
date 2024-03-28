@@ -59,18 +59,18 @@
     methods: {
       async fetchOvertimeList() {
         try {
-          const response = await axios.get("http://localhost:8080/employee/overtime/list");
+          const response = await axios.get("http://192.168.0.51/api/employee/overtime/list");
           this.overtimeList = response.data.result;
         } catch (error) {
           console.error("Error:", error);
         }
       },
       viewOvertimeDetail(id) {
-        window.location.href = `http://localhost:8080/employee/overtime/read/${id}`;
+        window.location.href = `http://192.168.0.51/api/employee/overtime/read/${id}`;
       },
       async approveOvertime(id) {
         try {
-          await axios.patch(`http://localhost:8080/employee/overtime/approve/${id}`);
+          await axios.patch(`http://192.168.0.51/api/employee/overtime/approve/${id}`);
           this.fetchOvertimeList(); // 목록 다시 불러오기
         } catch (error) {
           console.error("Error:", error);

@@ -2,7 +2,7 @@
 
   <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="/main">Start Bootstrap</a>
+    <a class="navbar-brand ps-3" href="/main">Hello_R_loha</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><svg
         class="svg-inline--fa fa-bars" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bars"
@@ -58,7 +58,7 @@ export default {
     checkIsAdmin() {
       console.log("getAuthorizeList");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);

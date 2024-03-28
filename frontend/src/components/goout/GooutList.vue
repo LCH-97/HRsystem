@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="button-container">
-      <button @click="filterGoouts(null)">전체 보기</button>
-      <button @click="filterGoouts(0)">대기중</button>
-      <button @click="filterGoouts(1)">기안중</button>
-      <button @click="filterGoouts(2)">최종 승인</button>
+      <button @click="filterGoouts(null)">전체</button>
+      <button @click="filterGoouts(0)">기안중</button>
+      <button @click="filterGoouts(1)">진행중</button>
       <button @click="filterGoouts(3)">반려</button>
+      <button @click="filterGoouts(2)">결재 완료</button>
       <button @click="filterGoouts(4)">등록 취소</button>
     </div>
     <div class="gooutList">
@@ -120,7 +120,7 @@ export default {
     },
     async fetchGoouts() {
       try {
-        const response = await axios.get(`http://localhost:8080/goout/check`, {
+        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
           params: {
             page: this.currentPage,
             size: this.pageSize,
@@ -159,37 +159,30 @@ export default {
 .button-container {
   text-align: left;
   padding-right: 40px;
-  background-color: #F7F8FA;
   margin-bottom: 20px;
 }
 .button-container2 {
   text-align: right;
   padding-right: 40px;
-  background-color: #F7F8FA;
   margin-bottom: 20px;
 }
-.button-container button {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 5px 10px;
-  color: white;
-  letter-spacing: 0.2px;
-  border: none;
-  background-color: #F75C29;
-  margin-left: 10px; /* 버튼 간격 조정 */
-}
+.button-container button,
 .button-container2 button {
   font-size: 18px;
   font-weight: 600;
   padding: 5px 10px;
-  color: white;
+  color: white; /* 글씨 색상을 흰색으로 설정 */
   letter-spacing: 0.2px;
   border: none;
-  background-color: #F75C29;
+  border-radius: 10px;
+  background-color: #111111; /* 기본 배경색을 검정색으로 설정 */
   margin-left: 10px; /* 버튼 간격 조정 */
+  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
 }
-.button-container button:hover {
-  color: #555555;
+.button-container button:hover,
+.button-container2 button:hover {
+  background-color: #F75C29; /* 마우스를 올렸을 때 배경색을 주황색으로 변경 */
+  color: white;
 }
 .gooutList ul {
   list-style: none;
@@ -200,9 +193,6 @@ export default {
   margin: 10px 0;
   transition: color 0.3s ease;
 }
-.gooutItem:hover {
-  color: #007BFF; /* 마우스를 올렸을 때 색상 변경 */
-}
 
 .gooutList table {
   width: 100%;
@@ -212,7 +202,10 @@ export default {
   border: 1px solid #ddd;
   padding: 8px;
 }
-.gooutItem:hover {
-  background-color: #f5f5f5;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
 </style>
