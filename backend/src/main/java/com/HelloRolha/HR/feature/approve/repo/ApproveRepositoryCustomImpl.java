@@ -37,7 +37,6 @@ public class ApproveRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         // QueryDSL 을 사용하기 위한 from 메서드 작성
         List<Approve> result = from(approve)
-                .leftJoin(approve.approveFiles, approveFile).fetchJoin()
                 .leftJoin(approve.approveLines, approveLine).fetchJoin()
                 .leftJoin(approve.employee, employee).fetchJoin()
                 // 중복제거를 위한 코드 추가

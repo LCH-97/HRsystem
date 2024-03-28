@@ -1,10 +1,8 @@
-package com.HelloRolha.HR.feature.approve.model.dto.Approve;
+package com.HelloRolha.HR.feature.approve.model.dto.approve;
 
-import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.ApproveLineList;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Data
