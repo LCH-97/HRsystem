@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <table class = "approve">
+    <table class="approve">
       <tr>
         <th>결재</th>
         <td>
@@ -30,16 +30,29 @@
     <div class="header">
       <div v-if="goout">
         <h1 class="title">휴가신청서</h1>
-        <br>
-        <div v-if="files.length > 0">
-          <h2>첨부 파일</h2>
-          <ul>
-            <li v-for="file in files" :key="file.name">
-              <a :href="file.downloadUrl" target="_blank">{{ file.name }}</a>
-            </li>
-          </ul>
-        </div>
+        <br />
         <table class="table">
+          <tr v-if="confirmer1?.status === 3 || confirmer2?.status === 3">
+            <th>반려 사유</th>
+            <td :colspan="confirmer1?.status === 3 ? '2' : ''">
+              {{ confirmer1?.status === 3 ? confirmer1.comment : confirmer2.comment }}
+            </td>
+          </tr>
+          <tr>
+            <th>첨부 파일</th>
+            <td colspan="2">
+              <div v-if="files.length > 0">
+                <ul class="file-list">
+                  <li v-for="file in files" :key="file.name">
+                    <a :href="file.downloadUrl" target="_blank">{{
+                      file.name
+                    }}</a>
+                  </li>
+                </ul>
+              </div>
+              <div v-else>첨부 파일 없음</div>
+            </td>
+          </tr>
           <tr>
             <th>휴가결재 올린사람</th>
             <td>{{ goout.writerName }}</td>
@@ -48,48 +61,60 @@
             <th>휴가가는 직원</th>
             <td>{{ goout.employeeName }}</td>
           </tr>
-          <tr>
+          <tr class="dates">
             <th>대리인</th>
             <td>{{ goout.agentName }}</td>
           </tr>
           <tr>
-            <th>신청사항</th>
+            <th>기한</th>
             <td>
-              <div class="input-group">
-                <label class="input-label">시작 날짜 : </label>
-                {{ goout.first }}
-              </div>
-              <div class="input-group">
-                <label class="input-label">종료 날짜 : </label>
-                {{ goout.last }}
-              </div>
+              <label class="input-label">시작 날짜 : </label>
+              {{ goout.first }}
+              <br />
+
+              <label class="input-label">종료 날짜 : </label>
+              {{ goout.last }}
             </td>
           </tr>
           <tr>
             <th>휴가 사용일 수</th>
             <td>{{ daysUsed }}일</td>
           </tr>
-          <tr class = "vac">
-            <th >휴가 유형</th>
-            <td >{{ goout.gooutTypeName }}</td>
+          <tr class="vac">
+            <th>휴가 유형</th>
+            <td>{{ goout.gooutTypeName }}</td>
           </tr>
         </table>
       </div>
     </div>
   </div>
   <div class="goout-button">
-    <div class="confirm1-button" v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0">
+    <div
+      class="confirm1-button"
+      v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0"
+    >
       <!-- Show these buttons if the logged-in user is confirmer1 -->
       <button @click="confirm1">결재자1 결재</button>
       <button @click="reject1">결재자1 반려</button>
     </div>
     <!-- Show these buttons if the logged-in user is confirmer2 -->
-    <div class="confirm1-button" v-else-if="confirmer2?.confirmerId === loggedInUserId && goout?.status == 1">
+    <div
+      class="confirm1-button"
+      v-else-if="
+        confirmer2?.confirmerId === loggedInUserId && goout?.status == 1
+      "
+    >
       <button @click="confirm2">결재자2 결재</button>
       <button @click="reject2">결재자2 반려</button>
     </div>
     <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-    <div class="confirm1-button" v-else-if="goout?.writerId === loggedInUserId">
+    <div
+      class="confirm1-button"
+      v-else-if="
+        goout?.writerId === loggedInUserId ||
+        goout?.employeeId === loggedInUserId
+      "
+    >
       <button @click="updateGoout">수정</button>
       <button @click="deleteGoout">등록취소</button>
     </div>
@@ -97,10 +122,9 @@
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import axios from "axios";
+import jwtDecode from "jwt-decode";
 export default {
   data() {
     return {
@@ -116,16 +140,17 @@ export default {
   methods: {
     fetchFiles() {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
-      axios.get(`${this.backend}/goout/files/${this.id}`)
-          .then(response => {
-            this.files = response.data; // 파일 목록 업데이트
-          })
-          .catch(error => {
-            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
-          });
+      axios
+        .get(`${this.backend}/goout/files/${this.id}`)
+        .then((response) => {
+          this.files = response.data; // 파일 목록 업데이트
+        })
+        .catch((error) => {
+          console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+        });
     },
     setLoggedInUser() {
-      const token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token); // Use the correct decoding method
         this.loggedInUserId = decoded.ID; // Adjust according to your token structure
@@ -234,7 +259,9 @@ export default {
     },
     async fetchGoout() {
       try {
-        const gooutResponse = await axios.get(`${this.backend}/goout/check/${this.id}`);
+        const gooutResponse = await axios.get(
+          `${this.backend}/goout/check/${this.id}`
+        );
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
           await this.fetchGooutLine(this.id); // 결재라인 정보 조회
@@ -248,7 +275,9 @@ export default {
     },
     async fetchGooutLine(gooutId) {
       try {
-        const response = await axios.get(`http://localhost:8080/gooutLine/2/${gooutId}`);
+        const response = await axios.get(
+          `http://localhost:8080/gooutLine/2/${gooutId}`
+        );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
           this.confirmer1 = response.data.result[0];
@@ -257,18 +286,21 @@ export default {
           console.error("결재라인 정보를 불러오는데 실패했습니다.");
         }
       } catch (error) {
-        console.error("결재라인 정보를 불러오는 중 오류가 발생했습니다.", error);
+        console.error(
+          "결재라인 정보를 불러오는 중 오류가 발생했습니다.",
+          error
+        );
       }
     },
     getStatusText(status) {
       const statusMap = {
-        '0': '상태 : 대기중',
-        '1': '상태 : 승인',
-        '2': '상태 : 승인',
-        '3': '상태 : 반려',
-        '4': '등록 취소',
+        0: "상태 : 대기중",
+        1: "상태 : 승인",
+        2: "상태 : 승인",
+        3: "상태 : 반려",
+        4: "등록 취소",
       };
-      return statusMap[status] || '알 수 없음';
+      return statusMap[status] || "알 수 없음";
     },
     updateGoout() {
       if (this.goout.status !== 3) {
@@ -276,34 +308,39 @@ export default {
         return;
       }
       const gooutId = this.$route.params.id;
-      localStorage.setItem('updateGooutInfo', JSON.stringify({
-        gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
-        employeeId: this.goout.employeeId,
-        agentId: this.goout.agentId,
-        first: this.goout.first,
-        last: this.goout.last,
-        id: gooutId
-      }));
-      localStorage.setItem('updateGooutLineInfo', JSON.stringify({
-        confirmer1Id: this.confirmer1?.confirmerId,
-        confirmer2Id: this.confirmer2?.confirmerId,
-      }));
-      this.$router.push('/goout/update');
+      localStorage.setItem(
+        "updateGooutInfo",
+        JSON.stringify({
+          gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+          employeeId: this.goout.employeeId,
+          agentId: this.goout.agentId,
+          first: this.goout.first,
+          last: this.goout.last,
+          id: gooutId,
+        })
+      );
+      localStorage.setItem(
+        "updateGooutLineInfo",
+        JSON.stringify({
+          confirmer1Id: this.confirmer1?.confirmerId,
+          confirmer2Id: this.confirmer2?.confirmerId,
+        })
+      );
+      this.$router.push("/goout/update");
     },
     async deleteGoout() {
       if (confirm("휴가 등록을 취소하시겠습니까?")) {
         try {
-          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {
-          });
+          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {});
           console.log("휴가 등록을 취소하였습니다.");
           alert("휴가 등록을 취소하였습니다.");
-          this.$router.push(`/goout/list`)
+          this.$router.push(`/goout/list`);
         } catch (error) {
           console.error("휴가 등록 취소 중 오류가 발생했습니다:", error);
           alert("휴가 등록 취소 중 오류가 발생했습니다.");
         }
       }
-    }
+    },
   },
   created() {
     this.fetchGoout();
@@ -323,8 +360,8 @@ export default {
         return days + 1; // 포함되는 첫날을 계산에 추가
       }
       return 0; // 또는 적절한 기본값
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -351,9 +388,6 @@ td {
 }
 th {
   text-align: center;
-}
-.input-group {
-  margin-bottom: 10px;
 }
 .input-label {
   display: inline-block;
@@ -389,15 +423,8 @@ th {
 .goout-button {
   text-align: right; /* 오른쪽 정렬 추가 */
 }
-.approve {
-  margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
-}
-.header {
-  margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
-  background-color: white;
-}
 .goout-button {
-  margin-top: 50px; /* 결재 버튼 위쪽에 공백 추가 */
+  margin-top: 20px; /* 결재 버튼 위쪽에 공백 추가 */
 }
 .approve {
   display: flex;
@@ -405,11 +432,7 @@ th {
 }
 .approve th,
 .approve td {
-  padding: 8px;
   text-align: right; /* 텍스트를 오른쪽 정렬합니다. */
-}
-.approve .input-group {
-  margin-bottom: 10px;
 }
 .approve .input-label {
   width: auto; /* 결재자 라벨의 너비를 자동으로 설정합니다. */
@@ -417,10 +440,14 @@ th {
 .approve .input-field {
   width: 200px;
 }
-.approve .table td:nth-last-child(2) {
-  line-height: 2; /* 휴가 유형 칸의 높이를 두 배로 조절 */
+.file-list {
+  list-style-type: none; /* Remove bullets from file list */
+  padding-left: 0; /* Remove indentation */
+  margin-bottom: 0; /* Reduce margin for file list */
 }
+.dates,
 .vac {
-  height: 500px;
+  padding-top: 5px; /* Reduced padding for specific rows */
+  padding-bottom: 5px; /* Reduced padding for specific rows */
 }
 </style>
