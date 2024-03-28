@@ -137,4 +137,24 @@ public class GooutController {
         List<GooutFileDto> files = gooutService.listFilesByGooutId(gooutId);
         return ResponseEntity.ok().body(files);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/remainingVacationDays")
+    public ResponseEntity<BaseRes> calculateRemainingVacationDays(@RequestParam Integer employeeId,
+                                                                  @RequestParam Integer gooutTypeId) {
+        try {
+            int remainingDays = gooutService.calculateRemainingVacationDays(employeeId, gooutTypeId);
+            return ResponseEntity.ok(BaseRes.builder()
+                    .code(1200)
+                    .message("남은 휴가 일수 조회 성공")
+                    .isSuccess(true)
+                    .result(remainingDays)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(BaseRes.builder()
+                    .code(1400)
+                    .message("남은 휴가 일수 조회 실패: " + e.getMessage())
+                    .isSuccess(false)
+                    .build());
+        }
+    }
 }

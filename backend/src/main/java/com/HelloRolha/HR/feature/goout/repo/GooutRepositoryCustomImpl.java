@@ -6,22 +6,19 @@ import com.HelloRolha.HR.feature.goout.model.QGoout;
 import com.HelloRolha.HR.feature.goout.model.QGooutFile;
 import com.HelloRolha.HR.feature.goout.model.QGooutType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class GooutRepositoryCustumImpl extends QuerydslRepositorySupport implements GooutRepositoryCustum{
+public class GooutRepositoryCustomImpl extends QuerydslRepositorySupport implements GooutRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    public GooutRepositoryCustumImpl(JPAQueryFactory queryFactory) {
+    public GooutRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         super(Goout.class);
         this.queryFactory = queryFactory;
     }
