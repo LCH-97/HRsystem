@@ -13,7 +13,8 @@
             </div>
             <div class="input-group">
               <label class="input-label"
-                >상태 : {{ getStatusText(confirmer1?.status) }}</label>
+                >상태 : {{ getStatusText(confirmer1?.status) }}</label
+              >
             </div>
           </td>
           <td>
@@ -23,7 +24,8 @@
             </div>
             <div class="input-group">
               <label class="input-label"
-              >상태 : {{ getStatusText(confirmer2?.status) }}</label>
+                >상태 : {{ getStatusText(confirmer2?.status) }}</label
+              >
             </div>
           </td>
         </tr>
@@ -32,6 +34,12 @@
         <h1 class="title">{{ this.approve.title }}</h1>
         <br />
         <table class="table">
+          <tr v-if="files.length > 0">
+            <th>첨부 파일</th>
+            <td v-for="file in files" :key = "file.name">
+            <a :href="file.downloadUrl" target = "_blank">{{ file.name }}</a>
+            </td>
+          </tr>
           <tr>
             <th>기안자</th>
             <td>{{ approve.employeeName }}</td>
@@ -40,28 +48,51 @@
             <th>상태</th>
             <td>{{ getStatusText1(this.approve.status) }}</td>
           </tr>
+          <tr v-if="confirmer1.status === 3">
+            <th>결재자1 반려 사유</th>
+            <td>{{ confirmer1.comment }}</td>
+          </tr>
+          <tr v-if="confirmer2.status === 3">
+            <th>결재자2 반려 사유</th>
+            <td>{{ confirmer2.comment }}</td>
+          </tr>
           <tr>
             <th>기안일자</th>
             <td>{{ approve.createAt }}</td>
           </tr>
-          <tr class="contenttable">
+          <tr>
             <th>내용</th>
-            <td class="content">{{ this.approve.content }}</td>
+            <td>
+            <div class="contable">{{ this.approve.content }}</div>
+            </td>
           </tr>
         </table>
       </div>
       <div class="approve-button">
-        <div class="confirm1-button" v-if=" confirmer1?.confirmerId === loggedInUserId && approve.status == 0">
+        <div
+          class="confirm1-button"
+          v-if="
+            confirmer1?.confirmerId === loggedInUserId && approve.status == 0
+          "
+        >
           <button @click="confirm1">결 재</button>
           <button @click="reject1">반 려</button>
         </div>
-        <div class="confirm1-button" v-else-if=" confirmer2?.confirmerId === loggedInUserId && approve?.status == 1">
+        <div
+          class="confirm1-button"
+          v-else-if="
+            confirmer2?.confirmerId === loggedInUserId && approve?.status == 1
+          "
+        >
           <button @click="confirm2">결 재</button>
           <button @click="reject2">반 려</button>
         </div>
-        <div class="confirm1-button" v-else-if="approve?.employeeId === loggedInUserId">
+        <div
+          class="confirm1-button"
+          v-else-if="approve?.employeeId === loggedInUserId && approve?.status != 4"
+        >
           <button @click="updateApprove">수 정</button>
-          <button @click="deleteApprove">삭 제</button>
+          <button @click="deleteApprove">회 수</button>
         </div>
       </div>
     </div>
@@ -70,7 +101,7 @@
 
 <script>
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import SideBar from "@/components/SideBar.vue";
 
@@ -88,10 +119,21 @@ export default {
 
       confirmer1: "",
       confirmer2: "",
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
+      files: [],
     };
   },
   methods: {
+    fetchFiles() {
+      // 특정 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
+      axios.get(`${this.backend}/approve/files/${this.id}`)
+          .then(response => {
+            this.files = response.data; // 파일 목록 업데이트
+          })
+          .catch(error => {
+            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+          });
+    },
     setLoggedInUser() {
       const token = sessionStorage.getItem("token");
       if (token) {
@@ -101,7 +143,7 @@ export default {
         console.log("Logged In User ID:", this.loggedInUserId); // 사용자 ID 출력
       }
     },
-    
+
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
         try {
@@ -113,7 +155,8 @@ export default {
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
           await this.returnApproveStatus(1);
-          this.$router.push(`/approve/read/` + this.$route.params.id)
+          this.$router
+            .push(`/approve/read/` + this.$route.params.id)
             .then(() => {
               this.$router.go(0);
             });
@@ -212,13 +255,13 @@ export default {
     async fetchApprove() {
       try {
         const approveResponse = await axios.get(
-          `http://localhost:8080/approve/read/${this.id}`
+          `http://192.168.0.51/api/approve/read/${this.id}`
         );
 
         if (approveResponse.data.isSuccess) {
           this.approve = approveResponse.data.result;
           await this.fetchApproveLine(this.id); // 결재라인 정보 조회
-          console.log(approveResponse);
+          this.fetchFiles();
         } else {
           alert("결재 정보를 불러오는데 실패했습니다.");
         }
@@ -229,9 +272,9 @@ export default {
     async fetchApproveLine(approveId) {
       try {
         const response = await axios.get(
-          `http://localhost:8080/approve/line/2/${approveId}`
+          `http://192.168.0.51/api/approve/line/2/${approveId}`
         );
-        if (response.data.isSuccess && response.data.result.length >=2) {
+        if (response.data.isSuccess && response.data.result.length >= 2) {
           this.confirmer1 = response.data.result[0];
           this.confirmer2 = response.data.result[1];
         } else {
@@ -251,6 +294,7 @@ export default {
         1: "승인",
         2: "승인",
         3: "반려",
+        4: "회수",
       };
       return statusMap[status] || "알 수 없음";
     },
@@ -260,6 +304,8 @@ export default {
         1: "결재자1 승인",
         2: "최종 승인",
         3: "반려",
+        4: "회수",
+
       };
       return statusMap[status] || "알 수 없음";
     },
@@ -272,27 +318,25 @@ export default {
       localStorage.setItem(
         "updateApproveInfo",
         JSON.stringify({
-        id: approveId,
-        title: this.approve.title,
-        content: this.approve.content
-      }));
-      localStorage.setItem('updateAPproveLineInfo', JSON.stringify({
-        confirmer1Id: this.confirmer1?.confirmerId,
-        confirmer2Id: this.confirmer2?.confirmerId,
-      }));
+          id: approveId,
+          title: this.approve.title,
+          content: this.approve.content,
+        })
+      );
+      localStorage.setItem(
+        "updateAPproveLineInfo",
+        JSON.stringify({
+          confirmer1Id: this.confirmer1?.confirmerId,
+          confirmer2Id: this.confirmer2?.confirmerId,
+        })
+      );
       this.$router.push("/approve/update");
     },
 
     async deleteApprove() {
       if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
         try {
-          await axios.delete(
-            `http://localhost:8080/approve/line/delete/${this.confirmer1.id}`
-          );
-          await axios.delete(
-            `http://localhost:8080/approve/line/delete/${this.confirmer2.id}`
-          );
-          await axios.delete(`http://localhost:8080/approve/delete/${this.id}`);
+          await axios.delete(`http://192.168.0.51/api/approve/cancel/${this.id}`);
 
           alert("결재가 성공적으로 삭제되었습니다.");
           this.$router.push("/approve/list");
@@ -306,6 +350,8 @@ export default {
 
   created() {
     this.fetchApprove();
+    this.fetchFiles();
+
   },
   mounted() {
     this.setLoggedInUser();
@@ -319,24 +365,11 @@ export default {
   margin-left: 320px;
   width: 80%;
 }
-/* button {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 5px 10px;
-  color: white;
-  letter-spacing: 0.2px;
-  border: none;
-  border-radius: 10px;
-  background-color: #111111;
-  margin: 15px 0px 15px 10px;
-  width: 100px;
-}
-button:hover {
-  background-color: #f75c29; */
-/* } */
 .container {
   width: 800px;
-  margin: 0 auto;
+  margin-top: 60px;
+  display: 100%;
+
 }
 .title {
   font-size: 24px;
@@ -350,6 +383,7 @@ th,
 td {
   border: 1px solid #ddd;
   padding: 8px;
+  word-wrap: break-word;
 }
 th {
   text-align: center;
@@ -359,12 +393,16 @@ th {
   width: 100px;
   text-align: center;
 }
-.contenttable {
-  height: 600px;
-}
-.content {
+/* .contenttable {
+  min-height: 400px;
+
+} */
+.contable {
   text-align: left; /* 텍스트를 왼쪽으로 정렬 */
   vertical-align: top; /* 콘텐츠를 셀의 상단으로 정렬 */
+  min-height: 400px;
+  width: 665px
+  
 }
 .input-field {
   width: 200px;
@@ -378,6 +416,7 @@ button {
   border: 1px solid #ddd;
   background-color: #111111;
   cursor: pointer;
+  border-radius: 10px;
 }
 button:hover {
   background-color: #f75c29;
@@ -418,9 +457,6 @@ button:hover {
 }
 .approve .input-field {
   width: 200px;
-}
-.approve .table td:nth-last-child(2) {
-  line-height: 2; /* 휴가 유형 칸의 높이를 두 배로 조절 */
 }
 .vac {
   height: 500px;
