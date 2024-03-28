@@ -151,19 +151,19 @@
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
 
                           <div class="main-button-container" v-show="!isCommute">
-                            <button id="commuteButton" @click="commute">
+                            <button id="commuteButton" v-show="!isLoading" @click="commute">
                               출근
                             </button>
                           </div>
 
                           <div class="main-button-container" v-show="isCommute && !isLeave">
-                            <button id="leaveButton" @click="leave">
+                            <button id="leaveButton" v-show="!isLoading" @click="leave">
                               퇴근 {{ this.commuteId }}
                             </button>
                           </div>
 
                           <div class="main-button-container" v-show="isCommute && isLeave">
-                            <button id="leaveButton">빨리 나가라</button>
+                            <button id="leaveButton">안전하게 퇴근하세요</button>
                           </div>
 
                           <div id="startTime" class="time">근무 시작</div>
@@ -187,13 +187,13 @@
       </div>
     </div>
   </div>
-  <PopUp v-if="isLoading" />
+  <LoadingPage v-if="isLoading" />
 </template>
 
 <script>
 import SideBar from "../components/SideBar.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
-import PopUp from "@/components/PopUp.vue";
+import LoadingPage from "@/components/LoadingPage.vue";
 
 import axios from "axios";
 // 달력
@@ -207,7 +207,7 @@ export default {
     SideBar,
     HeaderComponent,
     FullCalendar,
-    PopUp,
+    LoadingPage,
   },
   data() {
     return {
@@ -303,60 +303,56 @@ export default {
       this.sumTime = response.data.result.sumTime;
       this.isLeave = true;
     },
-    check() {
-      console.log("check");
-      // const api = process.env.VUE_APP_BACKEND_URL;
+    async check() {
+      console.log("check START");
       const api = "http://192.168.0.51/api";
       console.log(api);
-      // let formData = new FormData();
-      // formData.append('username', this.username);
-      // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      axios
+      let response = await axios
         .get(api + "/employee/commute/check", {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
           },
         })
-        .then((response) => {
-          console.log("Chcek Response:", response.data);
+        .then(() => {
+          console.log("Chcek Loaing...");
           // this.responseData = response.data;
-          this.isCommute = response.data.result.isCommute;
-          this.isLeave = response.data.result.isLeave;
-          if (this.isCommute) {
-            this.commuteId = response.data.result.id;
-            this.startTime = response.data.result.startTime;
-          }
-          if (this.isLeave) {
-            this.endTime = response.data.result.endTime;
-            this.sumTime = response.data.result.sumTime;
-          }
+          this.isLoading = true;
 
           //페이지 구성에 필요한 걸 다 가져와야한다.
         })
         .catch((error) => {
-          console.error("Error updating data:", error);
+          console.error("Error check data:", error);
+          alert("출근 정보 가져오기 실패");
         });
+      this.isCommute = response.data.result.isCommute;
+      this.isLeave = response.data.result.isLeave;
+      if (this.isCommute) {
+        this.commuteId = response.data.result.id;
+        this.startTime = response.data.result.startTime;
+      }
+      if (this.isLeave) {
+        this.endTime = response.data.result.endTime;
+        this.sumTime = response.data.result.sumTime;
+      }
     },
 
-    fetchNoticeData(page) {
-      console.log("qweqwe");
+    async fetchNoticeData(page) {
+      console.log("fetchNoticeData START");
       const itemsPerPage = 6;
-      axios
-        .get(
-          `http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`
-        )
-        .then((response) => {
-          this.notices = response.data.result;
-
-          console.log(response.data.result);
+      let response = await axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .then(() => {
+          console.log("Loading fetchNoticeData");
+          this.isLoading = true;
           //   totalItems = response.data.total;
         })
         .catch((error) => {
           console.error("Error fetching notice data:", error);
+          alert("공지사항 불러오기 실패");
         });
-      console.log("qweqwe");
+      this.notices = response.data.result;
+      console.log("fetchNoticeData END");
     },
   },
   mounted() {
