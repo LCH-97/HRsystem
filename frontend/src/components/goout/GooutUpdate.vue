@@ -59,7 +59,7 @@ import { jwtDecode } from 'jwt-decode';
 export default {
   data() {
     return {
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       updateInfo: {
         gooutTypeName: "",
         agentName: "",
@@ -181,8 +181,7 @@ export default {
           employeeId: Number(this.updateInfo.employeeId),
           agentId: Number(this.updateInfo.agentId),
           writerId:  Number(this.loggedInUserId),
-          confirmer1Id: Number(this.updateInfo2.confirmer1Id),
-          confirmer2Id: Number(this.updateInfo2.confirmer2Id),
+
         })], {type : 'application/json'}));
 
           // 여러 파일을 formData에 추가
@@ -193,8 +192,15 @@ export default {
         try {
         const response = await axios.post(`${this.backend}/goout/create`, formData);
         console.log(response);
+
+        const gooutId = response.data.result;
+        console.log('Created goout ID:', gooutId);
+        await this.reCreateGooutLine1(gooutId);
+        await this.reCreateGooutLine2(gooutId);
+
         alert("휴가가 재등록되었습니다.");
         this.$router.push(`/goout/list`);
+
             } catch (error) {
             console.error("휴가 등록 실패:", error);
             if (error.response) {
@@ -204,6 +210,50 @@ export default {
             }
           }
         },
+
+
+        async reCreateGooutLine1(gooutId) {
+    try {
+      const gooutLineReq = {
+        confirmerId: Number(this.updateInfo2.confirmer1Id),
+        gooutId: gooutId, 
+      };
+      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log("GooutLine1 생성 성공:", response);
+    } catch (error) {
+      console.error("결재라인 생성 실패:", error);
+      alert("결재라인1 생성 실패: " + error.response.data.message);
+    }
+  },
+
+  async reCreateGooutLine2(gooutId) {
+    try {
+      const gooutLineReq = {
+        confirmerId: Number(this.updateInfo2.confirmer2Id),
+        gooutId: gooutId, 
+      };
+      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log("GooutLine2 생성 성공:", response);
+      alert("휴가 등록 및 결재라인1, 2 생성 완료");
+      this.$router.push("/goout/list");
+    } catch (error) {
+      console.error("결재라인 생성 실패:", error);
+      alert("결재라인 생성 실패: " + error.response.data.message);
+    }
+      },
+
+    
+
   },
 };
 </script>
@@ -278,4 +328,7 @@ export default {
   .button-container button:hover {
     background-color: #ffd700;
   }
+
   </style>
+
+

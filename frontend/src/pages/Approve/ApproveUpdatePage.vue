@@ -1,4 +1,6 @@
 <template>
+  <!-- <HeaderComponent />
+  <SideBar /> -->
   <div>
     <div class="approveUpdateBanner">
       <div class="approveUpdateBannerTxt">
@@ -47,8 +49,15 @@
 
 <script>
 import axios from "axios";
+// import HeaderComponent from "@/components/HeaderComponent.vue";
+// import SideBar from "@/components/SideBar.vue";
 
 export default {
+  name: "ApproveUpdatePage",
+  // components: {
+  //   SideBar,
+  //   HeaderComponent,
+  // },
   data() {
     return {
       backend: "http://localhost:8080",
