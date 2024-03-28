@@ -19,6 +19,6 @@ public class BoardFile {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Board_id")
-    private Board board; //o
+    private Board board;
 
 }

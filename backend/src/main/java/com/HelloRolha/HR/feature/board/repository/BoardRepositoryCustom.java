@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface BoardRepositoryCustom {
 
-    public List<Board> findList(); //0
+    public List<Board> findList();
 
     Optional<Board> findByIdWithDetails(Integer id);
 

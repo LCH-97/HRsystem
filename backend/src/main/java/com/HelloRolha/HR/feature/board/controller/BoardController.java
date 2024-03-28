@@ -28,7 +28,7 @@ public class BoardController {
 
     @PostMapping("/create")
     public ResponseEntity create(BoardDto boardDto,
-                                  MultipartFile[] uploadFiles) { //o
+                                  MultipartFile[] uploadFiles) {
         Board board = boardService.create(boardDto);
 
         for (MultipartFile uploadFile : uploadFiles) {
