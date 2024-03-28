@@ -187,7 +187,7 @@
       </div>
     </div>
   </div>
-  <PopUp v-if="isLoading"/>
+  <PopUp v-if="isLoading" />
 </template>
 
 <script>
@@ -244,11 +244,12 @@ export default {
           Authorization: "Bearer " + token,
         },
       }).then(() => {
-          console.log("대기 중");
-          this.isLoading = true;
-        })
+        console.log("대기 중");
+        this.isLoading = true;
+      })
         .catch(error => {
           console.error('Error post commute data:', error);
+          alert("출근 실패");
           // if (error.response.data.code === "USER-004") {
           //   this.popTitle = "로그인에 실패하였습니다.";
           //   this.popText = "다시 시도해주세요.";
@@ -272,7 +273,7 @@ export default {
 
 
     },
-    leave() {
+    async leave() {
       console.log(" leave click");
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = "http://localhost:8080";
@@ -281,23 +282,26 @@ export default {
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      axios
-        .patch(api + "/employee/leave/" + this.commuteId, null, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((response) => {
-          console.log("Response:", response.data);
+      let response = await axios.patch(api + "/employee/leave/" + this.commuteId, null, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then(() => {
+          console.log("대기 중");
+          this.isLoading = true;
           // this.responseData = response.data;
-          this.endTime = response.data.result.endTime;
-          this.sumTime = response.data.result.sumTime;
-          this.isLeave = true;
+
         })
         .catch((error) => {
           console.error("Error updating data:", error);
+          alert("퇴근 실패");
         });
+      this.isLoading = false;
+      this.endTime = response.data.result.endTime;
+      this.sumTime = response.data.result.sumTime;
+      this.isLeave = true;
     },
     check() {
       console.log("check");
