@@ -4,6 +4,7 @@ import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpReq;
 import com.HelloRolha.HR.feature.employee.service.EmployeeService;
 import com.HelloRolha.HR.feature.manager.service.ManagerService;
+import com.HelloRolha.HR.feature.salary.model.dto.GetDatesOfSalaryRes;
 import com.HelloRolha.HR.feature.salary.service.SalaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -131,7 +132,22 @@ public class ManagerController {
 
         return ResponseEntity.ok().body(res);
     }
+    @RequestMapping(method = RequestMethod.GET, value = "/salary/months")
+    public ResponseEntity<BaseRes> getDatesOfSalary() {
+        GetDatesOfSalaryRes getDatesOfSalaryRes = GetDatesOfSalaryRes.builder()
+                .lastDate(salaryService.getLastDateOfSalary())
+                .firstDate(salaryService.getFirstDateOfSalary()).build();
 
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("getDatesOfSalary Request is Success")
+                .result(getDatesOfSalaryRes)
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/attend")
 //    public ResponseEntity<BaseRes> listCommute() {
