@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 public class ApproveLineUpdateReq {
-    private Integer confirmer1Id;
-    private Integer confirmer2Id;
-    private Integer approveId;
+    private Integer confirmerId;
+    private Integer Id;
+
 }

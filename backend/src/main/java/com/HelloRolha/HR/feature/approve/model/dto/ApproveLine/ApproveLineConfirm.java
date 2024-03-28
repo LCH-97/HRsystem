@@ -6,8 +6,9 @@ import lombok.Data;
 @Builder
 @Data
 public class ApproveLineConfirm {
-    private Integer confirmer1Id;
-    private Integer confirmer2Id;
+    private Integer id;
+    private Integer confirmerId;
     private Integer approveId;
     private String comment;
+
 }

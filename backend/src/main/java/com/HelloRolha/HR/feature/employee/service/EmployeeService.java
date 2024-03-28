@@ -67,7 +67,10 @@ public class EmployeeService {
 
 
         } else {
-            throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            if(employee.getStatus().equals(true))
+                throw UserAccountException.forInvalidPassword(loginReq.getPassword());
+            else
+                throw UserAccountException.forInvalidStatus(employee.getStatus());
         }
     }
 
@@ -85,6 +88,12 @@ public class EmployeeService {
                     .build());
         }
         return employeeDtos;
+    }
+    public List<Employee> getEmployeeListByEntity() {
+
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        return employeeList;
     }
 
     public Boolean authorize(Integer employeeId) {
