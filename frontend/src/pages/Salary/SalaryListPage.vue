@@ -21,6 +21,34 @@
                                         <div class="chartjs-size-monitor">
                                             <div class="chartjs-size-monitor-expand">
                                                 <div class="container">
+                                                    <div class="form-group">
+                                                        <label for="inputJobTitle">원하시는 년도를 선택하세요</label>
+                                                        <select class="form-control" id="inputJobTitle"
+                                                            v-model="selectedYear">
+                                                            <option v-for="(year,index) in salaryYears" :key="index" :value="year">{{year}}</option>
+                                                            
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="inputJobTitle">원하시는 월을 선택하세요</label>
+                                                        <select class="form-control" id="inputJobTitle"
+                                                            v-model="selectedMonth">
+                                                            <option value="01">01</option>
+                                                            <option value="02">02</option>
+                                                            <option value="03">03</option>
+                                                            <option value="04">04</option>
+                                                            <option value="05">05</option>
+                                                            <option value="06">06</option>
+                                                            <option value="07">07</option>
+                                                            <option value="08">08</option>
+                                                            <option value="09">09</option>
+                                                            <option value="10">10</option>
+                                                            <option value="11">11</option>
+                                                            <option value="12">12</option>
+                                                        </select>
+                                                        
+                                                    </div>
+
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
@@ -96,29 +124,36 @@ export default {
     },
     data() {
         return {
-
-            getSalaryResult:[{
-                "month": 1,
+            salaryMonthsResult: {
+                "firstDate": "2024-01-10",
+                "lastDate": "2024-02-25"
+            },
+            salaryMonths: [],
+            selectedYears: [],
+            selectedMonth: "",
+            selectedYear: "",
+            getSalaryResult: [{
+                "month": 13,
                 salaryDtoList: [
-                {
-                    "employeeId": 1,
-                    "employmentDate": "2024-03-15",
-                    "department": "사장실",
-                    "position": "사장",
-                    "employeeName": "asd",
-                    "employeeSalary": 5000000,
-                    "batchDate": "2024-02-10",
-                    "commuteCount": 0,
-                    "paidVacationCount": 0,
-                    "overTime": 0,
-                    "totalSalary": 38300723
-                },
-            ],
+                    {
+                        "employeeId": 1,
+                        "employmentDate": "2024-03-15",
+                        "department": "사장실",
+                        "position": "사장",
+                        "employeeName": "asd",
+                        "employeeSalary": 5000000,
+                        "batchDate": "2024-02-10",
+                        "commuteCount": 0,
+                        "paidVacationCount": 0,
+                        "overTime": 0,
+                        "totalSalary": 38300723
+                    },
+                ],
             }
-            
+
             ],
             // 공지사항
-            
+
 
 
         };
@@ -144,18 +179,77 @@ export default {
                     console.log("Response:", response.data);
                     // this.responseData = response.data;
                     this.getSalaryResult = response.data.result
-                   
+
                 })
                 .catch((error) => {
                     console.error("Error updating data:", error);
                 });
         },
-        
+        getYearsBetweenDates(startDate, endDate) {
+            // 시작 날짜와 종료 날짜를 Date 객체로 변환합니다.
+            const start = new Date(startDate).getFullYear();
+            const end = new Date(endDate).getFullYear();
+
+            // 두 날짜 사이의 월 수를 계산합니다.
+            const yearsDiff = Math.floor(end - start);
+
+            // 모든 월을 저장할 배열을 생성합니다.
+            const years = [];
+
+            // 시작 날짜부터 종료 날짜까지 반복하며 각 월을 배열에 추가합니다.
+            let year = end;
+            for (let i = 0; i <= yearsDiff; i++) {
+                
+                // months.push(month.toLocaleString('ko-KR', { year: 'numeric', month: 'long' }));
+                years.push(year-i);
+                
+                
+                
+
+                // months.push(month.toLocaleString('ko-KR', { year: 'numeric', month: 'long' }));
+                
+            }
+
+            // 배열을 반환합니다.
+            return years;
+        },
+        fetchSalaryData() {
+            console.log("fetchSalaryData method start");
+            const api = "http://localhost:8080";
+            // 요청하면 월급 처음 준 날하고, 마지막으로 준 날 반환됨.
+            const token = sessionStorage.getItem("token");
+            axios
+                .get(
+                    api + "/manager/salary/months", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                }
+                )
+                .then((response) => {
+                    this.salaryMonthsResult = response.data.result;
+                    console.log(response.data.result);
+                    const lastDate = this.salaryMonthsResult.lastDate;
+                    console.log(lastDate);
+                    this.selectedMonth = lastDate.split("-")[1];
+                    this.selectedYear = lastDate.split("-")[0];
+                    this.salaryYears = this.getYearsBetweenDates(this.salaryMonthsResult.firstDate, lastDate);
+                
+                    //   totalItems = response.data.total;
+                })
+                .catch((error) => {
+                    console.error("Error fetchSalaryData :", error);
+                    // 토큰  만료 예외처리
+                });
+            console.log("fetchSalaryData method end");
+        },
     },
     mounted() {
-        // 출근한 상태인지 확인해야함.
-        this.getSalaryList();
+
         
+        this.fetchSalaryData();
+        this.getSalaryList();
     },
 };
 </script>
