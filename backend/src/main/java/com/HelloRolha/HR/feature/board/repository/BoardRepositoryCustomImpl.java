@@ -20,7 +20,11 @@ public class BoardRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     public BoardRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         super(Board.class);
         this.queryFactory = queryFactory;
+
+   
+
     }
+
 
     @Override
     public List<Board> findList() {
@@ -58,7 +62,11 @@ public class BoardRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
 
     @Override
-    public Page<Board> findList(Pageable pageable) {
+
+    public Page<Board> findList(org.springframework.data.domain.Pageable pageable) {
+
+
+
         QBoard board = new QBoard("board");
         //QProductImage productImage = new QProductImage("productImage");
         QEmployee employee = new QEmployee("employee");

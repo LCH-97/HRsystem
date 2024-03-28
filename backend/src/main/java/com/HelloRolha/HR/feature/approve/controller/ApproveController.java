@@ -1,8 +1,8 @@
 package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
-import com.HelloRolha.HR.feature.approve.model.dto.Approve.*;
-import com.HelloRolha.HR.feature.approve.service.ApproveLineService;
+import com.HelloRolha.HR.feature.approve.model.dto.approve.*;
+import com.HelloRolha.HR.feature.approve.model.dto.approveFile.ApproveFileDto;
 import com.HelloRolha.HR.feature.approve.service.ApproveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public class ApproveController {
                 .build();
         return ResponseEntity.ok().body(response);
     }
-    @RequestMapping(method = RequestMethod.GET, value = "/list")
+    @GetMapping("/list")
     public ResponseEntity<BaseRes> list() {
         List<ApproveList> approveLists = approveService.list();
         BaseRes response = BaseRes.builder()
@@ -49,7 +49,7 @@ public class ApproveController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/read/{id}")
+    @GetMapping("/read/{id}")
     public ResponseEntity<BaseRes> read(@PathVariable Integer id) {
         ApproveRead readRes = approveService.read(id);
         BaseRes response = BaseRes.builder()
@@ -73,7 +73,7 @@ public class ApproveController {
         return ResponseEntity.ok().body(response);
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/return")
+    @PatchMapping(value = "/return")
     public ResponseEntity<BaseRes> returnStatus(@RequestBody ApproveReturn approveReturn) {
         approveService.returnStatus(approveReturn);
         String message;
@@ -97,7 +97,7 @@ public class ApproveController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<BaseRes> delete(@PathVariable Integer id) {
         approveService.delete(id);
         BaseRes response = BaseRes.builder()
@@ -106,5 +106,23 @@ public class ApproveController {
                 .isSuccess(true)
                 .build();
         return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/cancel/{id}")
+    public ResponseEntity<BaseRes> cancel(@PathVariable Integer id) {
+        approveService.cancel(id);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("휴가/외출 정보 삭제 성공")
+                .isSuccess(true)
+                .result("결재취소한 id : " + id)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/files/{approveId}")
+    public ResponseEntity<List<ApproveFileDto>> listFilesByApproveId(@PathVariable Integer approveId){
+        List<ApproveFileDto> files = approveService.listFilesByApproveId(approveId);
+        return ResponseEntity.ok().body(files);
     }
 }

@@ -3,6 +3,7 @@ package com.HelloRolha.HR.feature.employee.service;
 import com.HelloRolha.HR.config.utils.JwtUtils;
 import com.HelloRolha.HR.error.UserAccountException;
 import com.HelloRolha.HR.error.UserNotFoundException;
+import com.HelloRolha.HR.error.exception.CanNotInitException;
 import com.HelloRolha.HR.feature.department.model.entity.Department;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
 import com.HelloRolha.HR.feature.employee.model.dto.Login.LoginReq;
@@ -76,7 +77,7 @@ public class EmployeeService {
 
     public List<EmployeeDto> listEmployee() {
         List<EmployeeDto> employeeDtos = new ArrayList<>();
-        List<Employee> employeeList = employeeRepository.findAll();
+        List<Employee> employeeList = employeeRepository.getAllEmployList();
         for (Employee employee: employeeList) {
             employeeDtos.add(EmployeeDto.builder()
                     .id(employee.getId())
@@ -89,11 +90,12 @@ public class EmployeeService {
         }
         return employeeDtos;
     }
-    public List<Employee> getEmployeeListByEntity() {
 
-        List<Employee> employeeList = employeeRepository.findAll();
 
-        return employeeList;
+
+    public List<Employee> getWorkingEmployListForCalculateSalary() {
+
+        return employeeRepository.getWorkingEmployListForCalculateSalary();
     }
 
     public Boolean authorize(Integer employeeId) {
@@ -140,7 +142,9 @@ public class EmployeeService {
     public Object createAdmin(SignUpReq signUpReq) {
 
         List<Employee> employeeOptional = employeeRepository.findALLByAuthority("USER_ADMIN");
-
+        if(!employeeOptional.isEmpty()) {
+            throw new CanNotInitException();
+        }
         Employee employee= Employee.builder()
                 .username(signUpReq.getUsername())
                 .password(passwordEncoder.encode(signUpReq.getPassword()))
@@ -153,6 +157,7 @@ public class EmployeeService {
                 .department(Department.builder().id(signUpReq.getDepartmentId()).build())
                 .position(Position.builder().id(signUpReq.getPositionId()).build())
                 .authority("USER_ADMIN")
+                .status(true)
                 .build();
         employeeRepository.save(employee);
 

@@ -56,9 +56,9 @@ public enum ErrorCode {
     DUPLICATE_CATEGORY_NAME(HttpStatus.BAD_REQUEST, "CATEGORY-001", "카테고리 이름이 중복된 경우"),
     CATEGORY_NOT_EXISTS(HttpStatus.NOT_FOUND, "CATEGORY-002", "카테고리를 찾을 수 없는 경우"), 
     AlreadyCommute(HttpStatus.BAD_REQUEST, "COMMUTE-001", "한 사람이 같은 날짜에 출근할 경우"), 
-    USER_UNCERTIFIED(HttpStatus.UNAUTHORIZED, "EMPLOYEE-001" , "로그인 시도 시, 인증 받은 사용자가 아닌 경우");
+    USER_UNCERTIFIED(HttpStatus.UNAUTHORIZED, "EMPLOYEE-001" , "로그인 시도 시, 인증 받은 사용자가 아닌 경우"),
 
-
+    INIT_FAIL(HttpStatus.BAD_REQUEST,"INIT_FAIL","관리자가 이미 존재합니다.");
 
     private final HttpStatus status;  // 헤더로 반환할 Http 상태 코드
     private final String code;    // 페이로드로 반환할 에러 코드

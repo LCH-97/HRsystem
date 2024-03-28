@@ -2,7 +2,7 @@ package com.HelloRolha.HR.feature.approve.service;
 
 import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.ApproveLine;
-import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.*;
+import com.HelloRolha.HR.feature.approve.model.dto.approveLine.*;
 import com.HelloRolha.HR.feature.approve.repo.ApproveLineRepository;
 import com.HelloRolha.HR.feature.approve.repo.ApproveRepository;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
@@ -33,6 +33,12 @@ public class ApproveLineService {
                 .orElseThrow(() -> new IllegalArgumentException("결재자의 ID가 존재하지 않습니다."));
         Approve approve = approveRepository.findById(approveLineCreateReq.getApproveId())
                 .orElseThrow(() -> new IllegalArgumentException("결재의 ID가 존재하지 않습니다."));
+
+        if (approveLineCreateReq.getConfirmerId() == null) {
+            throw new IllegalArgumentException("결재자를 선택해주세요.");
+        }
+
+//        Objects.requireNonNull(approveLineCreateReq.getConfirmerId(), "결재자는 null일 수 없습니다.");
 
         ApproveLine approveLine =ApproveLine.builder()
                 .approve(Approve.builder().id(approveLineCreateReq.getApproveId()).build())

@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface SalaryRepositoryCustom {
     public List<Salary> readSalaryListBetween(LocalDate startDate, LocalDate endDate);
-
-    public List<Salary> readFirstDateOfSalary();
-    public List<Salary> readLastDateOfSalary();
+    List<Salary> getAllSalaryList();
+    public LocalDate readFirstDateOfSalary();
+    public LocalDate readLastDateOfSalary();
 
 }

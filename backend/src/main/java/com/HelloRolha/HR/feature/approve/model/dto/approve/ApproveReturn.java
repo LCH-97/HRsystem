@@ -1,4 +1,4 @@
-package com.HelloRolha.HR.feature.approve.model.dto.Approve;
+package com.HelloRolha.HR.feature.approve.model.dto.approve;
 
 import lombok.Data;
 

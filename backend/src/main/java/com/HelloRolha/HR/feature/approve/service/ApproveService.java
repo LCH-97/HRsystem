@@ -2,15 +2,21 @@ package com.HelloRolha.HR.feature.approve.service;
 
 import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.ApproveFile;
-import com.HelloRolha.HR.feature.approve.model.dto.Approve.*;
-import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.ApproveLineCreateReq;
-import com.HelloRolha.HR.feature.approve.model.dto.ApproveLine.ApproveLineList;
+import com.HelloRolha.HR.feature.approve.model.ApproveLine;
+import com.HelloRolha.HR.feature.approve.model.dto.approve.*;
+import com.HelloRolha.HR.feature.approve.model.dto.approveFile.ApproveFileDto;
+import com.HelloRolha.HR.feature.approve.model.dto.approveLine.ApproveLineCreateReq;
+import com.HelloRolha.HR.feature.approve.model.dto.approveLine.ApproveLineList;
 import com.HelloRolha.HR.feature.approve.repo.ApproveFileRepository;
+import com.HelloRolha.HR.feature.approve.repo.ApproveLineRepository;
 import com.HelloRolha.HR.feature.approve.repo.ApproveRepository;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,30 +26,38 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class ApproveService {
     private final ApproveRepository approveRepository;
+    private final ApproveLineRepository approveLineRepository;
     private final ApproveFileRepository approveFileRepository;
     private final EmployeeRepository employeeRepository;
     private final ApproveLineService approveLineService;
     private final AmazonS3 s3;
 
-    @Value("gurigiri-s3")
+    @Value("${AWS_S3_BUCKET}")
     private String bucket;
 
     public ApproveCreateRes create(ApproveCreateReq approveCreateReq) {
         Employee employee = employeeRepository.findById(approveCreateReq.getEmployeeId())
                 .orElseThrow(() -> new IllegalArgumentException("기안자의 ID가 존재하지 않습니다."));
 
+        if (approveCreateReq.getConfirmer1Id() == null) {
+            throw new IllegalArgumentException("결재자1을 선택해주세요.");
+        }
+        if (approveCreateReq.getConfirmer2Id() == null) {
+            throw new IllegalArgumentException("결재자2를 선택해주세요.");
+        }
         ApproveCreateRes approveCreateRes = ApproveCreateRes.builder().build();
         Approve approve = Approve.builder()
                 .content(approveCreateReq.getContent())
@@ -155,6 +169,20 @@ public class ApproveService {
         approveRepository.delete(approve); // 이후 Approve 레코드 삭제
     }
 
+    @Transactional
+    public void cancel(Integer id) {
+        Approve approve = approveRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 휴가/외출 정보를 찾을 수 없습니다."));
+        approve.setStatus(4);
+        approveRepository.save(approve);
+
+        List<ApproveLine> approveLines = approveLineRepository.findByApproveId(id);
+        approveLines.get(0).setStatus(4);
+        approveLines.get(1).setStatus(4);
+        approveLineRepository.save(approveLines.get(0));
+        approveLineRepository.save(approveLines.get(1));
+    }
+
 
 
     public String makeFolder() {
@@ -169,7 +197,7 @@ public class ApproveService {
         String originalName = file.getOriginalFilename();
         String folderPath = makeFolder();
         String uuid = UUID.randomUUID().toString();
-        String saveFileName = folderPath + File.separator + uuid + "_" + originalName;
+        String saveFileName = folderPath + "/" + uuid + "_" + originalName;
         InputStream input = null;
         try {
             input = file.getInputStream();
@@ -198,11 +226,46 @@ public class ApproveService {
         }
         return s3.getUrl(bucket, saveFileName).toString();
     }
+    @Transactional
+    public String generatePresignedUrl(String fileKey, String fileName) {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime() + 1000 * 60 * 10; // 10분 후 만료
+        expiration.setTime(expTimeMillis);
 
-    public void saveFile(Integer id, String uploadPath) {
-        approveFileRepository.save(ApproveFile.builder()
-                .approve(Approve.builder().id(id).build())
-                .filename(uploadPath)
-                .build());
+        try {
+            // 파일 이름을 URL 인코딩합니다.
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+
+            // 파일 다운로드를 위한 Content-Disposition 설정
+            String contentDisposition = String.format("attachment; filename*=UTF-8''%s", encodedFileName);
+
+            // 응답 헤더를 설정합니다.
+            ResponseHeaderOverrides headerOverrides = new ResponseHeaderOverrides()
+                    .withContentDisposition(contentDisposition);
+
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
+                    .withMethod(HttpMethod.GET)
+                    .withExpiration(expiration)
+                    .withResponseHeaders(headerOverrides); // 응답 헤더를 포함시킵니다.
+
+            URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+            return url.toString();
+        } catch (Exception e) {
+            // 예외 처리
+            throw new RuntimeException("URL 생성 중 오류 발생", e);
+        }
+    }
+
+    @Transactional
+    public List<ApproveFileDto> listFilesByApproveId(Integer approveId) {
+        List<ApproveFile> approveFiles = approveFileRepository.findByApproveId(approveId);
+
+        List<ApproveFileDto> fileDtos = approveFiles.stream().map(file -> {
+            String downloadUrl = generatePresignedUrl(file.getFilename(), file.getOriginalFilename());
+
+            return new ApproveFileDto(file.getOriginalFilename(), downloadUrl);
+        }).collect(Collectors.toList());
+
+        return fileDtos;
     }
 }

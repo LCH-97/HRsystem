@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,9 @@ public class GooutLineService {
 
     @Transactional
     public GooutLine create(GooutLineCreateReq gooutLineCreateReq) {
+        Objects.requireNonNull(gooutLineCreateReq, "gooutCreateReq는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutLineCreateReq.getConfirmerId(), "결재자 ID는 null일 수 없습니다.");
+        Objects.requireNonNull(gooutLineCreateReq.getGooutId(), "휴가 ID는 null일 수 없습니다.");
 
         Employee confirmer = employeeRepository.findById(gooutLineCreateReq.getConfirmerId())
                 .orElseThrow(() -> new IllegalArgumentException("결재자의 ID가 존재하지 않습니다."));

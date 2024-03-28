@@ -68,7 +68,7 @@ public class BoardService {
                         .id(board.getId())
                         .name(board.getName())
                         .text(board.getText())
-//                      .filename(boardListDtos)
+//                      .filename(boerardListDtos)
                         .title(board.getTitle())
                         .date(board.getDate())
                         .build();
