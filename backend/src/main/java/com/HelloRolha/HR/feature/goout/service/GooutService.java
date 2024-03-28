@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,20 @@ public class GooutService {
     private String bucket;
 
     public GooutCreateRes create(GooutCreateReq gooutCreateReq) {
+        // 1. 휴가 신청자의 이전 휴가 사용 일수 계산
+        int currentYear = LocalDate.now().getYear(); // 현재 연도
+        int usedVacationDays = calculateApprovedVacationDays(gooutCreateReq.getEmployeeId(), gooutCreateReq.getGooutTypeId(), currentYear);
+
+        // 2. 신청 휴가 기간 계산
+        long requestedDays = ChronoUnit.DAYS.between(gooutCreateReq.getFirst(), gooutCreateReq.getLast().plusDays(1)); // 종료 날짜 포함하여 계산
+
+        // 3. 최대 허용 휴가 일수 검사
+        int maxHoliday = gooutTypeRepository.findMaxHolidayByGooutTypeId(gooutCreateReq.getGooutTypeId());
+        if ((usedVacationDays + requestedDays) > maxHoliday) {
+            throw new IllegalArgumentException("휴가 일수가 최대 허용 일수를 초과합니다.");
+        }
+
+        // 4. 휴가 신청
         Objects.requireNonNull(gooutCreateReq, "gooutCreateReq는 null일 수 없습니다.");
         Objects.requireNonNull(gooutCreateReq.getAgentId(), "대리자 ID는 null일 수 없습니다.");
         Objects.requireNonNull(gooutCreateReq.getEmployeeId(), "직원 ID는 null일 수 없습니다.");
@@ -66,6 +81,13 @@ public class GooutService {
         }
 
         GooutCreateRes gooutCreateRes = GooutCreateRes.builder().build();
+
+        // 시작날짜가 끝 날짜보다 뒤쪽이면 둘이 교체
+        if (gooutCreateReq.getFirst().isAfter(gooutCreateReq.getLast())) {
+            LocalDate temp = gooutCreateReq.getFirst();
+            gooutCreateReq.setFirst(gooutCreateReq.getLast());
+            gooutCreateReq.setLast(temp);
+        }
 
         Goout goout = Goout.builder()
                 .agent(Employee.builder().id(gooutCreateReq.getAgentId()).build())
@@ -353,6 +375,41 @@ public class GooutService {
         }).collect(Collectors.toList());
 
         return fileDtos;
+    }
+
+    @Transactional
+    public int calculateApprovedVacationDays(Integer employeeId, Integer gooutTypeId, int year) {
+        LocalDate startOfYear = LocalDate.of(year, 1, 1);
+        LocalDate endOfYear = LocalDate.of(year, 12, 31);
+        List<Goout> approvedVacations = gooutRepository.findByEmployeeIdAndGooutTypeIdAndStatusAndFirstBetween(
+                employeeId, gooutTypeId, 2, startOfYear, endOfYear); // 상태가 승인된 휴가만 선택
+
+        return approvedVacations.stream()
+                .mapToInt(vacation -> (int) ChronoUnit.DAYS.between(
+                        max(vacation.getFirst(), startOfYear),
+                        min(vacation.getLast().plusDays(1), endOfYear.plusDays(1))
+                )).sum();
+    }
+
+    private LocalDate max(LocalDate a, LocalDate b) {
+        return a.isAfter(b) ? a : b;
+    }
+
+    private LocalDate min(LocalDate a, LocalDate b) {
+        return a.isBefore(b) ? a : b;
+    }
+
+    @Transactional
+    public int calculateRemainingVacationDays(Integer employeeId, Integer gooutTypeId) {
+        // 1. 휴가 신청자의 이전 휴가 사용 일수 계산
+        int currentYear = LocalDate.now().getYear(); // 현재 연도
+        int usedVacationDays = calculateApprovedVacationDays(employeeId, gooutTypeId, currentYear);
+
+        // 2. 계산
+        int maxHoliday = gooutTypeRepository.findMaxHolidayByGooutTypeId(gooutTypeId);
+        int remainingDays = maxHoliday - usedVacationDays;
+
+        return remainingDays;
     }
 }
 
