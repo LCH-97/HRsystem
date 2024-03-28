@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class getSalaryListRes {
+public class GetSalaryListRes {
 
     private Integer month;
     private List<SalaryDto> salaryDtoList;

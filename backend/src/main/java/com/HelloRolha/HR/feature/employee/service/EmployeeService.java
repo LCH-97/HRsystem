@@ -76,7 +76,7 @@ public class EmployeeService {
 
     public List<EmployeeDto> listEmployee() {
         List<EmployeeDto> employeeDtos = new ArrayList<>();
-        List<Employee> employeeList = employeeRepository.findAll();
+        List<Employee> employeeList = employeeRepository.getAllEmployList();
         for (Employee employee: employeeList) {
             employeeDtos.add(EmployeeDto.builder()
                     .id(employee.getId())
@@ -89,11 +89,12 @@ public class EmployeeService {
         }
         return employeeDtos;
     }
-    public List<Employee> getEmployeeListByEntity() {
 
-        List<Employee> employeeList = employeeRepository.findAll();
 
-        return employeeList;
+
+    public List<Employee> getWorkingEmployListForCalculateSalary() {
+
+        return employeeRepository.getWorkingEmployListForCalculateSalary();
     }
 
     public Boolean authorize(Integer employeeId) {

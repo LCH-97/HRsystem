@@ -43,7 +43,8 @@ public class Employee extends BaseEntity implements UserDetails {
 //    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_NEW'")
     @ColumnDefault("'ROLE_NEW'")
     private String authority;
-    private LocalDate employmentDate;
+    private LocalDate employmentDate; // 입사일
+    private LocalDate quitDate; // 퇴사일
     @ColumnDefault("false")
     private Boolean status;
 
