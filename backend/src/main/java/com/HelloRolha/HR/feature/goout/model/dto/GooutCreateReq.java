@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class GooutCreateReq {
     private Integer agentId;
     private Integer employeeId;
-    private Integer writerId;
+//    private Integer writerId;
     private Integer gooutTypeId;
     private LocalDate first;
     private LocalDate last;
