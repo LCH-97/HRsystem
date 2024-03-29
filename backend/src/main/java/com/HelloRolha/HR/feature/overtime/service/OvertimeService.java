@@ -3,6 +3,7 @@ package com.HelloRolha.HR.feature.overtime.service;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.overtime.model.Overtime;
+import com.HelloRolha.HR.feature.overtime.model.dto.CreateOvertimeReq;
 import com.HelloRolha.HR.feature.overtime.model.dto.OvertimeDto;
 import com.HelloRolha.HR.feature.overtime.repository.OvertimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,15 @@ public class OvertimeService {
         this.overtimeRepository = overtimeRepository;
     }
 
-    public Overtime processOvertimeRequest(OvertimeDto overtimeDto) {
+    public Overtime processOvertimeRequest(CreateOvertimeReq createOvertimeReq) {
 
         Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         Overtime overtime = Overtime.builder()
-                .date(overtimeDto.getDate())
-                .shift(overtimeDto.getShift())
-                .startTime(overtimeDto.getStartTime())
-                .endTime(overtimeDto.getEndTime())
-                .reason(overtimeDto.getReason())
+                .date(createOvertimeReq.getDate())
+                .shift(createOvertimeReq.getShift())
+                .startTime(createOvertimeReq.getStartTime())
+                .endTime(createOvertimeReq.getEndTime())
+                .reason(createOvertimeReq.getReason())
                 .status("대기 중")
                 .employee(employee)
                 .build();

@@ -2,6 +2,7 @@ package com.HelloRolha.HR.feature.overtime.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.overtime.model.Overtime;
+import com.HelloRolha.HR.feature.overtime.model.dto.CreateOvertimeReq;
 import com.HelloRolha.HR.feature.overtime.model.dto.OvertimeDto;
 import com.HelloRolha.HR.feature.overtime.service.OvertimeNotFoundException;
 import com.HelloRolha.HR.feature.overtime.service.OvertimeService;
@@ -26,8 +27,8 @@ public class OvertimeController {
     }
 
     @PostMapping("/overtime/create") // 초과 근무 신청
-    public ResponseEntity<Overtime> submitOvertimeRequest( OvertimeDto overtimeDto) {
-        Overtime savedOvertime = overtimeService.processOvertimeRequest(overtimeDto);
+    public ResponseEntity<Overtime> submitOvertimeRequest( CreateOvertimeReq createOvertimeReq) {
+        Overtime savedOvertime = overtimeService.processOvertimeRequest(createOvertimeReq);
         return ResponseEntity.ok(savedOvertime);
     }
 

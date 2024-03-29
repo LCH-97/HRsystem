@@ -38,6 +38,7 @@ import java.util.List;
 @AllArgsConstructor
 @DynamicInsert ////ToDo
 public class Employee extends BaseEntity implements UserDetails {
+    @Column(unique = true)
     private String username;
     private String password;
 //    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_NEW'")
