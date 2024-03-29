@@ -298,7 +298,7 @@ export default {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
         });
-      console.log("Resposne:",response);
+      console.log("Resposne:", response);
       this.endTime = response.result.endTime;
       this.sumTime = response.result.sumTime;
       this.isLeave = true;
@@ -310,54 +310,60 @@ export default {
       const api = "http://192.168.0.51/api";
       console.log(api);
       const token = sessionStorage.getItem("token");
-      let response = await axios
-        .get(api + "/employee/commute/check", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then(() => {
-          console.log("Chcek Loaing...");
-          // this.responseData = response.data;
-          this.isLoading = true;
+      console.log("Chcek Loaing...");
+      this.isLoading = true;
+      try {
+        let response = await axios
+          .get(api + "/employee/commute/check", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
 
-          //페이지 구성에 필요한 걸 다 가져와야한다.
-        })
-        .catch((error) => {
+          });
+        this.isCommute = response.data.result.isCommute;
+        this.isLeave = response.data.result.isLeave;
+        if (this.isCommute) {
+          this.commuteId = response.data.result.id;
+          this.startTime = response.data.result.startTime;
+        }
+        if (this.isLeave) {
+          this.endTime = response.data.result.endTime;
+          this.sumTime = response.data.result.sumTime;
+        }
+      } catch {
+        ((error) => {
           console.error("Error check data:", error);
           alert("출근 정보 가져오기 실패");
         });
-      this.isCommute = response.data.result.isCommute;
-      this.isLeave = response.data.result.isLeave;
-      if (this.isCommute) {
-        this.commuteId = response.data.result.id;
-        this.startTime = response.data.result.startTime;
+      } finally {
+        this.isLoading = false;
       }
-      if (this.isLeave) {
-        this.endTime = response.data.result.endTime;
-        this.sumTime = response.data.result.sumTime;
-      }
-      this.isLoading = false;
+
+
     },
 
-    async fetchNoticeData(page) {
+    fetchNoticeData(page) {
       console.log("fetchNoticeData START");
       const itemsPerPage = 6;
-      let response = await axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
-        .then(() => {
+      axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .then((response) => {
           console.log("Loading fetchNoticeData");
           this.isLoading = true;
+          this.notices = response.data.result;
           //   totalItems = response.data.total;
         })
         .catch((error) => {
           console.error("Error fetching notice data:", error);
+          
           alert("공지사항 불러오기 실패");
+          
+        }).finally(() => {
+          console.log("fetchNoticeData END");
+          this.isLoading = false;
         });
-      this.notices = response.data.result;
-      console.log("fetchNoticeData END");
 
-      this.isLoading = false;
+
     },
   },
   mounted() {
@@ -366,8 +372,8 @@ export default {
       this.check();
       this.fetchNoticeData(1);
     } catch (error) {
-      console.log("init fail:"+error);
-    }finally{
+      console.log("init fail:" + error);
+    } finally {
       this.isLoading = false;
     }
 
