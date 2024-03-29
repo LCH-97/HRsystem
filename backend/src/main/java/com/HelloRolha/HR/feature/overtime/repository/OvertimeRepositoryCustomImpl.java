@@ -41,7 +41,23 @@ public class OvertimeRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         return result;
     }
+    @Override
+    public List<Overtime> findMyList(Integer id) {
 
+        // 조인이 필요한 각 클래스들에 대한 객체 생성
+        QOvertime overtime = new QOvertime("overtime");
+//        QGooutFile gooutFile= new QGooutFile("gooutFile");
+//        QGooutType gooutType = new QGooutType("gooutType");
+//        QEmployee employee = new QEmployee("employee");
+
+        // QueryDSL 을 사용하기 위한 from 메서드 작성
+        List<Overtime> result = from(overtime)
+                .where(overtime.employee.id.eq(id))
+                .fetch().stream().distinct().collect(Collectors.toList());
+
+
+        return result;
+    }
     @Override
     public Optional<Overtime> findByIdWithDetails(Integer id) {
         QOvertime overtime = QOvertime.overtime;

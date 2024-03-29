@@ -40,7 +40,7 @@ public class OvertimeController {
 
     @GetMapping("/overtime/list") // 초과 근무 목록 조회
     public ResponseEntity<BaseRes> list() {
-        List<OvertimeDto> overtimeDtos = overtimeService.list();
+        List<OvertimeDto> overtimeDtos = overtimeService.mylist();
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("초과 근무 확인 성공")
