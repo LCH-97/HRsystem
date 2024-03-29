@@ -59,7 +59,7 @@ import jwtDecode from 'jwt-decode';
 export default {
   data() {
     return {
-      backend: "http://http://192.168.0.51/api",
+      backend: "http://192.168.0.51/api",
       updateInfo: {
         gooutTypeName: "",
         agentName: "",

@@ -131,7 +131,7 @@ export default {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
-      backend: "http://http://192.168.0.51/api", // 백엔드 서버 주소
+      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
       confirmer1: null,
       confirmer2: null,
       files: [], // 파일 목록을 저장할 배열
@@ -276,7 +276,7 @@ export default {
     async fetchGooutLine(gooutId) {
       try {
         const response = await axios.get(
-            `http://http://192.168.0.51/api/gooutLine/2/${gooutId}`
+            `http://192.168.0.51/api/gooutLine/2/${gooutId}`
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
