@@ -7,7 +7,7 @@
 
 <br>
 
-## &nbsp;🖥️ [ Hello_R_loha  Demo 바로가기](여기 링크 들어갈 예정)
+## &nbsp;🖥️ [ Hello_R_loha  Demo 바로가기](http://192.168.0.51)
 
 <br>
 <br>
