@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         closePop() {
-            this.popUpStatus = false;
+            this.$emit('closeEvent')
         },
     }
 }

@@ -159,7 +159,7 @@
 
                           <div class="main-button-container" v-show="isCommute && !isLeave">
                             <button id="leaveButton" v-show="!isLoading" @click="leave">
-                              퇴근 
+                              퇴근
 
                             </button>
                           </div>
@@ -189,7 +189,7 @@
       </div>
     </div>
   </div>
-  <LoadingPage v-if="isLoading" />
+  <LoadingPage v-if="isLoading" @close-event="close" />
 </template>
 
 <script>
@@ -232,7 +232,10 @@ export default {
   },
   methods: {
 
-    async commute() {
+    close() {
+      this.isLoading = false;
+    },
+    commute() {
       console.log("click");
 
       // const api = process.env.VUE_APP_BACKEND_URL;
@@ -243,14 +246,27 @@ export default {
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
 
-      let response = await axios.post(api + "/employee/commute", null, {
+
+      this.isLoading = true;
+      axios.post(api + "/employee/commute", null, {
+
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-      }).then(() => {
-        console.log("대기 중");
-        this.isLoading = true;
+      }).then((response) => {
+        console.log("commute 대기 중");
+
+
+        console.log("Response:", response);
+
+        // this.responseData = response.data;
+        this.startTime = this.formatDateTime(response.data.result.startTime);
+        this.commuteId = response.result.id;
+        this.isCommute = true;
+        this.isLeave = false;
+
+
       })
         .catch(error => {
           console.error('Error post commute data:', error);
@@ -267,17 +283,12 @@ export default {
           // }
           // this.popUpStatus = true;
 
+        }).finally(() => {
+          this.isLoading = false;
         });
 
-      console.log("Response:", response);
 
-      // this.responseData = response.data;
-      this.startTime = this.formatDateTime(response.data.result.startTime);
-      this.commuteId = response.result.id;
-      this.isCommute = true;
-      this.isLeave = false;
 
-      this.isLoading = false;
     },
 
     async leave() {
@@ -289,93 +300,104 @@ export default {
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      let response = await axios.patch(api + "/employee/leave/" + this.commuteId, null, {
+      axios.patch(api + "/employee/leave/" + this.commuteId, null, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
       })
-        .then(() => {
+        .then((response) => {
           console.log("대기 중");
           this.isLoading = true;
           // this.responseData = response.data;
+          console.log("Resposne:", response);
+          let now = new Date();
+          this.endTime = this.formatDateTime(now.toISOString());
+          const diff = this.endTime.getTime - this.startTime.getTime;
+          const hours = Math.floor(diff / 3600000); // 시간
+          const minutes = Math.floor((diff % 3600000) / 60000); // 분
+          this.sumTime = `${hours}시간 ${minutes}분`;
+          this.isLeave = true;
 
 
         })
         .catch((error) => {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
+        }).finally(() => {
+          this.isLoading = false;
         });
-      console.log("Resposne:",response);
-      let now = new Date();
-      this.endTime = this.formatDateTime(now.toISOString());
-      const diff = this.endTime.getTime - this.startTime.getTime;
-      const hours = Math.floor(diff / 3600000); // 시간
-      const minutes = Math.floor((diff % 3600000) / 60000); // 분
-      this.sumTime = `${hours}시간 ${minutes}분`;
-      this.isLeave = true;
 
-      this.isLoading = false;
+
+
+
+
+
     },
     async check() {
       console.log("check START");
       const api = "http://192.168.0.51/api";
       console.log(api);
       const token = sessionStorage.getItem("token");
-      let response = await axios
-        .get(api + "/employee/commute/check", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then(() => {
-          console.log("Chcek Loaing...");
-          // this.responseData = response.data;
 
-          this.isLoading = true;
+      console.log("Chcek Loaing...");
+      this.isLoading = true;
+      try {
+        let response = await axios
+          .get(api + "/employee/commute/check", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
 
-
-          //페이지 구성에 필요한 걸 다 가져와야한다.
-        })
-        .catch((error) => {
+          });
+        this.isCommute = response.data.result.isCommute;
+        this.isLeave = response.data.result.isLeave;
+        if (this.isCommute) {
+          this.commuteId = response.data.result.id;
+          this.startTime = response.data.result.startTime;
+        }
+        if (this.isLeave) {
+          this.startTime = response.data.result.startTime;
+          this.endTime = response.data.result.endTime;
+          const parts = response.data.result.sumTime.split(":");
+          const hours = parts[0];
+          const minutes = parts[1];
+          this.sumTime = `${hours}시간 ${minutes}분`;
+        }
+      } catch {
+        ((error) => {
           console.error("Error check data:", error);
-          alert("출근 정보 가져오기 실패");
+          // alert("출근 정보 가져오기 실패");
+          throw new Error('출근 정보 가져오기 실패');
         });
-      this.isCommute = response.data.result.isCommute;
-          this.isLeave = response.data.result.isLeave;
-          if (this.isCommute) {
-            this.commuteId = response.data.result.id;
-            this.startTime = response.data.result.startTime;
-          }
-          if (this.isLeave) {
-            this.startTime = response.data.result.startTime;
-            this.endTime = response.data.result.endTime;
-            const parts = response.data.result.sumTime.split(":");
-            const hours = parts[0];
-            const minutes = parts[1];
-            this.sumTime = `${hours}시간 ${minutes}분`;
-          }
-      this.isLoading = false;
+
+      } finally {
+        this.isLoading = false;
+      }
     },
 
-    async fetchNoticeData(page) {
+    fetchNoticeData(page) {
       console.log("fetchNoticeData START");
       const itemsPerPage = 6;
-      let response = await axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
-        .then(() => {
+      axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .then((response) => {
           console.log("Loading fetchNoticeData");
           this.isLoading = true;
+          this.notices = response.data.result;
           //   totalItems = response.data.total;
         })
         .catch((error) => {
           console.error("Error fetching notice data:", error);
-          alert("공지사항 불러오기 실패");
-        });
-      this.notices = response.data.result;
-      console.log("fetchNoticeData END");
 
-      this.isLoading = false;
+          // alert("공지사항 불러오기 실패");
+          throw new Error('공지사항 불러오기 실패');
+        }).finally(() => {
+          console.log("fetchNoticeData END");
+          this.isLoading = false;
+        });
+
+
     },
   },
   mounted() {
@@ -384,8 +406,8 @@ export default {
       this.check();
       this.fetchNoticeData(1);
     } catch (error) {
-      console.log("init fail:"+error);
-    }finally{
+      console.log("init fail:" + error);
+    } finally {
       this.isLoading = false;
     }
 

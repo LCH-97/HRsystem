@@ -226,6 +226,7 @@ export default {
         })
         .catch((error) => {
           console.error("Error getAuthorizeList:", error);
+          throw new Error("Error getAuthorizeList");
         });
     },
 
@@ -248,23 +249,31 @@ export default {
         .then((response) => {
           console.log("Response:", response.data);
           alert("승인 완료");
-          this.getAuthorizeList(); // 목록 초기화
+          
         })
         .catch((error) => {
           console.error("Error getAuthorizeList:", error);
           alert("승인 실패: 담당자에게 연락하세요");
+        }).finally(()=>{
+          this.getAuthorizeList(); // 목록 초기화
         });
     },
-    
-    
+
+
   },
   mounted() {
     // 출근한 상태인지 확인해야함.
     //   this.check();
     //   this.fetchNoticeData(1);
-    this.getAuthorizeList();
+    try {
+      this.getAuthorizeList();
+    } catch (error) {
+      console.error( "ManagerPage Init Fail",error);
+    }
+
     
-    
+
+
   },
 };
 </script>
