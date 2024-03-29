@@ -13,7 +13,6 @@ public class Overtime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String date;
     private String shift;
     private String startTime;
