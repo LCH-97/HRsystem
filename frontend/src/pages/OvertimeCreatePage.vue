@@ -78,23 +78,31 @@ export default {
   methods: {
     async sendData(formData) {
       try {
+        const token = sessionStorage.getItem("token");
         let response = await axios.post("http://192.168.0.51/api/employee/overtime/create", formData, {
           headers: { "Content-Type": "multipart/form-data" },
+          Authorization: "Bearer " + token,
         });
 
-        console.log("ID:", response.data.id);
+        console.log("ID:", response.data.result.id);
         // Handle response as needed
         alert("초과 근무 신청이 완료되었습니다."); // 신청 완료 메시지 출력
       } catch (error) {
         console.error("Error:", error);
+        alert("초과 근무 신청이 실패했습니다."); // 신청 실패 메시지 출력
       }
     },
     async submitForm() {
       try {
         const formData = new FormData();
-        for (let key in this.form) {
-          formData.append(key, this.form[key]);
-        }
+       
+        formData.append("date", this.date);
+        formData.append("shift", this.shift);
+        formData.append("startTime", this.startTime);
+        formData.append("endTime", this.endTime);
+        formData.append("reason", this.reason);
+        console.log("create overtime data:",this.form);
+      
         await this.sendData(formData);
       } catch (error) {
         console.error("Error:", error);
