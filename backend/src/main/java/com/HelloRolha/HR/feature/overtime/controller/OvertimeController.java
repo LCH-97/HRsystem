@@ -27,9 +27,15 @@ public class OvertimeController {
     }
 
     @PostMapping("/overtime/create") // 초과 근무 신청
-    public ResponseEntity<Overtime> submitOvertimeRequest( CreateOvertimeReq createOvertimeReq) {
-        Overtime savedOvertime = overtimeService.processOvertimeRequest(createOvertimeReq);
-        return ResponseEntity.ok(savedOvertime);
+    public ResponseEntity<BaseRes> submitOvertimeRequest( CreateOvertimeReq createOvertimeReq) {
+        BaseRes res = BaseRes.builder()
+                .code(1200)
+                .isSuccess(true)
+                .message("초과 생성 성공")
+                .result(overtimeService.processOvertimeRequest(createOvertimeReq))
+                .build();
+
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/overtime/list") // 초과 근무 목록 조회
