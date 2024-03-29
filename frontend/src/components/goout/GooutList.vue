@@ -131,7 +131,7 @@ export default {
     },
     async fetchGoouts() {
       try {
-        const response = await axios.get(`http://localhost:8080/goout/check`, {
+        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
           params: {
             page: this.currentPage,
             size: this.pageSize,
