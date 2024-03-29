@@ -3,6 +3,7 @@ package com.HelloRolha.HR.feature.overtime.service;
 import com.HelloRolha.HR.error.ErrorCode;
 import com.HelloRolha.HR.error.exception.CoummuteSQLException;
 import com.HelloRolha.HR.error.exception.OvertimeSQLException;
+import com.HelloRolha.HR.error.exception.getEmployeeInSecurityContextHolderError;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.overtime.model.Overtime;
@@ -34,10 +35,14 @@ public class OvertimeService {
     }
 
     public CreateOvertimeRes processOvertimeRequest(CreateOvertimeReq createOvertimeReq) {
-
-
         try{
             Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }catch (Exception e){
+            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER,e.getMessage());
+        }
+
+        try{
+
             Overtime overtime = overtimeRepository.save(Overtime.builder()
                     .date(createOvertimeReq.getDate())
                     .shift(createOvertimeReq.getShift())
@@ -49,7 +54,7 @@ public class OvertimeService {
                     .build());
             return CreateOvertimeRes.builder().id(overtime.getId()).build();
         }catch (Exception e){
-            throw new OvertimeSQLException(ErrorCode.DB_ERROR_SQL,"Overtime Create Fail");
+            throw new OvertimeSQLException(ErrorCode.DB_ERROR_SQL,e.getMessage());
         }
 
 
