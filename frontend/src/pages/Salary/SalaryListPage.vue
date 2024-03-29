@@ -48,6 +48,8 @@
                                                         </select>
                                                         
                                                     </div>
+                                                    
+                                                    <div> <button></button> </div>
 
                                                     <table class="table">
                                                         <thead>
@@ -162,7 +164,7 @@ export default {
         getSalaryList() {
             console.log("getSalaryList");
             // const api = process.env.VUE_APP_BACKEND_URL;
-            const api = "http://localhost:8080";
+            const api = "http://192.168.0.51/api";
             console.log(api);
             // let formData = new FormData();
             // formData.append('username', this.username);
@@ -215,7 +217,7 @@ export default {
         },
         fetchSalaryData() {
             console.log("fetchSalaryData method start");
-            const api = "http://localhost:8080";
+            const api = "http://192.168.0.51/api";
             // 요청하면 월급 처음 준 날하고, 마지막으로 준 날 반환됨.
             const token = sessionStorage.getItem("token");
             axios

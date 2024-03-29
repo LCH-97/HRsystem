@@ -44,10 +44,7 @@
                                 <th>날짜</th>
                               </tr>
 
-                              <tr
-                                v-for="notice in this.notices"
-                                v-bind:key="notice.id"
-                              >
+                              <tr v-for="notice in this.notices" v-bind:key="notice.id">
                                 <td>{{ notice.title }}</td>
                                 <td>{{ notice.name }}</td>
                                 <td>{{ notice.date }}</td>
@@ -76,61 +73,28 @@
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
-                        <div
-                          class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns"
-                        >
+                        <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                           <div class="datatable-container">
-                            <table
-                              id="datatablesSimple"
-                              class="datatable-table"
-                            >
+                            <table id="datatablesSimple" class="datatable-table">
                               <thead>
                                 <tr>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 19.287833827893174%"
-                                  >
-                                    <a href="#" class="datatable-sorter"
-                                      >Name</a
-                                    >
+                                  <th data-sortable="true" style="width: 19.287833827893174%">
+                                    <a href="#" class="datatable-sorter">Name</a>
                                   </th>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 30.56379821958457%"
-                                  >
-                                    <a href="#" class="datatable-sorter"
-                                      >Position</a
-                                    >
+                                  <th data-sortable="true" style="width: 30.56379821958457%">
+                                    <a href="#" class="datatable-sorter">Position</a>
                                   </th>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 14.93570722057369%"
-                                  >
-                                    <a href="#" class="datatable-sorter"
-                                      >Office</a
-                                    >
+                                  <th data-sortable="true" style="width: 14.93570722057369%">
+                                    <a href="#" class="datatable-sorter">Office</a>
                                   </th>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 8.605341246290802%"
-                                  >
+                                  <th data-sortable="true" style="width: 8.605341246290802%">
                                     <a href="#" class="datatable-sorter">Age</a>
                                   </th>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 14.342235410484669%"
-                                  >
-                                    <a href="#" class="datatable-sorter"
-                                      >Start date</a
-                                    >
+                                  <th data-sortable="true" style="width: 14.342235410484669%">
+                                    <a href="#" class="datatable-sorter">Start date</a>
                                   </th>
-                                  <th
-                                    data-sortable="true"
-                                    style="width: 12.265084075173096%"
-                                  >
-                                    <a href="#" class="datatable-sorter"
-                                      >Salary</a
-                                    >
+                                  <th data-sortable="true" style="width: 12.265084075173096%">
+                                    <a href="#" class="datatable-sorter">Salary</a>
                                   </th>
                                 </tr>
                               </thead>
@@ -180,37 +144,28 @@
                         <div id="commute-info">
                           <h2>안녕하세요</h2>
                           <h2>{{ this.$route.query.name }}</h2>
-                          <img
-                            class="profile-pic"
+                          <img class="profile-pic"
                             src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg"
-                            alt="Profile Picture"
-                          />
+                            alt="Profile Picture" />
 
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
 
-                          <div
-                            class="main-button-container"
-                            v-show="!isCommute"
-                          >
-                            <button id="commuteButton" @click="commute">
+                          <div class="main-button-container" v-show="!isCommute">
+                            <button id="commuteButton" v-show="!isLoading" @click="commute">
                               출근
                             </button>
                           </div>
 
-                          <div
-                            class="main-button-container"
-                            v-show="isCommute && !isLeave"
-                          >
-                            <button id="leaveButton" @click="leave">
-                              퇴근
+
+                          <div class="main-button-container" v-show="isCommute && !isLeave">
+                            <button id="leaveButton" v-show="!isLoading" @click="leave">
+                              퇴근 
+
                             </button>
                           </div>
 
-                          <div
-                            class="main-button-container"
-                            v-show="isCommute && isLeave"
-                          >
-                            <button id="leaveButton">빨리 나가라</button>
+                          <div class="main-button-container" v-show="isCommute && isLeave">
+                            <button id="leaveButton">안전하게 퇴근하세요</button>
                           </div>
 
                           <div id="startTime" class="time">근무 시작</div>
@@ -234,11 +189,14 @@
       </div>
     </div>
   </div>
+  <LoadingPage v-if="isLoading" />
 </template>
 
 <script>
 import SideBar from "../components/SideBar.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
+import LoadingPage from "@/components/LoadingPage.vue";
+
 import axios from "axios";
 // 달력
 import FullCalendar from "@fullcalendar/vue3";
@@ -251,6 +209,7 @@ export default {
     SideBar,
     HeaderComponent,
     FullCalendar,
+    LoadingPage,
   },
   data() {
     return {
@@ -260,7 +219,7 @@ export default {
       isCommute: false,
       isLeave: true,
       commuteId: "",
-
+      isLoading: false,
       // 공지사항
       notices: "",
 
@@ -272,83 +231,118 @@ export default {
     };
   },
   methods: {
-    commute() {
-      console.log("출근 버튼 클릭");
+
+    async commute() {
+      console.log("click");
+
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      axios
-        .post(api + "/employee/commute", null, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((response) => {
-          console.log("Response:", response.data);
-          this.startTime = this.formatDateTime(response.data.result.startTime);
-          this.isCommute = true;
-          this.isLeave = false;
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
-        });
-    },
-    leave() {
-      console.log("퇴근 버튼 클릭");
-      const api = "http://localhost:8080";
-      const token = sessionStorage.getItem("token");
-      axios
-        .patch(api + "/employee/leave/" + this.commuteId, null, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((response) => {
-          console.log("Response:", response.data);
 
-          //
-          let now = new Date();
-          this.endTime = this.formatDateTime(now.toISOString());
-          // 원래는 this.endTime = this.formatDateTime(response.data.result.endTime); 사용했는데
-          // 즉시 반영이 안되고 새로고침해야 보여서 출력자체는 프론트엔드에서 현재 시간을 이용!!
-          // 다만 이러면 DB와 출력되는 시간이 매우 미세하게 차이 있긴 함..
+      let response = await axios.post(api + "/employee/commute", null, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }).then(() => {
+        console.log("대기 중");
+        this.isLoading = true;
+      })
+        .catch(error => {
+          console.error('Error post commute data:', error);
+          alert("출근 실패");
+          // if (error.response.data.code === "USER-004") {
+          //   this.popTitle = "로그인에 실패하였습니다.";
+          //   this.popText = "다시 시도해주세요.";
+          // } else if (error.response.data.code === "EMPLOYEE-001") {
+          //   this.popTitle = "미승인 계정입니다.";
+          //   this.popText = "인사담당자에게 연락하세요.";
+          // } else {
+          //   this.popTitle = "예상하지 못한 에러입니다. ";
+          //   this.popText = "서버 관리자에게 연락하세요.";
+          // }
+          // this.popUpStatus = true;
 
-          const diff = this.endTime.getTime - this.startTime.getTime;
-          const hours = Math.floor(diff / 3600000); // 시간
-          const minutes = Math.floor((diff % 3600000) / 60000); // 분
-          this.sumTime = `${hours}시간 ${minutes}분`;
-          this.isLeave = true;
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
         });
+
+      console.log("Response:", response);
+
+      // this.responseData = response.data;
+      this.startTime = this.formatDateTime(response.data.result.startTime);
+      this.commuteId = response.result.id;
+      this.isCommute = true;
+      this.isLeave = false;
+
+      this.isLoading = false;
     },
-    check() {
-      console.log("check");
+
+    async leave() {
+      console.log(" leave click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      axios
+      let response = await axios.patch(api + "/employee/leave/" + this.commuteId, null, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then(() => {
+          console.log("대기 중");
+          this.isLoading = true;
+          // this.responseData = response.data;
+
+
+        })
+        .catch((error) => {
+          console.error("Error updating data:", error);
+          alert("퇴근 실패");
+        });
+      console.log("Resposne:",response);
+      let now = new Date();
+      this.endTime = this.formatDateTime(now.toISOString());
+      const diff = this.endTime.getTime - this.startTime.getTime;
+      const hours = Math.floor(diff / 3600000); // 시간
+      const minutes = Math.floor((diff % 3600000) / 60000); // 분
+      this.sumTime = `${hours}시간 ${minutes}분`;
+      this.isLeave = true;
+
+      this.isLoading = false;
+    },
+    async check() {
+      console.log("check START");
+      const api = "http://192.168.0.51/api";
+      console.log(api);
+      const token = sessionStorage.getItem("token");
+      let response = await axios
         .get(api + "/employee/commute/check", {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
           },
         })
-        .then((response) => {
-          console.log("Chcek Response:", response.data);
+        .then(() => {
+          console.log("Chcek Loaing...");
           // this.responseData = response.data;
-          this.isCommute = response.data.result.isCommute;
+
+          this.isLoading = true;
+
+
+          //페이지 구성에 필요한 걸 다 가져와야한다.
+        })
+        .catch((error) => {
+          console.error("Error check data:", error);
+          alert("출근 정보 가져오기 실패");
+        });
+      this.isCommute = response.data.result.isCommute;
           this.isLeave = response.data.result.isLeave;
           if (this.isCommute) {
             this.commuteId = response.data.result.id;
@@ -362,37 +356,39 @@ export default {
             const minutes = parts[1];
             this.sumTime = `${hours}시간 ${minutes}분`;
           }
-
-          //페이지 구성에 필요한 걸 다 가져와야한다.
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
-        });
+      this.isLoading = false;
     },
 
-    fetchNoticeData(page) {
-      console.log("qweqwe");
+    async fetchNoticeData(page) {
+      console.log("fetchNoticeData START");
       const itemsPerPage = 6;
-      axios
-        .get(
-          `http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`
-        )
-        .then((response) => {
-          this.notices = response.data.result;
-
-          console.log(response.data.result);
+      let response = await axios.get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .then(() => {
+          console.log("Loading fetchNoticeData");
+          this.isLoading = true;
           //   totalItems = response.data.total;
         })
         .catch((error) => {
           console.error("Error fetching notice data:", error);
+          alert("공지사항 불러오기 실패");
         });
-      console.log("qweqwe");
+      this.notices = response.data.result;
+      console.log("fetchNoticeData END");
+
+      this.isLoading = false;
     },
   },
   mounted() {
     // 출근한 상태인지 확인해야함.
-    this.check();
-    this.fetchNoticeData(1);
+    try {
+      this.check();
+      this.fetchNoticeData(1);
+    } catch (error) {
+      console.log("init fail:"+error);
+    }finally{
+      this.isLoading = false;
+    }
+
   },
 };
 </script>
@@ -471,6 +467,7 @@ button:active {
   position: relative;
   color: gray;
 }
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;

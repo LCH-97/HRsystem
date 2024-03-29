@@ -35,7 +35,7 @@
       },
       fetchGooutTypes() {
         // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
-        axios.get('http://localhost:8080/gooutType/list')
+        axios.get('http://192.168.0.51/api/gooutType/list')
           .then(response => {
             this.gooutTypes = response.data.result;
           })
