@@ -156,7 +156,7 @@ public class EmployeeService {
                 .employmentDate(LocalDate.now())
                 .department(Department.builder().id(signUpReq.getDepartmentId()).build())
                 .position(Position.builder().id(signUpReq.getPositionId()).build())
-                .authority("USER_ADMIN")
+                .authority("ROLE_ADMIN")
                 .status(true)
                 .build();
         employeeRepository.save(employee);
