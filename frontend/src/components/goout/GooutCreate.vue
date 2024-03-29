@@ -103,7 +103,6 @@
 
 <script>
 import axios from "axios";
-import jwtDecode from "jwt-decode";
 
 export default {
   data() {
@@ -129,9 +128,6 @@ export default {
   async created() {
     await this.fetchGooutTypes();
     await this.fetchEmployees();
-  },
-  mounted() {
-    this.setLoggedInUser();
   },
 
   watch: {
@@ -160,14 +156,6 @@ export default {
       }
     },
 
-    setLoggedInUser() {
-      const token = sessionStorage.getItem("token"); // 로컬 스토리지 또는 적절한 저장소에서 토큰 가져오기
-      if (token) {
-        const decoded = jwtDecode(token);
-        this.loggedInUserId = decoded.ID; // 실제 토큰 구조에 따라 변경될 수 있음
-      }
-    },
-
     handleFilesUpload(event) {
       this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
     },
@@ -186,25 +174,24 @@ export default {
         );
         return; // 메소드 실행을 중단
       }
-      this.setLoggedInUser();
+      const token = sessionStorage.getItem("token");
       let formData = new FormData();
       formData.append(
-          "gooutCreateReq",
-          new Blob(
-              [
-                JSON.stringify({
-                  agentId: this.agentId,
-                  employeeId: this.employeeId,
-                  writerId: this.loggedInUserId,
-                  gooutTypeId: this.gooutTypeId,
-                  first: this.first,
-                  last: this.last,
-                  confirmer1Id: this.confirmer1Id,
-                  confirmer2Id: this.confirmer2Id,
-                }),
-              ],
-              {type: "application/json"}
-          )
+        "gooutCreateReq",
+        new Blob(
+          [
+            JSON.stringify({
+              agentId: this.agentId,
+              employeeId: this.employeeId,
+              gooutTypeId: this.gooutTypeId,
+              first: this.first,
+              last: this.last,
+              confirmer1Id: this.confirmer1Id,
+              confirmer2Id: this.confirmer2Id,
+            }),
+          ],
+          { type: "application/json" }
+        )
       );
 
       // 여러 파일을 formData에 추가
@@ -212,15 +199,21 @@ export default {
         formData.append("uploadFiles", this.files[i]); // 'uploadFiles'로 변경
       }
 
+      // 요청 헤더에 인증 토큰 추가
+      const config = {
+        headers: {
+          // 여기에서 Authorization 헤더에 토큰 추가
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       try {
         const response = await axios.post(
-            `${this.backend}/goout/create`,
-            formData
+          `${this.backend}/goout/create`,
+          formData,
+          config
         );
         console.log(response);
-
-        const gooutId = response.data.result;
-        console.log("Created goout ID:", gooutId);
 
         alert("휴가가 등록되었습니다.");
         this.$router.push(`/goout/list`);
