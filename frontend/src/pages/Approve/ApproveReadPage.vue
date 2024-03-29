@@ -35,7 +35,7 @@
         <br />
         <table class="table">
           <tr v-if="files.length > 0">
-            <th>첨부 파일</th>
+            <th>첨부파일</th>
             <td v-for="file in files" :key = "file.name">
             <a :href="file.downloadUrl" target = "_blank">{{ file.name }}</a>
             </td>
@@ -45,7 +45,7 @@
             <td>{{ approve.employeeName }}</td>
           </tr>
           <tr>
-            <th>상태</th>
+            <th>상 태</th>
             <td>{{ getStatusText1(this.approve.status) }}</td>
           </tr>
           <tr v-if="confirmer1.status === 3">
@@ -61,7 +61,7 @@
             <td>{{ approve.createAt }}</td>
           </tr>
           <tr>
-            <th>내용</th>
+            <th>내 용</th>
             <td>
             <div class="contable">{{ this.approve.content }}</div>
             </td>
@@ -374,6 +374,7 @@ export default {
 .title {
   font-size: 24px;
   font-weight: bold;
+  margin-left: 70px;
 }
 .table {
   width: 100%;
