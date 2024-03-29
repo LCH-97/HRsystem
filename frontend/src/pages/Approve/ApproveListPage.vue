@@ -115,6 +115,8 @@ computed: {
     }
     return pages;
   },
+
+
 // 상태별 개수를 계산하는 계산된 속성
 statusCounts() {
   const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
@@ -150,7 +152,7 @@ methods: {
     },
     nextGroup() {
       // 다음 그룹으로 이동 (페이지 번호 배열만 +5)
-      if (this.pageGroupStart + this.pagesToShow <= 100) {
+      if (this.pageGroupStart + this.pagesToShow <= this.totalPages) {
         this.pageGroupStart += this.pagesToShow;
         // 현재 페이지도 페이지 그룹의 첫 페이지로 설정
         this.changePage(this.pageGroupStart);
@@ -166,7 +168,7 @@ methods: {
 },
 
 async fetchApprovals() {
-const api = "http://localhost:8080/approve/list";
+const api = "http://192.168.0.51/api/approve/list";
 try {
   const response = await axios.get(api);
   this.approvals = response.data.result;
@@ -213,7 +215,7 @@ getStatusText(status) {
 
 h1.mt-4 {
   padding-top: 10px;
-  margin-left: 900px;
+  margin-left: 1px;
 }
 /* 브레드크럼 스타일 */
 .breadcrumb.mb-4 {
@@ -225,8 +227,8 @@ h1.mt-4 {
 /* 카드 스타일 */
 .card.mb-4 {
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  display: 95%;
-  margin-left: 250px;
+  display: 100%;
+  margin-left: 50px;
 }
 
 .card-header {

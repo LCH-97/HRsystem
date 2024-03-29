@@ -45,8 +45,8 @@
                 <ul class="file-list">
                   <li v-for="file in files" :key="file.name">
                     <a :href="file.downloadUrl" target="_blank">{{
-                      file.name
-                    }}</a>
+                        file.name
+                      }}</a>
                   </li>
                 </ul>
               </div>
@@ -90,8 +90,8 @@
   </div>
   <div class="goout-button">
     <div
-      class="confirm1-button"
-      v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0"
+        class="confirm1-button"
+        v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0"
     >
       <!-- Show these buttons if the logged-in user is confirmer1 -->
       <button @click="confirm1">결재자1 결재</button>
@@ -99,8 +99,8 @@
     </div>
     <!-- Show these buttons if the logged-in user is confirmer2 -->
     <div
-      class="confirm1-button"
-      v-else-if="
+        class="confirm1-button"
+        v-else-if="
         confirmer2?.confirmerId === loggedInUserId && goout?.status == 1
       "
     >
@@ -109,8 +109,8 @@
     </div>
     <!-- Show these buttons if the logged-in user is the one who requested the leave -->
     <div
-      class="confirm1-button"
-      v-else-if="
+        class="confirm1-button"
+        v-else-if="
         goout?.writerId === loggedInUserId ||
         goout?.employeeId === loggedInUserId
       "
@@ -131,7 +131,7 @@ export default {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
-      backend: "http://localhost:8080", // 백엔드 서버 주소
+      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
       confirmer1: null,
       confirmer2: null,
       files: [], // 파일 목록을 저장할 배열
@@ -141,13 +141,13 @@ export default {
     fetchFiles() {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
       axios
-        .get(`${this.backend}/goout/files/${this.id}`)
-        .then((response) => {
-          this.files = response.data; // 파일 목록 업데이트
-        })
-        .catch((error) => {
-          console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
-        });
+          .get(`${this.backend}/goout/files/${this.id}`)
+          .then((response) => {
+            this.files = response.data; // 파일 목록 업데이트
+          })
+          .catch((error) => {
+            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+          });
     },
     setLoggedInUser() {
       const token = sessionStorage.getItem("token");
@@ -260,7 +260,7 @@ export default {
     async fetchGoout() {
       try {
         const gooutResponse = await axios.get(
-          `${this.backend}/goout/check/${this.id}`
+            `${this.backend}/goout/check/${this.id}`
         );
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
@@ -276,7 +276,7 @@ export default {
     async fetchGooutLine(gooutId) {
       try {
         const response = await axios.get(
-          `http://localhost:8080/gooutLine/2/${gooutId}`
+            `http://192.168.0.51/api/gooutLine/2/${gooutId}`
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
@@ -287,8 +287,8 @@ export default {
         }
       } catch (error) {
         console.error(
-          "결재라인 정보를 불러오는 중 오류가 발생했습니다.",
-          error
+            "결재라인 정보를 불러오는 중 오류가 발생했습니다.",
+            error
         );
       }
     },
@@ -309,22 +309,22 @@ export default {
       }
       const gooutId = this.$route.params.id;
       localStorage.setItem(
-        "updateGooutInfo",
-        JSON.stringify({
-          gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
-          employeeId: this.goout.employeeId,
-          agentId: this.goout.agentId,
-          first: this.goout.first,
-          last: this.goout.last,
-          id: gooutId,
-        })
+          "updateGooutInfo",
+          JSON.stringify({
+            gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+            employeeId: this.goout.employeeId,
+            agentId: this.goout.agentId,
+            first: this.goout.first,
+            last: this.goout.last,
+            id: gooutId,
+          })
       );
       localStorage.setItem(
-        "updateGooutLineInfo",
-        JSON.stringify({
-          confirmer1Id: this.confirmer1?.confirmerId,
-          confirmer2Id: this.confirmer2?.confirmerId,
-        })
+          "updateGooutLineInfo",
+          JSON.stringify({
+            confirmer1Id: this.confirmer1?.confirmerId,
+            confirmer2Id: this.confirmer2?.confirmerId,
+          })
       );
       this.$router.push("/goout/update");
     },

@@ -11,41 +11,41 @@
     <div class="gooutList">
       <table>
         <thead>
-          <tr>
-            <th>게시글 번호</th>
-            <th>이름</th>
-            <th>작성자 이름</th>
-            <th>휴가 유형</th>
-            <th>상태</th>
-            <th>시작 날짜</th>
-            <th>종료 날짜</th>
-          </tr>
+        <tr>
+          <th>게시글 번호</th>
+          <th>이름</th>
+          <th>작성자 이름</th>
+          <th>휴가 유형</th>
+          <th>상태</th>
+          <th>시작 날짜</th>
+          <th>종료 날짜</th>
+        </tr>
         </thead>
         <tbody>
-          <tr
+        <tr
             v-for="goout in filteredGoouts"
             :key="goout.id"
             @click="goToGooutReadPage(goout.id)"
             class="gooutItem"
-          >
-            <td style="text-align: center">{{ goout.id }}</td>
-            <td>{{ goout.name }}</td>
-            <td>{{ goout.writerName }}</td>
-            <td>{{ goout.gooutTypeName }}</td>
-            <td>{{ getStatusText(goout.status) }}</td>
-            <td>{{ goout.first }}</td>
-            <td>{{ goout.last }}</td>
-          </tr>
+        >
+          <td style="text-align: center">{{ goout.id }}</td>
+          <td>{{ goout.name }}</td>
+          <td>{{ goout.writerName }}</td>
+          <td>{{ goout.gooutTypeName }}</td>
+          <td>{{ getStatusText(goout.status) }}</td>
+          <td>{{ goout.first }}</td>
+          <td>{{ goout.last }}</td>
+        </tr>
         </tbody>
       </table>
     </div>
     <div class="pagination">
       <button @click="prevGroup">이전</button>
       <button
-        v-for="page in pageGroup"
-        :key="page"
-        :class="{ active: page === currentPage }"
-        @click="changePage(page)"
+          v-for="page in pageGroup"
+          :key="page"
+          :class="{ active: page === currentPage }"
+          @click="changePage(page)"
       >
         {{ page }}
       </button>
@@ -79,9 +79,9 @@ export default {
     pageGroup() {
       // 현재 페이지가 포함된 페이지 그룹의 시작 페이지를 계산합니다.
       let startPage =
-        Math.floor((this.currentPage - 1) / this.pagesToShow) *
+          Math.floor((this.currentPage - 1) / this.pagesToShow) *
           this.pagesToShow +
-        1;
+          1;
       // 시작 페이지를 기준으로 pagesToShow만큼의 페이지 번호를 생성합니다.
       // 단, 전체 페이지 수를 초과하지 않도록 주의합니다.
       let pages = [];
@@ -117,8 +117,8 @@ export default {
 
     getStatusText(status) {
       const statusMap = {
-        0: "대기중",
-        1: "기안중",
+        0: "기안중",
+        1: "진행중",
         2: "최종 승인",
         3: "반려",
         4: "등록 취소",
@@ -131,7 +131,7 @@ export default {
     },
     async fetchGoouts() {
       try {
-        const response = await axios.get(`http://localhost:8080/goout/check`, {
+        const response = await axios.get(`http://192.168.0.52:8080/goout/check`, {
           params: {
             page: this.currentPage,
             size: this.pageSize,
@@ -140,8 +140,8 @@ export default {
         const data = response.data.result; // 결과 데이터 구조에 따라 조정 필요
         this.goouts = data.goouts;
         this.filteredGoouts = data.goouts;
-            // 총 페이지 수 계산
-    this.totalPages = Math.ceil(data.totalElements / this.pageSize);
+        // 총 페이지 수 계산
+        this.totalPages = Math.ceil(data.totalElements / this.pageSize);
       } catch (error) {
         console.error("Failed to fetch goouts:", error);
       }
@@ -158,7 +158,7 @@ export default {
         this.filteredGoouts = this.goouts;
       } else {
         this.filteredGoouts = this.goouts.filter(
-          (goout) => goout.status === status
+            (goout) => goout.status === status
         );
       }
     },

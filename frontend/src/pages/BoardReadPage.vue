@@ -57,7 +57,7 @@
     mounted() {
       this.boardId = this.$route.params.id; // 라우터로부터 게시글의 id를 받아옴
   
-      axios.get(`http://localhost:8080/board/read?id=${this.boardId}`)
+      axios.get(`http://192.168.0.51/api/board/read?id=${this.boardId}`)
         .then(response => {
           const board = response.data;
   

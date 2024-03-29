@@ -56,36 +56,49 @@ export default {
   },
   methods: {
     checkIsAdmin() {
-      console.log("getAuthorizeList");
+      console.log("getAuthorizeList START");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
       axios.get(api + "/manager/authorize", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-        })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
         .then((response) => {
-          console.log("Response:", response.data);
-          if(response.data.code == 200){
+          console.log("checkIsAdmin is Loading");
+          console.log(response);
+          if (response.data.code == 200) {
             this.isAdmin = true;
+          }
+          else {
+            this.isAdmin = false;
           }
 
         })
         .catch((error) => {
-          console.error("Error getAuthorizeList:", error);
-          this.isAdmin = false;
+          console.error("Error checkIsAdmin:", error);
+          // alert();
+          throw new Error("권한 확인 실패");
+
+        }).finally(()=>{
+          console.log("getAuthorizeList END");
         });
+
     },
   },
   mounted() {
-
-    this.checkIsAdmin();
+    try {
+      this.checkIsAdmin();
+    } catch (error) {
+      console.error("Error Header Init:", error);
+    }
+    
 
   },
 }

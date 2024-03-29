@@ -10,9 +10,9 @@
           <div class="input">
             <select v-model="employeeId">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -24,9 +24,9 @@
           <div class="input">
             <select v-model="agentId">
               <option
-                v-for="agent in employees"
-                :key="agent.id"
-                :value="agent.id"
+                  v-for="agent in employees"
+                  :key="agent.id"
+                  :value="agent.id"
               >
                 {{ agent.name }}
               </option></select
@@ -38,9 +38,9 @@
           <div class="input-and-remaining-days">
             <select v-model="gooutTypeId" class="select-reason">
               <option
-                v-for="gooutType in gooutTypes"
-                :key="gooutType.id"
-                :value="gooutType.id"
+                  v-for="gooutType in gooutTypes"
+                  :key="gooutType.id"
+                  :value="gooutType.id"
               >
                 {{ gooutType.name }}
               </option>
@@ -72,9 +72,9 @@
             <p>결재자1</p>
             <select v-model="confirmer1Id">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -82,9 +82,9 @@
             <p>결재자2</p>
             <select v-model="confirmer2Id">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -107,7 +107,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",
@@ -170,7 +170,7 @@ export default {
     async createGooutRequest() {
       if (this.confirmer1Id === this.confirmer2Id) {
         alert(
-          "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
+            "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
         );
         return; // 메소드 실행을 중단
       }
@@ -234,13 +234,13 @@ export default {
       if (this.gooutTypeId && this.employeeId) {
         try {
           const response = await axios.get(
-            `${this.backend}/goout/remainingVacationDays`,
-            {
-              params: {
-                employeeId: this.employeeId,
-                gooutTypeId: this.gooutTypeId,
-              },
-            }
+              `${this.backend}/goout/remainingVacationDays`,
+              {
+                params: {
+                  employeeId: this.employeeId,
+                  gooutTypeId: this.gooutTypeId,
+                },
+              }
           );
           this.remainingVacationDays = response.data.result;
           if (this.remainingVacationDays < 0) {
