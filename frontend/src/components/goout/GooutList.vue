@@ -117,8 +117,8 @@ export default {
 
     getStatusText(status) {
       const statusMap = {
-        0: "대기중",
-        1: "기안중",
+        0: "기안중",
+        1: "진행중",
         2: "최종 승인",
         3: "반려",
         4: "등록 취소",
