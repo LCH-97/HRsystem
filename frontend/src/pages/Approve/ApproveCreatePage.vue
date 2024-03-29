@@ -8,11 +8,10 @@
       <div class="row">
         <div class="form-group">
           <label for="title">제목</label>
-          <textarea id="title" class="form-control" rows="1" v-model="title" required></textarea>
+          <textarea placeholder="제목을 입력하세요." id="title" class="form-control" rows="1" v-model="title" required></textarea>
           <br /><br />
           <label for="content">내용:</label>
-          <textarea id="content" class="form-control" rows="10" v-model="content" required>
-            내용을 입력하세요.</textarea>
+          <textarea placeholder="내용을 입력하세요." id="content" class="form-control" rows="10" v-model="content" required></textarea>
         </div>
         <br /><br />
         <div class="confirmer">
@@ -67,8 +66,8 @@ export default {
   data() {
     return {
       backend: "http://192.168.0.51/api",
-      title: "제목을 입력하세요.",
-      content: "내용을 입력하세요.",
+      title: "",
+      content: "",
       confirmer1Id: "",
       confirmer2Id: "",
       employees: [],
@@ -149,15 +148,13 @@ export default {
           // 결재 생성 성공 처리
           alert("결재가 성공적으로 생성되었습니다.");
           this.$router.push("/approve/list"); // 예시: 결재 목록 페이지로 이동
-        } else {
-          // 서버로부터 받은 에러 메시지 표시
-          alert(`결재 생성 실패: ${response.data.message}`);
-        }
+        } 
       } catch (error) {
+        if(error.response && error.response.data) {
         // 에러 처리
-        console.error("결재 생성 과정에서 에러 발생", error);
-        alert("결재 생성에 실패했습니다.");
+        alert(`에러: ${error.response.data.message}`);
       }
+    }
     },
     async createApproveLine1(approveId) {
       try{
@@ -206,8 +203,9 @@ async createApproveLine2(approveId) {
 </script>
 <style scoped>
 .approve-create-all {
-  margin-left: 320px;
-  width: 80%;
+  display: 100%;
+  margin-left: 650px;
+  margin-top: 100px;
 }
 button {
   font-size: 18px;
