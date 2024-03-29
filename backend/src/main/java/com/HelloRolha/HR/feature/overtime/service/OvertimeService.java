@@ -33,10 +33,10 @@ public class OvertimeService {
     public OvertimeService(OvertimeRepository overtimeRepository) {
         this.overtimeRepository = overtimeRepository;
     }
-
+    Employee employee;
     public CreateOvertimeRes processOvertimeRequest(CreateOvertimeReq createOvertimeReq) {
         try{
-            Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         }catch (Exception e){
             throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER,e.getMessage());
         }
