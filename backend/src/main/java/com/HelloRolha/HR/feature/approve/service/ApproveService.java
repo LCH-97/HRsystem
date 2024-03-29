@@ -21,6 +21,10 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -96,37 +100,33 @@ public class ApproveService {
         return approveCreateRes;
     }
 
-    @Transactional
-    public List<ApproveList> list() {
-        List<Approve> approves = approveRepository.findList();
-        List<ApproveList> approveLists = new ArrayList<>();
 
-        for (Approve approve : approves) {
+@Transactional
+public Page<ApproveList> list(Pageable pageable) {
+    Page<Approve> approvePage = approveRepository.findAllByOrderByCreateAtDesc(pageable);
+
+        Page<ApproveList> approveListPage = approvePage.map(approve -> {
             Employee employee = approve.getEmployee();
             List<ApproveLineList> approveLineLists = approveLineService.read2(approve.getId());
             Employee confirmer1 = employeeRepository.findById(approveLineLists.get(0).getConfirmerId())
-                        .orElseThrow(() -> new IllegalArgumentException("결재자1의 ID가 존재하지 않습니다."));
-                Employee confirmer2 = employeeRepository.findById(approveLineLists.get(1).getConfirmerId())
-                        .orElseThrow(() -> new IllegalArgumentException("결재자2의 ID가 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("결재자1의 ID가 존재하지 않습니다."));
+            Employee confirmer2 = employeeRepository.findById(approveLineLists.get(1).getConfirmerId())
+                    .orElseThrow(() -> new IllegalArgumentException("결재자2의 ID가 존재하지 않습니다."));
 
-                ApproveList approveList = ApproveList.builder()
-                        .id(approve.getId())
-                        .title(approve.getTitle())
-                        .content(approve.getContent())
-                        .employeeName(employee.getName())
-                        .status(approve.getStatus())
-                        .createAt(approve.getCreateAt())
-                        .confirmer1Name(confirmer1.getName())
-                        .confirmer2Name(confirmer2.getName())
-                        .build();
-                approveLists.add(approveList);
+            return ApproveList.builder()
+                    .id(approve.getId())
+                    .title(approve.getTitle())
+                    .content(approve.getContent())
+                    .employeeName(employee.getName())
+                    .status(approve.getStatus())
+                    .createAt(approve.getCreateAt())
+                    .confirmer1Name(confirmer1.getName())
+                    .confirmer2Name(confirmer2.getName())
+                    .build();
 
-            }
-        Collections.reverse(approveLists);
-        return approveLists;
+        });
+        return approveListPage;
     }
-
-
 
     public ApproveRead read(Integer Id) {
         Optional<Approve> optionalApprove = approveRepository.findById(Id);
