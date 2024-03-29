@@ -2,6 +2,7 @@ package com.HelloRolha.HR.config;
 
 
 import com.HelloRolha.HR.config.utils.filter.JwtFilter;
+import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class SecurityConfig{
 
     @Value("${jwt.secret-key}")
     private String secretKey;
-
+    private final EmployeeRepository employeeRepository;
 
 //    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 //    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -45,7 +46,7 @@ public class SecurityConfig{
                     .exceptionHandling()
                     .and()
                     .formLogin().disable()
-                    .addFilterBefore(new JwtFilter(secretKey), UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new JwtFilter(secretKey,employeeRepository), UsernamePasswordAuthenticationFilter.class)
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             return  http.build();
         } catch (Exception e) {
