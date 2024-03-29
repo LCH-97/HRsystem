@@ -41,8 +41,8 @@
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(approve, index) in filteredApprovals"
-                    :key="index"
+                    v-for="approve in filteredApprovals"
+                    :key="approve.id"
                     @click="goToApproveReadPage(approve.id)"
                     class="approvelist"
                   >
@@ -96,7 +96,7 @@ data() {
     confirmer1: "",
     confirmer2: "",
     currentPage: 1,
-    pageSize: 10,
+    pageSize: "",
     pagesToShow: 5,
     pageGroupStart: 1,
   };
@@ -106,15 +106,21 @@ computed: {
     return Math.ceil(this.approvals.length / this.pageSize);
   },
   pageGroup() {
-    let startPage = Math.floor((this.currentPage - 1) / this.pagesToShow) * this. pagesToShow + 1;
-    let pages = [];
-    for (let i = 0; i < this.pagesToShow; i++) {
-      let page = startPage + i;
-      if(page > this.totalPages) break;
-      pages.push(page);
-    }
-    return pages;
-  },
+      // 현재 페이지가 포함된 페이지 그룹의 시작 페이지를 계산합니다.
+      let startPage =
+          Math.floor((this.currentPage - 1) / this.pagesToShow) *
+          this.pagesToShow +
+          1;
+      // 시작 페이지를 기준으로 pagesToShow만큼의 페이지 번호를 생성합니다.
+      // 단, 전체 페이지 수를 초과하지 않도록 주의합니다.
+      let pages = [];
+      for (let i = 0; i < this.pagesToShow; i++) {
+        let page = startPage + i;
+        if (page > this.totalPages) break; // 전체 페이지 수를 초과하지 않도록 합니다.
+        pages.push(page);
+      }
+      return pages;
+    },
 
 
 // 상태별 개수를 계산하는 계산된 속성
@@ -168,22 +174,31 @@ methods: {
 },
 
 async fetchApprovals() {
-const api = "http://192.168.0.51/api/approve/list";
+  const api = `http://192.168.0.51/api/approve/list?page=${this.currentPage-1}&size=${this.pageSize}`;
 try {
   const response = await axios.get(api);
-  this.approvals = response.data.result;
-  this.filteredApprovals = this.approvals; // 초기 로딩 시 전체 결재 목록을 보여줍니다.
+  if (response.data && response.data.result && Array.isArray(response.data.result.content)) {
+    this.approvals = response.data.result.content;
+      this.filteredApprovals = this.approvals;
+  // this.approvals = Array.isArray(response.data.result) ? response.data.result : [];
+  // this.filteredApprovals = this.approvals; // 초기 로딩 시 전체 결재 목록을 보여줍니다.
 
   // 모든 결재 항목에 대해 결재라인 정보를 불러옵니다.
-  for (const approve of this.approvals) {
-    await this.fetchApproveLine(approve.id); // 각 결재 항목의 id를 사용하여 fetchApproveLine 호출
-  }
-} catch (error) {
-  console.error("Error fetching data:", error);
+  // for (const approve of this.approvals) {
+  //   await this.fetchApproveLine(approve.id); // 각 결재 항목의 id를 사용하여 fetchApproveLine 호출
+  // }
+} else {
+      this.approvals = [];
+      this.filteredApprovals = [];
 }
-const start = (this.currentPage - 1) * this.pageSize;
-  const end = this.currentPage * this.pageSize;
-  this.filteredApprovals = this.approvals.slice(start, end);
+    } catch (error) {
+  console.error("Error fetching data:", error);
+  this.approvals = [];
+  this.filteredApprovals = [];
+}
+// const start = (this.currentPage - 1) * this.pageSize;
+//   const end = this.currentPage * this.pageSize;
+//   this.filteredApprovals = this.approvals.slice(start, end);
 },
 
   goToApproveReadPage(id) {
