@@ -87,6 +87,7 @@ export default {
         alert("초과 근무 신청이 완료되었습니다."); // 신청 완료 메시지 출력
       } catch (error) {
         console.error("Error:", error);
+        alert("초과 근무 신청이 실패했습니다."); // 신청 실패 메시지 출력
       }
     },
     async submitForm() {
@@ -95,6 +96,7 @@ export default {
         for (let key in this.form) {
           formData.append(key, this.form[key]);
         }
+        console.log("create overtime data:",formData);
         await this.sendData(formData);
       } catch (error) {
         console.error("Error:", error);
