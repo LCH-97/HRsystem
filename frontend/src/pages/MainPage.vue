@@ -229,7 +229,7 @@ export default {
     };
   },
   methods: {
-    async commute() {
+    commute() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = "http://192.168.0.51/api";
@@ -238,14 +238,25 @@ export default {
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      let response = await axios.post(api + "/employee/commute", null, {
+
+      this.isLoading = true;
+      axios.post(api + "/employee/commute", null, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-      }).then(() => {
-        console.log("대기 중");
-        this.isLoading = true;
+      }).then((response) => {
+        console.log("commute 대기 중");
+
+        console.log("commute Response:", response);
+
+        // this.responseData = response.data;
+        this.startTime = response.result.startTime;
+        this.commuteId = response.result.id;
+        this.isCommute = true;
+        this.isLeave = false;
+
+
       })
         .catch(error => {
           console.error('Error post commute data:', error);
@@ -261,17 +272,11 @@ export default {
           //   this.popText = "서버 관리자에게 연락하세요.";
           // }
           // this.popUpStatus = true;
+        }).finally(() => {
+          this.isLoading = false;
         });
 
-      console.log("Response:", response);
 
-      // this.responseData = response.data;
-      this.startTime = response.result.startTime;
-      this.commuteId = response.result.id;
-      this.isCommute = true;
-      this.isLeave = false;
-
-      this.isLoading = false;
     },
     async leave() {
       console.log(" leave click");
@@ -282,28 +287,31 @@ export default {
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      let response = await axios.patch(api + "/employee/leave/" + this.commuteId, null, {
+      axios.patch(api + "/employee/leave/" + this.commuteId, null, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
       })
-        .then(() => {
+        .then((response) => {
           console.log("대기 중");
           this.isLoading = true;
           // this.responseData = response.data;
+          console.log("Resposne:", response);
+          this.endTime = response.result.endTime;
+          this.sumTime = response.result.sumTime;
+          this.isLeave = true;
 
         })
         .catch((error) => {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
+        }).finally(()=>{
+          this.isLoading = false;
         });
-      console.log("Resposne:", response);
-      this.endTime = response.result.endTime;
-      this.sumTime = response.result.sumTime;
-      this.isLeave = true;
 
-      this.isLoading = false;
+
+      
     },
     async check() {
       console.log("check START");
@@ -334,7 +342,8 @@ export default {
       } catch {
         ((error) => {
           console.error("Error check data:", error);
-          alert("출근 정보 가져오기 실패");
+          // alert("출근 정보 가져오기 실패");
+          throw new Error('출근 정보 가져오기 실패');
         });
       } finally {
         this.isLoading = false;
@@ -355,9 +364,9 @@ export default {
         })
         .catch((error) => {
           console.error("Error fetching notice data:", error);
-          
-          alert("공지사항 불러오기 실패");
-          
+
+          // alert("공지사항 불러오기 실패");
+          throw new Error('공지사항 불러오기 실패');
         }).finally(() => {
           console.log("fetchNoticeData END");
           this.isLoading = false;

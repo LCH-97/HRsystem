@@ -83,7 +83,8 @@ export default {
         })
         .catch((error) => {
           console.error("Error checkIsAdmin:", error);
-          alert("권한 확인 실패");
+          // alert();
+          throw new Error("권한 확인 실패");
 
         }).finally(()=>{
           console.log("getAuthorizeList END");
@@ -92,8 +93,12 @@ export default {
     },
   },
   mounted() {
-
-    this.checkIsAdmin();
+    try {
+      this.checkIsAdmin();
+    } catch (error) {
+      console.error("Error Header Init:", error);
+    }
+    
 
   },
 }
