@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,10 +64,6 @@ public class GooutService {
         }
         if (gooutCreateReq.getEmployeeId() == null) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "직원 ID는 null일 수 없습니다.");
-        }
-
-        if (gooutCreateReq.getWriterId() == null) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "작성자 ID는 null일 수 없습니다.");
         }
 
         if (gooutCreateReq.getGooutTypeId() == null) {
@@ -111,10 +108,12 @@ public class GooutService {
             gooutCreateReq.setLast(temp);
         }
 
+        Employee writer = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
         Goout goout = Goout.builder()
                 .agent(Employee.builder().id(gooutCreateReq.getAgentId()).build())
                 .employee(Employee.builder().id(gooutCreateReq.getEmployeeId()).build())
-                .writer(Employee.builder().id(gooutCreateReq.getWriterId()).build())
+                .writer(Employee.builder().id(writer.getId()).build()) // writer ID를 여기에 사용
                 .gooutType(GooutType.builder().id(gooutCreateReq.getGooutTypeId()).build())
                 .first(gooutCreateReq.getFirst())
                 .last(gooutCreateReq.getLast())
