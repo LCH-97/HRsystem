@@ -156,9 +156,11 @@
                             </button>
                           </div>
 
+
                           <div class="main-button-container" v-show="isCommute && !isLeave">
                             <button id="leaveButton" v-show="!isLoading" @click="leave">
-                              퇴근 {{ this.commuteId }}
+                              퇴근
+
                             </button>
                           </div>
 
@@ -187,7 +189,7 @@
       </div>
     </div>
   </div>
-  <LoadingPage v-if="isLoading" @close-event="close"/>
+  <LoadingPage v-if="isLoading" @close-event="close" />
 </template>
 
 <script>
@@ -229,11 +231,13 @@ export default {
     };
   },
   methods: {
-    close(){
-      this.isLoading= false;
+
+    close() {
+      this.isLoading = false;
     },
     commute() {
       console.log("click");
+
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = "http://192.168.0.51/api";
       console.log(api);
@@ -242,8 +246,10 @@ export default {
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
 
+
       this.isLoading = true;
       axios.post(api + "/employee/commute", null, {
+
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -251,11 +257,12 @@ export default {
       }).then((response) => {
         console.log("commute 대기 중");
 
-        console.log("commute Response:", response);
+
+        console.log("Response:", response);
 
         // this.responseData = response.data;
-        this.startTime = response.data.result.startTime;
-        this.commuteId = response.data.result.id;
+        this.startTime = this.formatDateTime(response.data.result.startTime);
+        this.commuteId = response.result.id;
         this.isCommute = true;
         this.isLeave = false;
 
@@ -275,12 +282,15 @@ export default {
           //   this.popText = "서버 관리자에게 연락하세요.";
           // }
           // this.popUpStatus = true;
+
         }).finally(() => {
           this.isLoading = false;
         });
 
 
+
     },
+
     async leave() {
       console.log(" leave click");
       // const api = process.env.VUE_APP_BACKEND_URL;
@@ -301,26 +311,35 @@ export default {
           this.isLoading = true;
           // this.responseData = response.data;
           console.log("Resposne:", response);
-          this.endTime = response.data.result.endTime;
-          this.sumTime = response.data.result.sumTime;
+          let now = new Date();
+          this.endTime = this.formatDateTime(now.toISOString());
+          const diff = this.endTime.getTime - this.startTime.getTime;
+          const hours = Math.floor(diff / 3600000); // 시간
+          const minutes = Math.floor((diff % 3600000) / 60000); // 분
+          this.sumTime = `${hours}시간 ${minutes}분`;
           this.isLeave = true;
+
 
         })
         .catch((error) => {
           console.error("Error updating data:", error);
           alert("퇴근 실패");
-        }).finally(()=>{
+        }).finally(() => {
           this.isLoading = false;
         });
 
 
-      
+
+
+
+
     },
     async check() {
       console.log("check START");
       const api = "http://192.168.0.51/api";
       console.log(api);
       const token = sessionStorage.getItem("token");
+
       console.log("Chcek Loaing...");
       this.isLoading = true;
       try {
@@ -339,8 +358,12 @@ export default {
           this.startTime = response.data.result.startTime;
         }
         if (this.isLeave) {
+          this.startTime = response.data.result.startTime;
           this.endTime = response.data.result.endTime;
-          this.sumTime = response.data.result.sumTime;
+          const parts = response.data.result.sumTime.split(":");
+          const hours = parts[0];
+          const minutes = parts[1];
+          this.sumTime = `${hours}시간 ${minutes}분`;
         }
       } catch {
         ((error) => {
@@ -348,11 +371,10 @@ export default {
           // alert("출근 정보 가져오기 실패");
           throw new Error('출근 정보 가져오기 실패');
         });
+
       } finally {
         this.isLoading = false;
       }
-
-
     },
 
     fetchNoticeData(page) {
