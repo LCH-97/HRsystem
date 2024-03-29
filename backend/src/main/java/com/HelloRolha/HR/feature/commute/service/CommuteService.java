@@ -1,8 +1,10 @@
 package com.HelloRolha.HR.feature.commute.service;
 
 
+import com.HelloRolha.HR.error.ErrorCode;
 import com.HelloRolha.HR.error.exception.AlreadyCommuteException;
 import com.HelloRolha.HR.error.exception.CommuteNotFoundException;
+import com.HelloRolha.HR.error.exception.CoummuteSQLException;
 import com.HelloRolha.HR.feature.commute.model.Commute;
 import com.HelloRolha.HR.feature.commute.model.dto.CommuteCheckRes;
 import com.HelloRolha.HR.feature.commute.model.dto.CommuteDto;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,7 +37,7 @@ public class CommuteService {
     public CommuteDto commute() {
         //자신의 id를 가져오는 법
         Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
+        System.out.println("\nEmployee id :"+employee.getId()+"\n");
         //오늘 출근을 한 상태라면 못해야한다.
         if(todayCheck(employee)){
             throw AlreadyCommuteException.alreadyCommuteException();
@@ -44,11 +47,20 @@ public class CommuteService {
                 .employee(employee)
                 .build();
 
-        Commute savedCommute = commuteRepository.save(commute);
+        try{
+            commute = commuteRepository.save(commute);
+        }
+        catch (Exception e){
+            throw new CoummuteSQLException(ErrorCode.DB_ERROR_SQL,"Commute Create Fail");
+        }
+        finally {
+
+        }
+
 
         return CommuteDto.builder()
-                .id(savedCommute.getId())
-                .startTime(savedCommute.getCreateAt())
+                .id(commute.getId())
+                .startTime(commute.getCreateAt())
                 .build();
     }
 
