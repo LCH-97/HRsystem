@@ -5,6 +5,7 @@ import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Position extends BaseEntity {
-
+    @Column(unique = true)
     private Integer positionNum;
     private String positionName;
 
