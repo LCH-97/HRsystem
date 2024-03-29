@@ -187,7 +187,7 @@
       </div>
     </div>
   </div>
-  <LoadingPage v-if="isLoading" />
+  <LoadingPage v-if="isLoading" @close-event="close"/>
 </template>
 
 <script>
@@ -229,6 +229,9 @@ export default {
     };
   },
   methods: {
+    close(){
+      this.isLoading= false;
+    },
     commute() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
@@ -251,8 +254,8 @@ export default {
         console.log("commute Response:", response);
 
         // this.responseData = response.data;
-        this.startTime = response.result.startTime;
-        this.commuteId = response.result.id;
+        this.startTime = response.data.result.startTime;
+        this.commuteId = response.data.result.id;
         this.isCommute = true;
         this.isLeave = false;
 
@@ -298,8 +301,8 @@ export default {
           this.isLoading = true;
           // this.responseData = response.data;
           console.log("Resposne:", response);
-          this.endTime = response.result.endTime;
-          this.sumTime = response.result.sumTime;
+          this.endTime = response.data.result.endTime;
+          this.sumTime = response.data.result.sumTime;
           this.isLeave = true;
 
         })
