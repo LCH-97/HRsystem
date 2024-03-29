@@ -109,7 +109,11 @@ export default {
         })
         .catch(error => {
           console.error('Error updating data:', error);
-          if (error.response.data.code === "USER-004") {
+          if (axios.isAxiosError(error)){
+            this.popTitle = "로그인에 실패하였습니다.";
+            this.popText = "서버와의 통신이 실패하였습니다.";
+          }
+          else if (error.response.data.code === "USER-004") {
             this.popTitle = "로그인에 실패하였습니다.";
             this.popText = "다시 시도해주세요.";
           } else if (error.response.data.code === "EMPLOYEE-001") {
