@@ -33,8 +33,9 @@ public class OvertimeService {
     public OvertimeService(OvertimeRepository overtimeRepository) {
         this.overtimeRepository = overtimeRepository;
     }
-    Employee employee;
+
     public CreateOvertimeRes processOvertimeRequest(CreateOvertimeReq createOvertimeReq) {
+        Employee employee;
         try{
             employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         }catch (Exception e){
@@ -81,7 +82,38 @@ public class OvertimeService {
         }
         return overtimeDtos;
     }
+    public List<OvertimeDto> mylist( ) {
+        Employee employee;
+        try{
+            employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }catch (Exception e){
+            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER,e.getMessage());
+        }
 
+        try{
+            List<Overtime> overtimes = overtimeRepository.findMyList(employee.getId());
+            List<OvertimeDto> overtimeDtos = new ArrayList<>();
+            for (Overtime overtime : overtimes) {
+                if (overtime != null) {
+                    OvertimeDto overtimeDto = OvertimeDto.builder()
+                            .id(overtime.getId())
+                            .shift(overtime.getShift())
+                            .startTime(overtime.getStartTime())
+                            .endTime(overtime.getEndTime())
+                            .date(overtime.getDate())
+                            .reason(overtime.getReason())
+                            .status(overtime.getStatus())
+                            .build();
+                    overtimeDtos.add(overtimeDto);
+                }
+            }
+            return overtimeDtos;
+        }catch (Exception e){
+            throw new OvertimeSQLException(ErrorCode.DB_ERROR_CREATE_SQL,e.getMessage());
+        }
+
+
+    }
 
     public OvertimeDto read(Integer id) {
         Overtime overtime = overtimeRepository.findById(id).orElseThrow(()->new OvertimeNotFoundException(""));
