@@ -1,5 +1,7 @@
 package com.HelloRolha.HR.feature.approve.service;
 
+import com.HelloRolha.HR.error.BusinessException;
+import com.HelloRolha.HR.error.ErrorCode;
 import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.approve.model.ApproveFile;
 import com.HelloRolha.HR.feature.approve.model.ApproveLine;
@@ -49,15 +51,27 @@ public class ApproveService {
     private String bucket;
 
     public ApproveCreateRes create(ApproveCreateReq approveCreateReq) {
-        Employee employee = employeeRepository.findById(approveCreateReq.getEmployeeId())
-                .orElseThrow(() -> new IllegalArgumentException("기안자의 ID가 존재하지 않습니다."));
 
+        if (approveCreateReq == null) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "결재 정보는 Null일 수 없습니다.");
+        }
+        if (approveCreateReq.getTitle() == null || approveCreateReq.getTitle().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "Title은 Null일 수 없습니다.");
+        }
+        if (approveCreateReq.getContent() == null || approveCreateReq.getContent().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "Content는 Null일 수 없습니다.");
+        }
+        if (approveCreateReq.getEmployeeId() == null) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "기안자는 Null일 수 없습니다.");
+        }
         if (approveCreateReq.getConfirmer1Id() == null) {
-            throw new IllegalArgumentException("결재자1을 선택해주세요.");
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "결재자1은 Null일 수 없습니다.");
         }
         if (approveCreateReq.getConfirmer2Id() == null) {
-            throw new IllegalArgumentException("결재자2를 선택해주세요.");
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "결재자2는 Null일 수 없습니다.");
         }
+        Employee employee = employeeRepository.getOne(approveCreateReq.getEmployeeId());
+
         ApproveCreateRes approveCreateRes = ApproveCreateRes.builder().build();
         Approve approve = Approve.builder()
                 .content(approveCreateReq.getContent())
@@ -89,10 +103,8 @@ public class ApproveService {
 
         for (Approve approve : approves) {
             Employee employee = approve.getEmployee();
-
-            if (employee != null) {
-                List<ApproveLineList> approveLineLists = approveLineService.read2(approve.getId());
-                Employee confirmer1 = employeeRepository.findById(approveLineLists.get(0).getConfirmerId())
+            List<ApproveLineList> approveLineLists = approveLineService.read2(approve.getId());
+            Employee confirmer1 = employeeRepository.findById(approveLineLists.get(0).getConfirmerId())
                         .orElseThrow(() -> new IllegalArgumentException("결재자1의 ID가 존재하지 않습니다."));
                 Employee confirmer2 = employeeRepository.findById(approveLineLists.get(1).getConfirmerId())
                         .orElseThrow(() -> new IllegalArgumentException("결재자2의 ID가 존재하지 않습니다."));
@@ -110,7 +122,7 @@ public class ApproveService {
                 approveLists.add(approveList);
 
             }
-        }
+        Collections.reverse(approveLists);
         return approveLists;
     }
 
