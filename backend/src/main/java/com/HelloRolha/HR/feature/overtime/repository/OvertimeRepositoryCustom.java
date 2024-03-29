@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface OvertimeRepositoryCustom {
   public List<Overtime> findList();
 
-
+  public List<Overtime> findMyList(Integer id);
   Optional<Overtime> findByIdWithDetails(Integer id);
 }
