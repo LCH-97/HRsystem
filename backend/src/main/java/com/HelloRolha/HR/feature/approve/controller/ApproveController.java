@@ -5,6 +5,9 @@ import com.HelloRolha.HR.feature.approve.model.dto.approve.*;
 import com.HelloRolha.HR.feature.approve.model.dto.approveFile.ApproveFileDto;
 import com.HelloRolha.HR.feature.approve.service.ApproveService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,8 +40,10 @@ public class ApproveController {
         return ResponseEntity.ok().body(response);
     }
     @GetMapping("/list")
-    public ResponseEntity<BaseRes> list() {
-        List<ApproveList> approveLists = approveService.list();
+    public ResponseEntity<BaseRes> list(
+            @PageableDefault(size = 5) Pageable pageable
+            ) {
+        Page<ApproveList> approveLists = approveService.list(pageable);
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("결재 목록 확인 성공")
