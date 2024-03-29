@@ -56,7 +56,7 @@
     <button id="close-btn" @click="closePop">닫기</button>
   </div>
 
-
+  <LoadingPage v-if="isLoading" @close-event="close" />
 
 </template>
 
@@ -64,11 +64,11 @@
 <script scope>
 
 import axios from 'axios';
-
+import LoadingPage from "@/components/LoadingPage.vue";
 export default {
   name: 'LoginPage',
   components: {
-
+    LoadingPage,
   },
   data() {
     return {
@@ -78,14 +78,19 @@ export default {
       responseData: null,
       username: '',
       password: '',
+      isLoading: false,
     };
   },
   methods: {
+    close() {
+      this.isLoading = false;
+    },
     closePop() {
       this.popUpStatus = false;
     },
     login() {
       console.log("click");
+      this.isLoading = true;
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = 'http://192.168.0.51/api';
       console.log(api);
@@ -108,10 +113,15 @@ export default {
 
         })
         .catch(error => {
-          console.error('Error updating data:', error);
+          console.error('Error Login:', error);
           if (axios.isAxiosError(error)){
             this.popTitle = "로그인에 실패하였습니다.";
-            this.popText = "서버와의 통신이 실패하였습니다.";
+            this.popText = "AxiosError: 서버와의 통신이 실패하였습니다. ";
+          
+          }
+          else if (error.code === "ERR_NETWORK") {
+            this.popTitle = "로그인에 실패하였습니다.";
+            this.popText = "ERR_NETWORK: 서버와의 통신이 실패하였습니다.";
           }
           else if (error.response.data.code === "USER-004") {
             this.popTitle = "로그인에 실패하였습니다.";
@@ -124,6 +134,8 @@ export default {
             this.popText = "서버 관리자에게 연락하세요.";
           }
           this.popUpStatus = true;
+        }).finally(()=>{
+          this.isLoading = false;
         });
     }
   },

@@ -4,8 +4,8 @@
     <div id="popup-container">
         <h2>{{ Title }}</h2>
         <p>{{ Text }}</p>
-        <p>담당자 번호</p>
-        <p>02-1111-2222</p>
+        <p>로딩 중</p>
+        <p>로딩 중</p>
         <button id="close-btn" @click="closePop">닫기</button>
     </div>
 </template>
