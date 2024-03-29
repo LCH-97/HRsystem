@@ -11,8 +11,8 @@
 
           <p>휴가 유형</p>
           <select v-model="updateInfo.gooutTypeId">
-  <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id.toString()">{{ gooutType.name }}</option>
-</select><br>
+            <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id.toString()">{{ gooutType.name }}</option>
+          </select><br>
           <p>신청직원</p>
           <select v-model="updateInfo.employeeId">
             <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
@@ -21,28 +21,28 @@
           <select v-model="updateInfo.agentId">
             <option v-for="agent in employees" :key="agent.id" :value="agent.id">{{ agent.name }}</option>
           </select><br>
-          
+
           <p>시작 날짜</p>
           <input type="date" v-model="updateInfo.first"><br>
           <p>종료 날짜</p>
           <input type="date" v-model="updateInfo.last"><br>
 
           <div class="row">
-           <div class="label">첨부파일</div>
-           <div class="input">
-            <input type="file" multiple @change="handleFilesUpload">
-           </div>
+            <div class="label">첨부파일</div>
+            <div class="input">
+              <input type="file" multiple @change="handleFilesUpload">
+            </div>
           </div>
 
           <p>결재자1</p>
-            <select v-model="updateInfo2.confirmer1Id">
-              <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-            </select><br>
+          <select v-model="updateInfo2.confirmer1Id">
+            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+          </select><br>
 
-            <p>결재자2</p>
-            <select v-model="updateInfo2.confirmer2Id">
-              <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
-            </select><br>
+          <p>결재자2</p>
+          <select v-model="updateInfo2.confirmer2Id">
+            <option v-for="employee in employees" :key="employee.id" :value="employee.id">{{ employee.name }}</option>
+          </select><br>
         </div>
       </article>
       <div class="button-container">
@@ -69,7 +69,7 @@ export default {
         writerId: "",
       },
       gooutTypes: [],
-      employees: [],  
+      employees: [],
       loggedInUserId: null, // 로그인한 사용자 ID 저장
       updateInfo2: {
         confirmer1Id: "",
@@ -81,9 +81,9 @@ export default {
 
   async created() {
     await this.fetchGooutTypes();
-  await this.fetchEmployees();
-  await this.loadUpdateInfo();
-  await this.loadUpdateInfo2();
+    await this.fetchEmployees();
+    await this.loadUpdateInfo();
+    await this.loadUpdateInfo2();
   },
 
   mounted() {
@@ -161,7 +161,7 @@ export default {
       }
     },
 
-        async updateGoout() {
+    async updateGoout() {
 
       if (this.updateInfo.employeeId === this.updateInfo.agentId) {
         alert("결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다.");
@@ -173,23 +173,23 @@ export default {
       }
 
 
-        let formData  = new FormData();
-  formData.append('gooutCreateReq', new Blob([JSON.stringify({
-          gooutTypeId: Number(this.updateInfo.gooutTypeId),
-          first: this.updateInfo.first,
-          last: this.updateInfo.last,
-          employeeId: Number(this.updateInfo.employeeId),
-          agentId: Number(this.updateInfo.agentId),
-          writerId:  Number(this.loggedInUserId),
+      let formData  = new FormData();
+      formData.append('gooutCreateReq', new Blob([JSON.stringify({
+        gooutTypeId: Number(this.updateInfo.gooutTypeId),
+        first: this.updateInfo.first,
+        last: this.updateInfo.last,
+        employeeId: Number(this.updateInfo.employeeId),
+        agentId: Number(this.updateInfo.agentId),
+        writerId:  Number(this.loggedInUserId),
 
-        })], {type : 'application/json'}));
+      })], {type : 'application/json'}));
 
-          // 여러 파일을 formData에 추가
-          for (let i = 0; i < this.files.length; i++) {
-          formData.append('uploadFiles', this.files[i]); // 'uploadFiles'로 변경
-        }
-        
-        try {
+      // 여러 파일을 formData에 추가
+      for (let i = 0; i < this.files.length; i++) {
+        formData.append('uploadFiles', this.files[i]); // 'uploadFiles'로 변경
+      }
+
+      try {
         const response = await axios.post(`${this.backend}/goout/create`, formData);
         console.log(response);
 
@@ -201,134 +201,134 @@ export default {
         alert("휴가가 재등록되었습니다.");
         this.$router.push(`/goout/list`);
 
-            } catch (error) {
-            console.error("휴가 등록 실패:", error);
-            if (error.response) {
-              alert("휴가 등록 실패: " + error.response.data.message);
-            } else {
-              alert("휴가 등록 실패: 서버에서 응답이 없습니다.");
-            }
+      } catch (error) {
+        console.error("휴가 등록 실패:", error);
+        if (error.response) {
+          alert("휴가 등록 실패: " + error.response.data.message);
+        } else {
+          alert("휴가 등록 실패: 서버에서 응답이 없습니다.");
+        }
+      }
+    },
+
+
+    async reCreateGooutLine1(gooutId) {
+      try {
+        const gooutLineReq = {
+          confirmerId: Number(this.updateInfo2.confirmer1Id),
+          gooutId: gooutId,
+        };
+        const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+          headers: {
+            'Content-Type': 'application/json'
           }
-        },
+        });
+
+        console.log("GooutLine1 생성 성공:", response);
+      } catch (error) {
+        console.error("결재라인 생성 실패:", error);
+        alert("결재라인1 생성 실패: " + error.response.data.message);
+      }
+    },
+
+    async reCreateGooutLine2(gooutId) {
+      try {
+        const gooutLineReq = {
+          confirmerId: Number(this.updateInfo2.confirmer2Id),
+          gooutId: gooutId,
+        };
+        const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log("GooutLine2 생성 성공:", response);
+        alert("휴가 등록 및 결재라인1, 2 생성 완료");
+        this.$router.push("/goout/list");
+      } catch (error) {
+        console.error("결재라인 생성 실패:", error);
+        alert("결재라인 생성 실패: " + error.response.data.message);
+      }
+    },
 
 
-        async reCreateGooutLine1(gooutId) {
-    try {
-      const gooutLineReq = {
-        confirmerId: Number(this.updateInfo2.confirmer1Id),
-        gooutId: gooutId, 
-      };
-      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log("GooutLine1 생성 성공:", response);
-    } catch (error) {
-      console.error("결재라인 생성 실패:", error);
-      alert("결재라인1 생성 실패: " + error.response.data.message);
-    }
-  },
-
-  async reCreateGooutLine2(gooutId) {
-    try {
-      const gooutLineReq = {
-        confirmerId: Number(this.updateInfo2.confirmer2Id),
-        gooutId: gooutId, 
-      };
-      const response = await axios.post(`${this.backend}/gooutLine/create`, gooutLineReq, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log("GooutLine2 생성 성공:", response);
-      alert("휴가 등록 및 결재라인1, 2 생성 완료");
-      this.$router.push("/goout/list");
-    } catch (error) {
-      console.error("결재라인 생성 실패:", error);
-      alert("결재라인 생성 실패: " + error.response.data.message);
-    }
-      },
-
-    
 
   },
 };
 </script>
-  
-  
-  <style scoped>
-  .gooutUpdateBanner {
-    margin: 0 auto;
-    text-align: center;
-    padding-top: 15px;
-    padding-bottom: 20px;
-    background-color: #f7f8fa;
-  }
 
-  .gooutUpdateBannerTxt {
-    font-size: 40px;
-    font-weight: 600;
-    color: rgb(85, 85, 85);
-  }
 
-  .ReqBox {
-    text-align: center;
-    background-color: #f7f8fa;
-    border: 1px solid #f7f8fa;
-    border-radius: 12px;
-    padding: 20px;
-  }
+<style scoped>
+.gooutUpdateBanner {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 15px;
+  padding-bottom: 20px;
+  background-color: #f7f8fa;
+}
 
-  .ReqInputBox {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
-  }
+.gooutUpdateBannerTxt {
+  font-size: 40px;
+  font-weight: 600;
+  color: rgb(85, 85, 85);
+}
 
-  .ReqInput {
-    width: 300px;
-  }
+.ReqBox {
+  text-align: center;
+  background-color: #f7f8fa;
+  border: 1px solid #f7f8fa;
+  border-radius: 12px;
+  padding: 20px;
+}
 
-  .ReqInput p {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
+.ReqInputBox {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
 
-  .ReqInput select,
-  .ReqInput input[type="date"] {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+.ReqInput {
+  width: 300px;
+}
 
-  .button-container {
-    margin-top: 20px;
-  }
+.ReqInput p {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 
-  .button-container button {
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 20px;
-    color: white;
-    background-color: #fae14a;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+.ReqInput select,
+.ReqInput input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
-  .button-container button:hover {
-    background-color: #ffd700;
-  }
+.button-container {
+  margin-top: 20px;
+}
 
-  </style>
+.button-container button {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 20px;
+  color: white;
+  background-color: #fae14a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-container button:hover {
+  background-color: #ffd700;
+}
+
+</style>
 
 
