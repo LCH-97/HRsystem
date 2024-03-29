@@ -202,7 +202,7 @@
                             v-show="isCommute && !isLeave"
                           >
                             <button id="leaveButton" @click="leave">
-                              퇴근 {{ this.commuteId }}
+                              퇴근
                             </button>
                           </div>
 
@@ -273,7 +273,7 @@ export default {
   },
   methods: {
     commute() {
-      console.log("click");
+      console.log("출근 버튼 클릭");
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = "http://localhost:8080";
       console.log(api);
@@ -290,9 +290,7 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          // this.responseData = response.data;
-          this.startTime = response.data.result.startTime;
-          this.commuteId = response.data.result.id;
+          this.startTime = this.formatDateTime(response.data.result.startTime);
           this.isCommute = true;
           this.isLeave = false;
         })
@@ -301,13 +299,8 @@ export default {
         });
     },
     leave() {
-      console.log(" leave click");
-      // const api = process.env.VUE_APP_BACKEND_URL;
+      console.log("퇴근 버튼 클릭");
       const api = "http://localhost:8080";
-      console.log(api);
-      // let formData = new FormData();
-      // formData.append('username', this.username);
-      // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
       axios
         .patch(api + "/employee/leave/" + this.commuteId, null, {
@@ -318,9 +311,18 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          // this.responseData = response.data;
-          this.endTime = response.data.result.endTime;
-          this.sumTime = response.data.result.sumTime;
+
+          //
+          let now = new Date();
+          this.endTime = this.formatDateTime(now.toISOString());
+          // 원래는 this.endTime = this.formatDateTime(response.data.result.endTime); 사용했는데
+          // 즉시 반영이 안되고 새로고침해야 보여서 출력자체는 프론트엔드에서 현재 시간을 이용!!
+          // 다만 이러면 DB와 출력되는 시간이 매우 미세하게 차이 있긴 함..
+
+          const diff = this.endTime.getTime - this.startTime.getTime;
+          const hours = Math.floor(diff / 3600000); // 시간
+          const minutes = Math.floor((diff % 3600000) / 60000); // 분
+          this.sumTime = `${hours}시간 ${minutes}분`;
           this.isLeave = true;
         })
         .catch((error) => {
@@ -353,8 +355,12 @@ export default {
             this.startTime = response.data.result.startTime;
           }
           if (this.isLeave) {
+            this.startTime = response.data.result.startTime;
             this.endTime = response.data.result.endTime;
-            this.sumTime = response.data.result.sumTime;
+            const parts = response.data.result.sumTime.split(":");
+            const hours = parts[0];
+            const minutes = parts[1];
+            this.sumTime = `${hours}시간 ${minutes}분`;
           }
 
           //페이지 구성에 필요한 걸 다 가져와야한다.
