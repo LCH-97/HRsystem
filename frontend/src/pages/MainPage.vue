@@ -28,7 +28,7 @@
               <div class="col-xl-4">
                 <div class="card mb-3">
                   <div class="card-header">
-                    <a href="/board"> 공지사항 </a>
+                    <a href="/board/list"> 공지사항 </a>
                   </div>
 
                   <div class="card-body">

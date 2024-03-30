@@ -1,79 +1,56 @@
 <template>
   <HeaderComponent />
+  <SideBar />
+  <div class="all">
 
-  <div class="sb-nav-fixed">
-    <div id="layoutSidenav">
-      <SideBar />
-      <div id="layoutSidenav_content">
-        <main>
-          <div id="container-fluid px-4">
-            <div class="row" style="width: 100%; margin: auto">
-              <div class="col-xl-12">
-                <div class="card mb-3">
-                  <div class="card-header">Bar Chart Example</div>
-                  <div class="card-body">
-                    <div class="chartjs-size-monitor">
-                      <div class="chartjs-size-monitor-expand">
-                        <div class="container">
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>ID</th>
-                                <th>제목</th>
-                                <th>내용</th>
-                                <th>작성자</th>
-                                <th>날짜</th>
-                                <th>파일</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr
-                                v-for="board in boards"
-                                :key="board.id"
-                                @click="viewBoardRead(board.id)"
-                                style="cursor: pointer"
-                              >
-                                <td>{{ board.id }}</td>
-                                <td>{{ board.title }}</td>
-                                <td>{{ board.text }}</td>
-                                <td>{{ board.name }}</td>
-                                <td>{{ board.date }}</td>
-                                <td>
-                                  <a :href="`/board/read/${board.id}`">
-                                    {{ board.filename.split('_')[1] }}
-                                  </a>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-
-                          <div class="pagination">
-                            <a href="#" class="prev">&laquo; 이전</a>
-                            <!-- 페이지 버튼은 자동으로 생성됩니다. -->
-                            <a href="#" class="next">다음 &raquo;</a>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="chartjs-size-monitor-shrink">
-                        <div class=""></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
+    <br><br><br><br><br><br><br><br><br><br>
+    <div class="boardList">
+      <table>
+        <thead>
+          <tr>
+            <th>게시글 번호</th>
+            <th>작성자 이름</th>
+            <th>제목</th>
+            <th>시간</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="board in boards"
+            :key="board.id"
+            @click="goToBoardReadPage(board.id)"
+            class="boardItem"
+          >
+            <td style="text-align: center">{{ board.id }}</td>
+            <td>{{ board.writerName }}</td>
+            <td>{{ board.title }}</td>
+            <td>{{ board.createAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button @click="prevGroup">이전</button>
+      <button
+        v-for="page in pageGroup"
+        :key="page"
+        :class="{ active: page === currentPage }"
+        @click="changePage(page)"
+      >
+        {{ page }}
+      </button>
+      <button @click="nextGroup">이후</button>
+    </div>
+    <div class="button-container2">
+      <button @click="goToBoardCreate">글쓰기</button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import SideBar from "../components/SideBar.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
-import axios from "axios";
-
 export default {
   name: "BoardListPage",
   components: {
@@ -83,159 +60,129 @@ export default {
   data() {
     return {
       boards: [],
+      currentPage: 1,
+      pageSize: 10,
+      pagesToShow: 5,
+      pageGroupStart: 1,
+      totalPages: 0,
     };
   },
-  methods: {
-    viewBoardRead(id) {
-      window.location.href = `/board/read/${id}`;
-    },
-    fetchBoardData(page) {
-      const itemsPerPage = 6;
-      axios
-        .get(`http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`)
-        .then((response) => {
-          this.boards = response.data.result;
-        })
-        .catch((error) => {
-          console.error("Error fetching board data:", error);
-        });
+  created() {
+    this.fetchBoards();
+  },
+  computed: {
+    pageGroup() {
+      let startPage =
+        Math.floor((this.currentPage - 1) / this.pagesToShow) *
+          this.pagesToShow +
+        1;
+      let pages = [];
+      for (let i = 0; i < this.pagesToShow; i++) {
+        let page = startPage + i;
+        if (page > this.totalPages) break;
+        pages.push(page);
+      }
+      return pages;
     },
   },
-  mounted() {
-    this.fetchBoardData(1);
+  methods: {
+    changePage(page) {
+      this.currentPage = page;
+      this.fetchBoards();
+    },
+    prevGroup() {
+      this.pageGroupStart = Math.max(1, this.pageGroupStart - this.pagesToShow);
+      this.changePage(this.pageGroupStart);
+    },
+    nextGroup() {
+      if (this.pageGroupStart + this.pagesToShow <= this.totalPages) {
+        this.pageGroupStart += this.pagesToShow;
+        this.changePage(this.pageGroupStart);
+      }
+    },
+    goToBoardCreate() {
+      this.$router.push("/board/create");
+    },
+    async fetchBoards() {
+      try {
+        const response = await axios.get(`http://localhost:8080/board/check`, {
+          params: { page: this.currentPage, size: this.pageSize },
+        });
+        this.boards = response.data.result.boards;
+        this.totalPages = Math.ceil(
+          response.data.result.totalElements / this.pageSize
+        );
+      } catch (error) {
+        console.error("Failed to fetch boards:", error);
+      }
+    },
+    goToBoardReadPage(id) {
+      this.$router.push(`/board/read/${id}`);
+    },
   },
 };
 </script>
-
 <style scoped>
-#commuteButton {
-  border: none;
-  outline: none;
-  margin: 10px;
-  font-size: 12px;
-  background-color: #f7c231;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 80%;
-  height: 35px;
+.active {
+  font-weight: bold;
+  color: red;
 }
-
-#leaveButton {
+.button-container {
+  text-align: left;
+  padding-right: 40px;
+  margin-bottom: 20px;
+}
+.button-container2 {
+  text-align: right;
+  padding-right: 40px;
+  margin-bottom: 20px;
+}
+.button-container button,
+.button-container2 button {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white; /* 글씨 색상을 흰색으로 설정 */
+  letter-spacing: 0.2px;
   border: none;
-  outline: none;
-  margin: 10px;
-  font-size: 12px;
-  background-color: #f7c231;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 80%;
-  height: 35px;
-}
-
-button:hover {
-  background-color: #f7a129;
-}
-
-button:active {
-  background-color: #ff8c00;
-}
-
-#commute-info {
-  height: 100%;
-  font-size: 12px;
-  text-align: center;
-  border: 2px solid #f0f0f0;
-  max-width: 220px;
-  margin: auto;
   border-radius: 10px;
-  background-color: #f9f9f9;
-  position: relative;
+  background-color: #111111; /* 기본 배경색을 검정색으로 설정 */
+  margin-left: 10px; /* 버튼 간격 조정 */
+  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
 }
-
-.time {
-  font-size: 15px;
+.button-container button:hover,
+.button-container2 button:hover {
+  background-color: #f75c29; /* 마우스를 올렸을 때 배경색을 주황색으로 변경 */
+  color: white;
 }
-
-.profile-pic {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  position: absolute;
-  top: 75px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.main-button-container {
-  position: relative;
-  padding: 0px;
-  margin-top: 150px;
-}
-
-#sumTime {
-  position: relative;
-  color: gray;
-}
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
+.boardList ul {
+  list-style: none;
   padding: 0;
+  margin-left: 100px;
+}
+.boardItem {
+  cursor: pointer;
+  margin: 10px 0;
+  transition: color 0.3s ease;
+}
+.all {
+  margin-left: 100px;
 }
 
-.container {
-  /* max-width: 970px; */
-  margin: auto;
-  padding: 8px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  overflow-x: auto;
-  font-size: 10px;
-}
-
-.table {
+.boardList table {
   width: 100%;
   border-collapse: collapse;
 }
-
-.table th,
-.table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
-
-.table th {
-  background-color: #f2f2f2;
-}
-
-.table tr:last-child td {
-  border-bottom: none;
-}
-
-.pagination {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.pagination a {
-  display: inline-block;
-  padding: 8px 16px;
-  text-decoration: none;
-  color: #333;
+.boardList th,
+.boardList td {
   border: 1px solid #ddd;
-  margin-right: 5px;
+  padding: 8px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
 
-.pagination a.active {
-  background-color: #e29c41;
-  color: white;
-  border: 1px solid #e29c41;
-}
 </style>
