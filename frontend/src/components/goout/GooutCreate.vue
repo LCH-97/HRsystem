@@ -10,9 +10,9 @@
           <div class="input">
             <select v-model="employeeId">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -24,9 +24,9 @@
           <div class="input">
             <select v-model="agentId">
               <option
-                v-for="agent in employees"
-                :key="agent.id"
-                :value="agent.id"
+                  v-for="agent in employees"
+                  :key="agent.id"
+                  :value="agent.id"
               >
                 {{ agent.name }}
               </option></select
@@ -38,9 +38,9 @@
           <div class="input-and-remaining-days">
             <select v-model="gooutTypeId" class="select-reason">
               <option
-                v-for="gooutType in gooutTypes"
-                :key="gooutType.id"
-                :value="gooutType.id"
+                  v-for="gooutType in gooutTypes"
+                  :key="gooutType.id"
+                  :value="gooutType.id"
               >
                 {{ gooutType.name }}
               </option>
@@ -72,9 +72,9 @@
             <p>결재자1</p>
             <select v-model="confirmer1Id">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -82,9 +82,9 @@
             <p>결재자2</p>
             <select v-model="confirmer2Id">
               <option
-                v-for="employee in employees"
-                :key="employee.id"
-                :value="employee.id"
+                  v-for="employee in employees"
+                  :key="employee.id"
+                  :value="employee.id"
               >
                 {{ employee.name }}
               </option></select
@@ -103,12 +103,11 @@
 
 <script>
 import axios from "axios";
-import jwtDecode from "jwt-decode";
 
 export default {
   data() {
     return {
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",
@@ -129,9 +128,6 @@ export default {
   async created() {
     await this.fetchGooutTypes();
     await this.fetchEmployees();
-  },
-  mounted() {
-    this.setLoggedInUser();
   },
 
   watch: {
@@ -160,14 +156,6 @@ export default {
       }
     },
 
-    setLoggedInUser() {
-      const token = sessionStorage.getItem("token"); // 로컬 스토리지 또는 적절한 저장소에서 토큰 가져오기
-      if (token) {
-        const decoded = jwtDecode(token);
-        this.loggedInUserId = decoded.ID; // 실제 토큰 구조에 따라 변경될 수 있음
-      }
-    },
-
     handleFilesUpload(event) {
       this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
     },
@@ -182,11 +170,11 @@ export default {
     async createGooutRequest() {
       if (this.confirmer1Id === this.confirmer2Id) {
         alert(
-          "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
+            "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
         );
         return; // 메소드 실행을 중단
       }
-      this.setLoggedInUser();
+      const token = sessionStorage.getItem("token");
       let formData = new FormData();
       formData.append(
         "gooutCreateReq",
@@ -195,7 +183,6 @@ export default {
             JSON.stringify({
               agentId: this.agentId,
               employeeId: this.employeeId,
-              writerId: this.loggedInUserId,
               gooutTypeId: this.gooutTypeId,
               first: this.first,
               last: this.last,
@@ -212,21 +199,31 @@ export default {
         formData.append("uploadFiles", this.files[i]); // 'uploadFiles'로 변경
       }
 
+      // 요청 헤더에 인증 토큰 추가
+      const config = {
+        headers: {
+          // 여기에서 Authorization 헤더에 토큰 추가
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       try {
         const response = await axios.post(
           `${this.backend}/goout/create`,
-          formData
+          formData,
+          config
         );
         console.log(response);
-
-        const gooutId = response.data.result;
-        console.log("Created goout ID:", gooutId);
 
         alert("휴가가 등록되었습니다.");
         this.$router.push(`/goout/list`);
       } catch (error) {
-        console.error("휴가 등록 실패:", error);
-        alert("휴가 등록 실패: " + error.response.data.message); // 서버에서 반환한 오류 메시지를 사용자에게 보여줌
+        if (error.response && error.response.data) {
+          // 서버로부터 받은 에러 메시지를 alert로 표시
+          alert(`에러: ${error.response.data.message}`);
+        } else {
+          alert("휴가 등록 중 문제가 발생했습니다.");
+        }
       }
     },
 
@@ -237,13 +234,13 @@ export default {
       if (this.gooutTypeId && this.employeeId) {
         try {
           const response = await axios.get(
-            `${this.backend}/goout/remainingVacationDays`,
-            {
-              params: {
-                employeeId: this.employeeId,
-                gooutTypeId: this.gooutTypeId,
-              },
-            }
+              `${this.backend}/goout/remainingVacationDays`,
+              {
+                params: {
+                  employeeId: this.employeeId,
+                  gooutTypeId: this.gooutTypeId,
+                },
+              }
           );
           this.remainingVacationDays = response.data.result;
           if (this.remainingVacationDays < 0) {
