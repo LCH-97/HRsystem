@@ -1,4 +1,4 @@
-package com.HelloRolha.HR.feature.goout.model.dto;
+package com.HelloRolha.HR.feature.board.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GooutFileDto {
+public class BoardFileDto {
     private String name;
     private String downloadUrl;
 }

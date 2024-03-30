@@ -2,11 +2,12 @@ package com.HelloRolha.HR.feature.board.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.board.model.Board;
-import com.HelloRolha.HR.feature.board.model.dto.BoardDto;
-import com.HelloRolha.HR.feature.board.model.dto.BoardListDto;
+import com.HelloRolha.HR.feature.board.model.dto.*;
 import com.HelloRolha.HR.feature.board.service.BoardNotFoundException;
 import com.HelloRolha.HR.feature.board.service.BoardService;
 
+import com.HelloRolha.HR.feature.goout.model.dto.GooutRead;
+import com.HelloRolha.HR.feature.goout.model.dto.GooutUpdateReq;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,57 +27,76 @@ public class BoardController {
     }
 
 
-    @PostMapping("/create")
-    public ResponseEntity create(BoardDto boardDto,
-                                  MultipartFile[] uploadFiles) {
-        Board board = boardService.create(boardDto);
+    @RequestMapping(method = RequestMethod.POST, value = "/create")
+    public ResponseEntity create(@RequestPart BoardCreateReq boardCreateReq,
+                                 @RequestPart(name = "uploadFiles", required = false) MultipartFile[] uploadFiles) {
+        Board board = boardService.create(boardCreateReq);
 
-        for (MultipartFile uploadFile : uploadFiles) {
-            String uploadPath = boardService.uploadFile(uploadFile);
-            boardService.saveFile(board.getId(), uploadPath);
+        if (uploadFiles != null) {
+            for (MultipartFile uploadFile : uploadFiles) {
+                // 파일 업로드 메소드 호출 시 gooutId 전달
+                String uploadPath = boardService.uploadFile(uploadFile, board.getId());
+            }
         }
 
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("공지사항 생성 성공")
                 .isSuccess(true)
-                .result(board)
+                .result(board.getId())
                 .build();
         return ResponseEntity.ok().body(response);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/check")
-    public ResponseEntity<BaseRes> list() {
-        List<BoardListDto> boardLists = boardService.list();
+    public ResponseEntity<BaseRes> list(Integer page, Integer size) {
+        BoardListRes boardListRes = boardService.list(page, size);
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("공지사항 확인 성공")
                 .isSuccess(true)
-                .result(boardLists)
+                .result(boardListRes)
                 .build();
         return ResponseEntity.ok().body(response);
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/read")
-    public ResponseEntity read(Integer id) {
-        return ResponseEntity.ok().body(boardService.read(id));
+    @RequestMapping(method = RequestMethod.GET, value = "/check/{id}")
+    public ResponseEntity<BaseRes> read (@PathVariable Integer id) {
+        BoardReadDto boardReadDto = boardService.read(id);
+        if (boardReadDto == null) {
+            return ResponseEntity.notFound().build(); // 적절한 예외 처리
+        }
+        BaseRes response = BaseRes.builder() // 응답 객체 생성
+                .code(1200)
+                .message("공지사항 상세 확인 성공")
+                .isSuccess(true)
+                .result(boardReadDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody BoardDto boardDto) {
-        try {
-            boardService.update(id, boardDto);
-            return ResponseEntity.ok().body("공지 사항이 성공적으로 수정되었습니다.");
-        } catch (BoardNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    @RequestMapping(method = RequestMethod.PATCH, value = "/update")
+    public ResponseEntity<BaseRes> update(@RequestBody BoardUpdateReq boardUpdateReq) {
+        boardService.update(boardUpdateReq);
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("휴가/외출 정보 수정 성공")
+                .isSuccess(true)
+                .result(boardUpdateReq)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{id}")
-    public ResponseEntity delete(@PathVariable Integer id) {
+    public ResponseEntity<BaseRes> delete(@PathVariable Integer id) {
         boardService.delete(id);
-        return ResponseEntity.ok().body("공지 사항이 성공적으로 삭제되었습니다.");
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("휴가/외출 정보 삭제 성공")
+                .isSuccess(true)
+                .result("삭제한 id : " + id)
+                .build();
+        return ResponseEntity.ok(response);
     }
-
 }

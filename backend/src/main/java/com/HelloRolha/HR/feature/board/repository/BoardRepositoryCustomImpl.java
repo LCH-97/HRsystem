@@ -4,6 +4,8 @@ import com.HelloRolha.HR.feature.board.model.Board;
 import com.HelloRolha.HR.feature.board.model.QBoard;
 import com.HelloRolha.HR.feature.board.model.QBoardFile;
 import com.HelloRolha.HR.feature.employee.model.entity.QEmployee;
+import com.HelloRolha.HR.feature.goout.model.QGooutFile;
+import com.HelloRolha.HR.feature.goout.model.QGooutType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,65 +22,45 @@ public class BoardRepositoryCustomImpl extends QuerydslRepositorySupport impleme
     public BoardRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         super(Board.class);
         this.queryFactory = queryFactory;
-
-   
-
     }
 
-
     @Override
-    public List<Board> findList() {
-
+    public Page<Board> findList(Pageable pageable) {
         // 조인이 필요한 각 클래스들에 대한 객체 생성
         QBoard board = new QBoard("board");
-        QBoardFile boardFile = new QBoardFile("boardFile");
-        QEmployee employee = new QEmployee("employee");
+        QEmployee writer = new QEmployee("writer");
+
+        // 총 개수를 위한 쿼리
+        long total = queryFactory
+                .selectFrom(board)
+                .leftJoin(board.writer, writer)
+                .fetchCount();
 
         // QueryDSL 을 사용하기 위한 from 메서드 작성
         List<Board> result = from(board)
-                .leftJoin(board.boardFiles, boardFile).fetchJoin()
-//                .leftJoin(board.employee, employee).fetchJoin()
+                .leftJoin(board.writer, writer)
                 // 중복제거를 위한 코드 추가
-                .fetch().stream().distinct().collect(Collectors.toList());
+                .distinct()
+                .orderBy(board.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        return result;
+        return new PageImpl<>(result, pageable, total);
     }
 
     @Override
     public Optional<Board> findByIdWithDetails(Integer id) {
         QBoard board = QBoard.board;
-        QEmployee employee = QEmployee.employee;
+        QBoardFile boardFile = QBoardFile.boardFile;
+        QEmployee writer = new QEmployee("writer");
 
         Board result = queryFactory.selectFrom(board)
-                .leftJoin(board.boardFiles).fetchJoin()
-//                .leftJoin(board.employee, employee).fetchJoin()
+                .leftJoin(board.boardFiles, boardFile).fetchJoin()
+                .leftJoin(board.writer, writer).fetchJoin()
                 .where(board.id.eq(id))
                 .fetchOne();
 
         return Optional.ofNullable(result);
-    }
-
-
-
-
-    @Override
-
-    public Page<Board> findList(org.springframework.data.domain.Pageable pageable) {
-
-
-
-        QBoard board = new QBoard("board");
-        //QProductImage productImage = new QProductImage("productImage");
-        QEmployee employee = new QEmployee("employee");
-
-        List<Board> result = from(board)
-                //.leftJoin(board.productImageList, productImage).fetchJoin()
-                //.leftJoin(board.employee, employee).fetchJoin()
-                .distinct()
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        return new PageImpl<>(result, pageable, result.size());
     }
 }
