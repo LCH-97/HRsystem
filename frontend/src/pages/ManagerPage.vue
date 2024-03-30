@@ -206,7 +206,7 @@ export default {
     getAuthorizeList() {
       console.log("getAuthorizeList");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -226,13 +226,14 @@ export default {
         })
         .catch((error) => {
           console.error("Error getAuthorizeList:", error);
+          throw new Error("Error getAuthorizeList");
         });
     },
 
     authorize(employeeId) {
       console.log("authorize");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -248,23 +249,31 @@ export default {
         .then((response) => {
           console.log("Response:", response.data);
           alert("승인 완료");
-          this.getAuthorizeList(); // 목록 초기화
+          
         })
         .catch((error) => {
           console.error("Error getAuthorizeList:", error);
           alert("승인 실패: 담당자에게 연락하세요");
+        }).finally(()=>{
+          this.getAuthorizeList(); // 목록 초기화
         });
     },
-    
-    
+
+
   },
   mounted() {
     // 출근한 상태인지 확인해야함.
     //   this.check();
     //   this.fetchNoticeData(1);
-    this.getAuthorizeList();
+    try {
+      this.getAuthorizeList();
+    } catch (error) {
+      console.error( "ManagerPage Init Fail",error);
+    }
+
     
-    
+
+
   },
 };
 </script>

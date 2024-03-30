@@ -35,7 +35,7 @@
         <br />
         <table class="table">
           <tr v-if="files.length > 0">
-            <th>첨부 파일</th>
+            <th>첨부파일</th>
             <td v-for="file in files" :key = "file.name">
             <a :href="file.downloadUrl" target = "_blank">{{ file.name }}</a>
             </td>
@@ -45,7 +45,7 @@
             <td>{{ approve.employeeName }}</td>
           </tr>
           <tr>
-            <th>상태</th>
+            <th>상 태</th>
             <td>{{ getStatusText1(this.approve.status) }}</td>
           </tr>
           <tr v-if="confirmer1.status === 3">
@@ -61,7 +61,7 @@
             <td>{{ approve.createAt }}</td>
           </tr>
           <tr>
-            <th>내용</th>
+            <th>내 용</th>
             <td>
             <div class="contable">{{ this.approve.content }}</div>
             </td>
@@ -119,7 +119,7 @@ export default {
 
       confirmer1: "",
       confirmer2: "",
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       files: [],
     };
   },
@@ -255,7 +255,7 @@ export default {
     async fetchApprove() {
       try {
         const approveResponse = await axios.get(
-          `http://localhost:8080/approve/read/${this.id}`
+          `http://192.168.0.51/api/approve/read/${this.id}`
         );
 
         if (approveResponse.data.isSuccess) {
@@ -272,7 +272,7 @@ export default {
     async fetchApproveLine(approveId) {
       try {
         const response = await axios.get(
-          `http://localhost:8080/approve/line/2/${approveId}`
+          `http://192.168.0.51/api/approve/line/2/${approveId}`
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           this.confirmer1 = response.data.result[0];
@@ -336,7 +336,7 @@ export default {
     async deleteApprove() {
       if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
         try {
-          await axios.delete(`http://localhost:8080/approve/cancel/${this.id}`);
+          await axios.delete(`http://192.168.0.51/api/approve/cancel/${this.id}`);
 
           alert("결재가 성공적으로 삭제되었습니다.");
           this.$router.push("/approve/list");
@@ -374,6 +374,7 @@ export default {
 .title {
   font-size: 24px;
   font-weight: bold;
+  margin-left: 70px;
 }
 .table {
   width: 100%;
