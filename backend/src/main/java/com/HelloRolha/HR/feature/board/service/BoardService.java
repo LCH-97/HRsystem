@@ -106,7 +106,7 @@ public class BoardService {
         }
         return BoardListRes.builder()
                 .boards(boardListReqs)
-                // Querydsl 끝나면 페이지기능 추가
+                .totalElements(boardPage.getTotalElements()) // 전체 요소의 수
                 .build();
     }
 
@@ -126,7 +126,7 @@ public class BoardService {
                 .text(board.getText())
                 .createAt(board.getCreateAt())
                 .updateAt(board.getUpdateAt())
-                    .build();
+                .build();
         }).orElse(null);
     }
 
@@ -244,9 +244,19 @@ public class BoardService {
             String downloadUrl = generatePresignedUrl(file.getFilename(), file.getOriginalFilename());
 
             // 파일의 원본 이름과 다운로드 URL을 사용하여 GooutFileDto 객체 생성
-            return new BoardFileDto(file.getOriginalFilename(), downloadUrl);
+            return new BoardFileDto(file.getId(), file.getOriginalFilename(), downloadUrl);
         }).collect(Collectors.toList());
 
         return fileDtos;
+    }
+
+    @Transactional
+    public void deleteFile(Integer fileId) {
+        boardFileRepository.findById(fileId).ifPresent(file -> {
+            // S3에서 파일 삭제
+            s3.deleteObject(bucket, file.getFilename());
+            // 데이터베이스에서 파일 정보 삭제
+            boardFileRepository.delete(file);
+        });
     }
 }

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardFileDto {
-    private String name;
+    private Integer id;
+    private String originalFilename;
     private String downloadUrl;
 }
