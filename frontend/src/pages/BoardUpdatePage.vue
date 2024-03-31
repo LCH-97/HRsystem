@@ -181,6 +181,7 @@ export default {
 .container {
   max-width: 600px;
   margin: auto;
+  margin-top: 50px;
 }
 
 .form-group {

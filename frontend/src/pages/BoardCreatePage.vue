@@ -106,11 +106,13 @@ export default {
 <style scoped>
 .main-content {
   display: flex;
+  margin-left: 250px;
 }
 
 .container {
   flex-grow: 1;
   padding: 20px;
+  margin-top: 50px;
 }
 
 .form-group {
