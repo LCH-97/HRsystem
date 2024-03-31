@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class BoardReadDto {
     private final Integer id;
     private final String writerName;
+    private final Integer writerId;
     private final String title;
     private final String text;
     private final LocalDateTime createAt;

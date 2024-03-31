@@ -122,6 +122,7 @@ public class BoardService {
             return BoardReadDto.builder()
                 .id(board.getId())
                 .writerName(writer.getName())
+                .writerId(writer.getId())
                 .title(board.getTitle())
                 .text(board.getText())
                 .createAt(board.getCreateAt())
