@@ -6,6 +6,6 @@ import com.HelloRolha.HR.feature.goout.model.GooutFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 public interface BoardFileRepository  extends JpaRepository<BoardFile, Integer>, BoardRepositoryCustom {
-    List<BoardFile> findAllByBoardId(Integer id);
+    List<BoardFile> findByBoardId(Integer boardId);
     void deleteAllByBoard(Board board);
 }
