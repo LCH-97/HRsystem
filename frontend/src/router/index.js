@@ -26,8 +26,11 @@ import GooutTypeUpdate from "@/components/goout/gooutType/GooutTypeUpdate.vue";
 import GooutPage from "@/pages/goout/GooutPage.vue";
 import GooutTypePage from "@/pages/goout/GooutTypePage.vue";
 
+import BoardCreatePage from "@/pages/BoardCreatePage.vue";
 import BoardListPage from "@/pages/BoardListPage.vue";
 import BoardReadPage from "@/pages/BoardReadPage.vue";
+import BoardUpdatePage from "@/pages/BoardUpdatePage.vue";
+
 import ManagerPage from "@/pages/ManagerPage.vue";
 import SalaryListPage from "@/pages/Salary/SalaryListPage.vue";
 
@@ -51,8 +54,10 @@ const router = createRouter({
     { path: "/approve/create", component: ApproveCreatePage },
     { path: "/approve/read/:id", component: ApproveReadPage },
 
-    { path: "/board", component: BoardListPage },
+    { path: "/board/create", component: BoardCreatePage },
+    { path: "/board/list", component: BoardListPage },
     { path: "/board/read/:id", component: BoardReadPage },
+    { path: "/board/update", component: BoardUpdatePage },
 
     { path: "/salary/list", component: SalaryListPage },
 
