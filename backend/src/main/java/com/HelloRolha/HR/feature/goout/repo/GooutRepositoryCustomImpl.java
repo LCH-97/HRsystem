@@ -62,14 +62,16 @@ public class GooutRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         QGoout goout = QGoout.goout;
         QGooutFile gooutFile = QGooutFile.gooutFile;
         QGooutType gooutType = QGooutType.gooutType;
-        QEmployee employee = QEmployee.employee;
+        QEmployee employee = new QEmployee("employee");
+        QEmployee agent = new QEmployee("agent");
+        QEmployee writer = new QEmployee("writer");
 
         Goout result = queryFactory.selectFrom(goout)
                 .leftJoin(goout.gooutFiles, gooutFile).fetchJoin()
                 .leftJoin(goout.gooutType, gooutType).fetchJoin()
                 .leftJoin(goout.employee, employee).fetchJoin()
-                .leftJoin(goout.agent, employee).fetchJoin()
-                .leftJoin(goout.writer, employee).fetchJoin()
+                .leftJoin(goout.agent, agent).fetchJoin()
+                .leftJoin(goout.writer, writer).fetchJoin()
                 .where(goout.id.eq(id))
                 .fetchOne();
 
