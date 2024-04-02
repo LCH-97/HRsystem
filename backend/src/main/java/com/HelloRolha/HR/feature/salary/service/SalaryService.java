@@ -12,6 +12,7 @@ import com.HelloRolha.HR.feature.salary.repo.SalaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class SalaryService {
     public List<SalaryDto> createAllEmployeeSalary(LocalDate startDate, LocalDate endDate){
         List<SalaryDto> salaryDtoList = new ArrayList<>();
         // 전직원 리스트 가져오기
-        List<Employee> employeeList = employeeService.getWorkingEmployListForCalculateSalary();
+        List<Employee> employeeList = employeeService.listEmployeeEntity();
 
         // 반복문 //직원마다 총 월급 계산
         for(Employee employee: employeeList){
@@ -169,14 +170,14 @@ public class SalaryService {
     public LocalDate getFirstDateOfSalary() {
         return salaryRepository.readFirstDateOfSalary();
     }
-
+    @Transactional
     public List<SalaryDto> init() {
         // 맨 처음 달 구하기
         // 맨 마지막 달 구하기
         List<SalaryDto> list = new ArrayList<>();
-        LocalDate firstDate = getFirstDateOfSalary();
-        LocalDate lastDate = getLastDateOfSalary();
-        lastDate = lastDate.minusMonths(1).withDayOfMonth(lastDate.getMonth().length(lastDate.isLeapYear()));
+        LocalDate firstDate = LocalDate.of(2023,1,1);
+        LocalDate lastDate = LocalDate.of(2023,12,31);
+
 
         Period period = Period.between(firstDate, lastDate);
         int getMonths = period.getMonths();

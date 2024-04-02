@@ -90,7 +90,12 @@ public class EmployeeService {
         }
         return employeeDtos;
     }
+    public List<Employee> listEmployeeEntity() {
 
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        return employeeList;
+    }
 
 
     public List<Employee> getWorkingEmployListForCalculateSalary() {
