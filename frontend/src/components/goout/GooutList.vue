@@ -117,8 +117,8 @@ export default {
 
     getStatusText(status) {
       const statusMap = {
-        0: "대기중",
-        1: "기안중",
+        0: "기안중",
+        1: "진행중",
         2: "최종 승인",
         3: "반려",
         4: "등록 취소",
@@ -131,7 +131,7 @@ export default {
     },
     async fetchGoouts() {
       try {
-        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
+        const response = await axios.get(`http://192.168.0.52:8080/goout/check`, {
           params: {
             page: this.currentPage,
             size: this.pageSize,
