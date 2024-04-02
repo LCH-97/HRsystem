@@ -6,10 +6,7 @@ import com.HelloRolha.HR.error.ErrorCode;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
-import com.HelloRolha.HR.feature.goout.model.Goout;
-import com.HelloRolha.HR.feature.goout.model.GooutFile;
-import com.HelloRolha.HR.feature.goout.model.GooutLine;
-import com.HelloRolha.HR.feature.goout.model.GooutType;
+import com.HelloRolha.HR.feature.goout.model.*;
 import com.HelloRolha.HR.feature.goout.model.dto.*;
 import com.HelloRolha.HR.feature.goout.repo.*;
 import com.amazonaws.HttpMethod;
@@ -35,11 +32,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -52,6 +51,7 @@ public class GooutService {
     private final EmployeeRepository employeeRepository;
     private final AmazonS3 s3;
     private final GooutLineService gooutLineService;
+    private final HolidayRepository holidayRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -86,18 +86,22 @@ public class GooutService {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "결재자2는 null일 수 없습니다.");
         }
 
-        int currentYear = LocalDate.now().getYear();
-        int usedVacationDays = calculateApprovedVacationDays(gooutCreateReq.getEmployeeId(), gooutCreateReq.getGooutTypeId(), currentYear);
-        long requestedDays = ChronoUnit.DAYS.between(gooutCreateReq.getFirst(), gooutCreateReq.getLast().plusDays(1)); // 종료 날짜 포함하여 계산
-        int maxHoliday = gooutTypeRepository.findMaxHolidayByGooutTypeId(gooutCreateReq.getGooutTypeId());
-        if ((usedVacationDays + requestedDays) > maxHoliday) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "휴가 일수가 최대 허용 일수를 초과합니다.");
-        }
     }
 
     public GooutCreateRes create(GooutCreateReq gooutCreateReq) {
 
         validateGooutCreateReq(gooutCreateReq);
+
+        // 실제 휴가 사용일 계산 (공휴일 및 주말 제외)
+        int currentYear = LocalDate.now().getYear();
+        int usedVacationDays = calculateApprovedVacationDays(gooutCreateReq.getEmployeeId(), gooutCreateReq.getGooutTypeId(), currentYear);
+        long actualVacationDays = calculateActualVacationDays(gooutCreateReq.getFirst(), gooutCreateReq.getLast());
+
+        //        long requestedDays = ChronoUnit.DAYS.between(gooutCreateReq.getFirst(), gooutCreateReq.getLast().plusDays(1)); // 종료 날짜 포함하여 계산
+        int maxHoliday = gooutTypeRepository.findMaxHolidayByGooutTypeId(gooutCreateReq.getGooutTypeId());
+        if ((usedVacationDays + actualVacationDays) > maxHoliday) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "휴가 일수가 최대 허용 일수를 초과합니다.");
+        }
 
         GooutCreateRes gooutCreateRes = GooutCreateRes.builder().build();
 
@@ -408,11 +412,18 @@ public class GooutService {
                 employeeId, gooutTypeId, 2, startOfYear, endOfYear); // 상태가 승인된 휴가만 선택
 
         return approvedVacations.stream()
-                .mapToInt(vacation -> (int) ChronoUnit.DAYS.between(
-                        max(vacation.getFirst(), startOfYear),
-                        min(vacation.getLast().plusDays(1), endOfYear.plusDays(1))
-                )).sum();
+                .mapToInt(vacation -> {
+                    LocalDate start = max(vacation.getFirst(), startOfYear);
+                    LocalDate end = min(vacation.getLast(), endOfYear);
+                    return (int) Stream.iterate(start, date -> date.plusDays(1))
+                            .limit(ChronoUnit.DAYS.between(start, end.plusDays(1)))
+                            .filter(date -> !(date.getDayOfWeek() == DayOfWeek.SATURDAY ||
+                                    date.getDayOfWeek() == DayOfWeek.SUNDAY ||
+                                    isHoliday(date)))
+                            .count();
+                }).sum();
     }
+
 
     private LocalDate max(LocalDate a, LocalDate b) {
         return a.isAfter(b) ? a : b;
@@ -433,6 +444,31 @@ public class GooutService {
         int remainingDays = maxHoliday - usedVacationDays;
 
         return remainingDays;
+    }
+
+    public boolean isHoliday(LocalDate date) {
+        return holidayRepository.existsByDate(date);
+    }
+
+    // 실제 휴가 사용일 계산
+    @Transactional
+    public long calculateActualVacationDays(LocalDate start, LocalDate end) {
+        long days = 0;
+        LocalDate date = start;
+        while (!date.isAfter(end)) {
+            // 주말 확인
+            boolean isWeekend = (date.getDayOfWeek() == DayOfWeek.SATURDAY ||
+                    date.getDayOfWeek() == DayOfWeek.SUNDAY);
+            // 공휴일 확인
+            boolean isHoliday = isHoliday(date);
+
+            // 주말이 아니고, 공휴일도 아닌 경우에만 카운트
+            if (!isWeekend && !isHoliday) {
+                days++;
+            }
+            date = date.plusDays(1);
+        }
+        return days;
     }
 }
 
