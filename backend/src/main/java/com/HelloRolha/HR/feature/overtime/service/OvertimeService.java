@@ -36,13 +36,13 @@ public class OvertimeService {
 
     public CreateOvertimeRes processOvertimeRequest(CreateOvertimeReq createOvertimeReq) {
         Employee employee;
-        try{
+        try {
             employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        }catch (Exception e){
-            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER,e.getMessage());
+        } catch (Exception e) {
+            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER, e.getMessage());
         }
 
-        try{
+        try {
 
             Overtime overtime = overtimeRepository.save(Overtime.builder()
                     .date(createOvertimeReq.getDate())
@@ -54,10 +54,9 @@ public class OvertimeService {
                     .employee(employee)
                     .build());
             return CreateOvertimeRes.builder().id(overtime.getId()).build();
-        }catch (Exception e){
-            throw new OvertimeSQLException(ErrorCode.DB_ERROR_SQL,e.getMessage());
+        } catch (Exception e) {
+            throw new OvertimeSQLException(ErrorCode.DB_ERROR_SQL, e.getMessage());
         }
-
 
 
     }
@@ -82,41 +81,42 @@ public class OvertimeService {
         }
         return overtimeDtos;
     }
-    public List<OvertimeDto> mylist( ) {
+
+    public List<OvertimeDto> mylist() {
         Employee employee;
-        try{
+        try {
             employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        }catch (Exception e){
-            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER,e.getMessage());
+        } catch (Exception e) {
+            throw new getEmployeeInSecurityContextHolderError(ErrorCode.EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER, e.getMessage());
         }
 
-        try{
+        try {
             List<Overtime> overtimes = overtimeRepository.findMyList(employee.getId());
             List<OvertimeDto> overtimeDtos = new ArrayList<>();
             for (Overtime overtime : overtimes) {
-                if (overtime != null) {
-                    OvertimeDto overtimeDto = OvertimeDto.builder()
-                            .id(overtime.getId())
-                            .shift(overtime.getShift())
-                            .startTime(overtime.getStartTime())
-                            .endTime(overtime.getEndTime())
-                            .date(overtime.getDate())
-                            .reason(overtime.getReason())
-                            .status(overtime.getStatus())
-                            .build();
-                    overtimeDtos.add(overtimeDto);
-                }
+
+                OvertimeDto overtimeDto = OvertimeDto.builder()
+                        .id(overtime.getId())
+                        .shift(overtime.getShift())
+                        .startTime(overtime.getStartTime())
+                        .endTime(overtime.getEndTime())
+                        .date(overtime.getDate())
+                        .reason(overtime.getReason())
+                        .status(overtime.getStatus())
+                        .build();
+                overtimeDtos.add(overtimeDto);
+
             }
             return overtimeDtos;
-        }catch (Exception e){
-            throw new OvertimeSQLException(ErrorCode.DB_ERROR_CREATE_SQL,e.getMessage());
+        } catch (Exception e) {
+            throw new OvertimeSQLException(ErrorCode.DB_ERROR_CREATE_SQL, e.getMessage());
         }
 
 
     }
 
     public OvertimeDto read(Integer id) {
-        Overtime overtime = overtimeRepository.findById(id).orElseThrow(()->new OvertimeNotFoundException(""));
+        Overtime overtime = overtimeRepository.findById(id).orElseThrow(() -> new OvertimeNotFoundException(""));
 
         return OvertimeDto.builder()
                 .id(overtime.getId())
@@ -132,7 +132,7 @@ public class OvertimeService {
 
     public void update(Integer id, OvertimeDto overtimeDto) {
         Optional<Overtime> result = overtimeRepository.findById(id);
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             Overtime overtime = result.get();
             overtime.setShift(overtimeDto.getShift());
             overtime.setDate(overtimeDto.getDate());
@@ -154,17 +154,17 @@ public class OvertimeService {
     }
 
 
-    public Long getOverTimeOf(Employee employee, LocalDate startDate, LocalDate endDate ) {
+    public Long getOverTimeOf(Employee employee, LocalDate startDate, LocalDate endDate) {
 
 
         //Todo 예외 처리 : 결과가 비어있다면
         Long totalMinutes = 0L;
-        for(Overtime overtime:employee.getOvertimes()){
+        for (Overtime overtime : employee.getOvertimes()) {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate overtimeDate = LocalDate.parse(overtime.getDate(), formatter);
 
-            if(overtimeDate.isAfter(startDate) && overtimeDate.isBefore(endDate)){
+            if (overtimeDate.isAfter(startDate) && overtimeDate.isBefore(endDate)) {
 
                 LocalTime startTime = LocalTime.parse(overtime.getStartTime());
                 LocalTime endTime = LocalTime.parse(overtime.getEndTime());
