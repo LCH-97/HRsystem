@@ -46,23 +46,23 @@ public class EmployeeRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         return query.fetch();
     }
-    @Override
-    public List<Employee> getWorkingEmployListForCalculateSalary() { //현재 일하고 있는 사람들만
-
-        // 조인이 필요한 각 클래스들에 대한 객체 생성
-        QGoout goout = new QGoout("goout");
-        QOvertime overtime = new QOvertime("overtime");
-        QEmployee employee = new QEmployee("employee");
-        QCommute commute = new QCommute("commute");
-        // QueryDSL 을 사용하기 위한 from 메서드 작성
-        JPAQuery<Employee> query = queryFactory.select(employee).from(employee)
-                .leftJoin(goout.employee, employee).fetchJoin()
-                .leftJoin(overtime.employee, employee).fetchJoin()
-                .leftJoin(commute.employee, employee).fetchJoin()
-                .distinct()// 중복제거를 위한 코드 추가
-                .where(employee.status); // true면 일하고 있는 직원
-
-
-        return query.fetch();
-    }
+    //
+//    @Override
+//    public List<Employee> getWorkingEmployListForCalculateSalary() { //현재 일하고 있는 사람들만
+//
+//        // 조인이 필요한 각 클래스들에 대한 객체 생성
+//        QGoout goout = new QGoout("goout");
+//        QOvertime overtime = new QOvertime("overtime");
+//        QEmployee employee = new QEmployee("employee");
+//        QCommute commute = new QCommute("commute");
+//        // QueryDSL 을 사용하기 위한 from 메서드 작성
+//        JPAQuery<Employee> query = queryFactory.select(employee).from(employee)
+//                .innerJoin(employee.commutes, commute).fetchJoin()
+//                .innerJoin(employee.overtimes, overtime).fetchJoin()
+//                .innerJoin(employee.goouts, goout).fetchJoin();
+//
+//  // onetoMany 관계 여러개를 join 할 수 없음. 못 쓰는 쿼리문
+//
+//        return query.fetch();
+//    }
 }
