@@ -21,12 +21,12 @@ public class SalaryController {
         this.salaryService = salaryService;
     }
 
-    @GetMapping("/overtime/list") // 초과 근무 목록 조회
-    public ResponseEntity<BaseRes> list() {
+    @GetMapping("/init") // 초과 근무 목록 조회
+    public ResponseEntity<BaseRes> init() {
         List<SalaryDto> salaryDtoList = salaryService.init();
         BaseRes response = BaseRes.builder()
                 .code(1200)
-                .message("초과 근무 확인 성공")
+                .message("월급 초기화 성공")
                 .isSuccess(true)
                 .result(salaryDtoList)
                 .build();
