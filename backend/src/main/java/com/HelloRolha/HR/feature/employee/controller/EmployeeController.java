@@ -7,10 +7,7 @@ import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpReq;
 import com.HelloRolha.HR.feature.employee.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -69,5 +66,11 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDto>> listEmployees() {
         List<EmployeeDto> employeeDtos = employeeService.listEmployee();
         return ResponseEntity.ok().body(employeeDtos); // HTTP 200 OK 응답과 함께 직원 목록 반환
+    }
+
+    @GetMapping("/department/{departmentId}")
+    public ResponseEntity<List<EmployeeDto>> listEmployeeByDepartmentId(@PathVariable Integer departmentId) {
+    List<EmployeeDto> employees = employeeService.listEmployeeByDepartmentId(departmentId);
+    return ResponseEntity.ok().body(employees);
     }
 }

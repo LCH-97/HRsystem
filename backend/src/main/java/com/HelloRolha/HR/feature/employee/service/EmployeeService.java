@@ -98,11 +98,6 @@ public class EmployeeService {
     }
 
 
-    public List<Employee> getWorkingEmployListForCalculateSalary() {
-
-        return employeeRepository.getWorkingEmployListForCalculateSalary();
-    }
-
     public Boolean authorize(Integer employeeId) {
         Optional<Employee> optionalEmployee =  employeeRepository.findById(employeeId);
         if(optionalEmployee.isEmpty()){
@@ -169,5 +164,20 @@ public class EmployeeService {
         return SignUpRes.builder()
                 .result(true)
                 .build();
+    }
+
+    public List<EmployeeDto> listEmployeeByDepartmentId(Integer departmentId) {
+        List<Employee> employees = employeeRepository.findByDepartmentId(departmentId);
+        List<EmployeeDto> employeeDtos = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            employeeDtos.add(EmployeeDto.builder()
+                            .id(employee.getId())
+                            .name(employee.getName())
+                            .department(employee.getDepartment().getDepartmentName())
+                            .position(employee.getPosition().getPositionName())
+                            .build());
+        }
+        return employeeDtos;
     }
 }
