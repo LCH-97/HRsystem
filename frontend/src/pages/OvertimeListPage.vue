@@ -2,8 +2,8 @@
   <div>
     <HeaderComponent />
     <SideBar />
-    
-    <div class="col-xl-9">
+
+    <!-- <div class="col-xl-9">
     <div class="card mb-3">
       <div class="card-header">
         초과근무페이지
@@ -58,11 +58,54 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 
-    <!-- <div class="page-content">
+
+<br>
+<br>
+<br>
+
+
+<div class="container with-shadow">
+      <h1>초과근무 목록</h1>
+      <div class="datatable-container">
+        <table id="datatablesSimple" class="datatable-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>일자</th>
+              <th>오전/오후</th>
+              <th>시작 시간</th>
+              <th>종료 시간</th>
+              <th>사유</th>
+              <th>승인여부</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="overtime in paginatedOvertimeList" :key="overtime.id" @click="viewOvertimeDetail(overtime.id)">
+              <td>{{ overtime.id }}</td>
+              <td>{{ overtime.date }}</td>
+              <td>{{ overtime.shift }}</td>
+              <td>{{ overtime.startTime }}</td>
+              <td>{{ overtime.endTime }}</td>
+              <td>{{ overtime.reason }}</td>
+              <td>{{ overtime.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button @click="prevPage">&lt;</button>
+          <span>{{ currentPage }}</span>
+          <button @click="nextPage">&gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- <div class="page-content">
       <h1>초과 근무 목록</h1>
       <table>
         <thead>
@@ -90,95 +133,111 @@
       </table>
     </div>
   </div> -->
-  
+
 </template>
 
 <script>
-  import axios from 'axios';
-  import SideBar from '../components/SideBar.vue';
-  import HeaderComponent from '../components/HeaderComponent.vue';
-  export default {
-    name: 'OvertimeListPage',
-    components: {
-        SideBar,
-      HeaderComponent,
-    },
-    data() {
-      return {
-        overtimeList: []
-      };
-    },
-    mounted() {
-      this.fetchOvertimeList();
-    },
-    methods: {
-      async fetchOvertimeList() {
-        try {
-          const token = sessionStorage.getItem("token");
-          const response = await axios.get("http://192.168.0.51/api/employee/overtime/list",{
-          headers: { "Content-Type": "multipart/form-data", Authorization: "Bearer " + token, },
+import axios from 'axios';
+import SideBar from '../components/SideBar.vue';
+import HeaderComponent from '../components/HeaderComponent.vue';
 
+export default {
+  name: 'OvertimeListPage',
+  components: {
+    SideBar,
+    HeaderComponent,
+  },
+  data() {
+    return {
+      overtimeList: [],
+      itemsPerPage: 6,
+      currentPage: 1,
+    };
+  },
+  computed: {
+    paginatedOvertimeList() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.overtimeList.slice(startIndex, endIndex);
+    },
+    totalPages() {
+      return Math.ceil(this.overtimeList.length / this.itemsPerPage);
+    },
+  },
+  mounted() {
+    this.fetchOvertimeList();
+  },
+  methods: {
+    async fetchOvertimeList() {
+      try {
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get("http://localhost:8080/employee/overtime/list", {
+          headers: { Authorization: "Bearer " + token, },
         });
-          this.overtimeList = response.data.result;
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      },
-      viewOvertimeDetail(id) {
-        window.location.href = `/overtime/read/${id}`;
+        this.overtimeList = response.data.result;
+      } catch (error) {
+        console.error("Error:", error);
       }
-    }
-  };
-  </script>
+    },
+    viewOvertimeDetail(id) {
+      window.location.href = `/overtime/read/${id}`;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+  },
+};
+</script>
 
 <style scoped>
-body {
-  font-family: 'Roboto', sans-serif;
+.container {
+  max-width: 1254px;
+  margin: 0 auto;
+  padding: 15px;
   background-color: #fff;
-  color: #000;
-  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 113px;
+}
+
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 h1 {
-  font-size: 30px;
-  margin-left: 260px;
+  font-size: 24px;
+  margin-bottom: 32px;
+  margin-left: 13px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 13px;
-  margin-left: 9px;
+.pagination {
+  margin-top: 20px;
+  text-align: center;
 }
 
-th,
-td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  background-color: #fff;
-}
-
-th {
-  background-color: #fff;
-  color: #333;
-  border-bottom: 2px solid #333;
-}
-
-tr:last-child td {
-  border-bottom: none;
-}
-
-.table-data {
+.pagination button {
   cursor: pointer;
+  padding: 8px 12px;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin: 0 5px;
 }
 
-
-.col-xl-9{
-  margin-left: 320px;
-  margin-top: 50px;
+.pagination button:hover {
+  background-color: #e0e0e0;
 }
 
-
-
+.pagination button:disabled {
+  cursor: not-allowed;
+  background-color: #ddd;
+}
 </style>
