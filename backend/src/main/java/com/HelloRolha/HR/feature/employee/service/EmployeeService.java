@@ -97,7 +97,6 @@ public class EmployeeService {
         return employeeList;
     }
 
-
     public Boolean authorize(Integer employeeId) {
         Optional<Employee> optionalEmployee =  employeeRepository.findById(employeeId);
         if(optionalEmployee.isEmpty()){
@@ -141,7 +140,7 @@ public class EmployeeService {
 
     public Object createAdmin(SignUpReq signUpReq) {
 
-        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("USER_ADMIN");
+        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("ROLE_ADMIN");
         if(!employeeOptional.isEmpty()) {
             throw new CanNotInitException();
         }
