@@ -14,6 +14,13 @@
           <textarea placeholder="내용을 입력하세요." id="content" class="form-control" rows="10" v-model="content" required></textarea>
         </div>
         <br /><br />
+        <!-- <button @click="showModal">결재자 선택</button>
+        <department-list-modal
+          :departments="departments"
+          :backend="backend" 
+          v-model:isVisible="isModalVisible"
+          @confirm="handleEmployeeSelection"
+        ></department-list-modal> -->
         <div class="confirmer">
           결재자1
           <select v-model="confirmer1Id">
@@ -56,12 +63,13 @@ import axios from "axios";
 import  jwtDecode  from "jwt-decode";
 import SideBar from "@/components/SideBar.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
-
+// import DepartmentListModal from "@/components/DepartmentListModal.vue"
 export default {
   name: "ApproveCreatePage",
   components: {
     SideBar,
     HeaderComponent,
+    // DepartmentListModal,
   },
   data() {
     return {
@@ -73,22 +81,49 @@ export default {
       employees: [],
       files: [],
       loggedInUserId: null, // 로그인한 사용자 ID 저장
+      // isModalVisible: false,
+      // departments: [],
     };
   },
   async created() {
     await this.fetchEmployees();
+    // this.fetchDepartments();
   },
   mounted() {
     this.setLoggedInUser();
   },
   methods: {
+    // fetchDepartments() {
+    //   axios.get(`${this.backend}/department/list`).then((response) => {
+    //     this.departments = response.data.result; // 수정됨
+    //   }).catch(error => {
+    //     console.error("부서 목록 조회 실패:", error);
+    //   });
+    // },
+    //  showModal() {
+    //   console.log("showModal called");
+    //   this.isModalVisible = true;
+    // },
+    handleEmployeeSelection(employeeId) {
+  if (!this.confirmer1Id) {
+    this.confirmer1Id = employeeId;
+  } else if (!this.confirmer2Id) {
+    if (this.confirmer1Id === employeeId) {
+      alert('동일한 결재자를 다시 선택할 수 없습니다. 다른 결재자를 선택해주세요.');
+    } else {
+      this.confirmer2Id = employeeId;
+    }
+  } else {
+    alert('이미 두 명의 결재자가 선택되었습니다. 더 이상 선택할 수 없습니다.');
+  }
+},
     setLoggedInUser() {
       const token = sessionStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token);
-        console.log("Decoded:", decoded); // 디코드된 토큰 출력
+        console.log("Decoded:", decoded);
         this.loggedInUserId = decoded.ID;
-        console.log("Logged In User ID:", this.loggedInUserId); // 사용자 ID 출력
+        console.log("Logged In User ID:", this.loggedInUserId);
       }
     },
 
