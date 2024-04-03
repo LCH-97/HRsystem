@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="4" failures="1" errors="0" time="2.044">
-  <testsuite name="BoardReadPage.vue" errors="0" failures="1" skipped="0" timestamp="2024-03-27T06:43:44" time="0.869" tests="1">
-    <testcase classname="BoardReadPage.vue fetches board data on mount and displays content" name="BoardReadPage.vue fetches board data on mount and displays content" time="0.006">
-      <failure>TypeError: _axios.default.get.mockResolvedValueOnce is not a function
-    at Object.&lt;anonymous&gt; (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\tests\unit\boardread.spec.js:37:15)
-    at Promise.then.completed (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\utils.js:391:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\utils.js:316:10)
-    at _callCircusHook (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\run.js:181:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\run.js:148:5)
-    at _runTestsForDescribeBlock (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\run.js:66:9)
-    at _runTestsForDescribeBlock (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\run.js:60:9)
-    at run (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\run.js:25:3)
-    at runAndTransformResultsToJestFormat (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
-    at jestAdapter (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
-    at runTestInternal (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-runner\build\runTest.js:389:16)
-    at runTest (C:\Users\Playdata\Desktop\front_test\be02-fin-Hello_R_loha-HRsystem\frontend\node_modules\jest-runner\build\runTest.js:475:34)</failure>
+<testsuites name="jest tests" tests="3" failures="1" errors="0" time="2.937">
+  <testsuite name="LoginPage.vue" errors="0" failures="0" skipped="0" timestamp="2024-04-03T08:34:23" time="1.04" tests="1">
+    <testcase classname="LoginPage.vue handles login error" name="LoginPage.vue handles login error" time="0.066">
     </testcase>
   </testsuite>
-  <testsuite name="LoginPage.vue" errors="0" failures="0" skipped="0" timestamp="2024-03-27T06:43:45" time="0.156" tests="1">
-    <testcase classname="LoginPage.vue handles login error" name="LoginPage.vue handles login error" time="0.052">
+  <testsuite name="SignUpPage" errors="0" failures="0" skipped="0" timestamp="2024-04-03T08:34:23" time="1.043" tests="1">
+    <testcase classname="SignUpPage renders props.msg when passed" name="SignUpPage renders props.msg when passed" time="0.058">
     </testcase>
   </testsuite>
-  <testsuite name="SignUpPage" errors="0" failures="0" skipped="0" timestamp="2024-03-27T06:43:45" time="0.118" tests="1">
-    <testcase classname="SignUpPage renders props.msg when passed" name="SignUpPage renders props.msg when passed" time="0.025">
-    </testcase>
-  </testsuite>
-  <testsuite name="BoardListPage.vue" errors="0" failures="0" skipped="0" timestamp="2024-03-27T06:43:46" time="0.119" tests="1">
-    <testcase classname="BoardListPage.vue fetches board data on mount" name="BoardListPage.vue fetches board data on mount" time="0.015">
+  <testsuite name="BoardListPage.vue" errors="0" failures="1" skipped="0" timestamp="2024-04-03T08:34:23" time="1.442" tests="1">
+    <testcase classname="BoardListPage.vue fetches board data on mount" name="BoardListPage.vue fetches board data on mount" time="0.031">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+- Expected  - 10
++ Received  +  1
+
+- Array [
+-   Object {
+-     &quot;filename&quot;: &quot;file1.pdf&quot;,
+-     &quot;id&quot;: 1,
+-   },
+-   Object {
+-     &quot;filename&quot;: &quot;file2.pdf&quot;,
+-     &quot;id&quot;: 2,
+-   },
+- ]
++ Array []
+    at Object.&lt;anonymous&gt; (C:\Users\Playdata\Desktop\04_01_front\be02-fin-Hello_R_loha-HRsystem\frontend\tests\unit\boardlist.spec.js:27:31)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
     </testcase>
   </testsuite>
 </testsuites>
