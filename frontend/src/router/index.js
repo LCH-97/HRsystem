@@ -33,6 +33,7 @@ import BoardUpdatePage from "@/pages/BoardUpdatePage.vue";
 
 import ManagerPage from "@/pages/ManagerPage.vue";
 import SalaryListPage from "@/pages/Salary/SalaryListPage.vue";
+import OvertimeCreateList from "@/pages/OvertimeCreateList.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -61,6 +62,8 @@ const router = createRouter({
 
     { path: "/salary/list", component: SalaryListPage },
 
+    { path: "/overtimecreatelist", component: OvertimeCreateList },
+
     {
       path: "/goout",
       component: GooutPage,
@@ -82,6 +85,8 @@ const router = createRouter({
         { path: "update", component: GooutTypeUpdate },
       ],
     },
+    
+    
   ],
 });
 

@@ -11,7 +11,7 @@
             <div class="row" style="width: 100%">
               <div class="col-xl-6">
                 <div class="card mb-4">
-                  <div class="card-header">Area Chart Example</div>
+                  <div class="card-header">일정 관리</div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -69,7 +69,7 @@
                   </div>
                 </div>
                 <div class="card mb-3">
-                  <div class="card-header">Bar Chart Example</div>
+                  <div class="card-header">결재 진행사항</div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -137,7 +137,7 @@
               </div>
               <div class="col-xl-2">
                 <div class="card mb-4">
-                  <div class="card-header">Bar Chart Example</div>
+                  <div class="card-header">출퇴근 관리</div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">

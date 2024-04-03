@@ -1,13 +1,13 @@
 <template>
   <div>
     <HeaderComponent />
-      <SideBar />
-    <h1>초과 근무 수정</h1>
+    <SideBar />
+    <!-- <h1>초과 근무 수정</h1>
 
     <form @submit.prevent="submitForm" id="overtimeForm">
-      <div class="section-divider"></div>
-      <!-- 초과 근무 수정 -->
-      <div class="flex-container">
+      <div class="section-divider"></div> -->
+    <!-- 초과 근무 수정 -->
+    <!-- <div class="flex-container">
         <label for="id">ID</label>
         <input type="text" id="id" name="id" v-model="formData.id" required>
       </div>
@@ -24,37 +24,208 @@
       </div>
       <div class="flex-container">
         <label for="startTime">Start Time</label>
-        <select id="startTime" name="startTime" v-model="formData.startTime">
-          <!-- Options dynamically populated based on shift selection -->
-          <option v-for="time in startTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
-        </select>
-      </div>
-      <div class="flex-container">
+        <select id="startTime" name="startTime" v-model="formData.startTime"> -->
+    <!-- Options dynamically populated based on shift selection -->
+    <!-- <option v-for="time in startTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+        </select> -->
+    <!-- </div> -->
+    <!-- <div class="flex-container">
         <label for="endTime">End Time</label>
-        <select id="endTime" name="endTime" v-model="formData.endTime">
-          <!-- Options dynamically populated based on shift selection -->
-          <option v-for="time in endTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
-        </select>
-      </div>
+        <select id="endTime" name="endTime" v-model="formData.endTime"> -->
+    <!-- Options dynamically populated based on shift selection -->
+    <!-- <option v-for="time in endTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+        </select> -->
+    <!-- </div>
       <div class="section-divider">Reason</div>
       <textarea v-model="formData.reason" id="reason" name="reason" rows="4" cols="50"></textarea>
-      <input type="submit" value="Update">
-      <div id="message" style="color: rgb(50, 216, 228);"></div> <!-- 수정 완료 메시지 출력 영역 -->
-    </form>
+      <input type="submit" value="Update"> -->
+    <!-- <div id="message" style="color: rgb(50, 216, 228);"></div> 수정 완료 메시지 출력 영역 -->
+    <!-- </form>
+  </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <br>
+    <br>
+    <br>
+    <div class="col-xl-9">
+      <div class="card mb-6" style="margin-left: 100px;   position: relative; left: 189px;">
+        <div class="card-header">초과근무 페이지</div>
+        <div class="card-body">
+          <div class="container">
+            <div class="header">
+              <h1>초과근무 수정</h1>
+            </div>
+            <div class="content">
+              <form @submit.prevent="submitForm" id="overtimeForm">
+                <div class="row">
+                  <div class="label">아이디</div>
+                  <input type="text" id="id" name="id" v-model="formData.id" required>
+                </div>
+                <div class="row">
+                  <div class="label">초과근무 날짜</div>
+                  <input type="date" id="date" name="date" v-model="formData.date">
+                </div>
+                <div class="row">
+                  <div class="label">새벽/야간</div>
+                  <select id="shift" name="shift" v-model="formData.shift" @change="handleShiftChange">
+                    <option value="morning">Morning</option>
+                    <option value="afternoon">Afternoon</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <div class="label">초과근무 시작시간</div>
+                  <select id="startTime" name="startTime" v-model="formData.startTime"> -->
+    <!-- Options dynamically populated based on shift selection -->
+    <!-- <option v-for="time in startTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+                  </select> -->
+    <!-- </div>
+                <div class="row">
+                  <div class="label">초과근무 종료시간</div>
+                  <select id="endTime" name="endTime" v-model="formData.endTime"> -->
+    <!-- Options dynamically populated based on shift selection -->
+    <!-- <option v-for="time in endTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <div class="label">초과근무 사유</div>
+                  <textarea v-model="formData.reason" id="reason" name="reason" rows="4" cols="50"></textarea>
+                  <input type="submit" value="Update">
+                  <div id="message" style="color: rgb(50, 216, 228);"></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <div class="content">
+      <div class="header">
+        <h1>초과근무 수정</h1>
+      </div>
+      <form @submit.prevent="submitForm" id="overtimeForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="ID">아이디</label>
+              <input type="text" id="id" name="id" v-model="formData.id" required class="form-control">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="overtimeDate">초과근무 날짜</label>
+              <input type="date" id="date" name="date" v-model="formData.date">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="shift">새벽/야간</label>
+              <select id="shift" name="shift" v-model="formData.shift" @change="handleShiftChange">
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="startTime">초과근무 시작시간</label>
+              <select id="startTime" name="startTime" v-model="formData.startTime">
+                <!-- Options dynamically populated based on shift selection -->
+                <option v-for="time in startTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="endTime">초과근무 종료시간</label>
+              <select id="endTime" name="endTime" v-model="formData.endTime">
+                <!-- Options dynamically populated based on shift selection -->
+                <option v-for="time in endTimes" :key="time.value" :value="time.value">{{ time.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="reason">초과근무 사유</label>
+                <textarea v-model="formData.reason" id="reason" name="reason" rows="4" cols="50" required
+                  class="form-control"></textarea>
+                <input type="submit" value="Update">
+                <div id="message" style="color: rgb(50, 216, 228);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
+
+
+
+
+
+
+
+
+
+
+
 </template>
 
 <script>
 import axios from 'axios';
-  import SideBar from '../components/SideBar.vue';
-  import HeaderComponent from '../components/HeaderComponent.vue';
+import SideBar from '../components/SideBar.vue';
+import HeaderComponent from '../components/HeaderComponent.vue';
 
 export default {
   name: 'OvertimeModifyPage',
-    components: {
-        SideBar,
-      HeaderComponent,
-    },
+  components: {
+    SideBar,
+    HeaderComponent,
+  },
   data() {
     return {
       formData: {
@@ -124,81 +295,48 @@ export default {
 </script>
 
 <style scoped>
-  body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #fff;
-    color: #000;
-    margin: 20px;
-  }
-  
-  h1 {
-    font-size: 34px;
-    margin-left: 266px;
-    margin-top: 55px;
-  }
-  
-  form {
-    max-width: 1170px;
-    margin: 37 auto;
-    padding: 47px;
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-    border: 0px solid #ffffff;
-    text-align: left;
-    margin-left: 223px;
-  }
-  
-  label {
-    display: inline-block;
-    width: 120px;
-    margin-bottom: 5px;
-    margin-right: 10px;
-  }
-  
-  input[type="text"],
-  input[type="date"],
-  select,
-  textarea {
-    width: calc(100% - 130px);
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  input[type="submit"] {
-    background-color: #1a1817;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    float: right;
-    margin-top: 40px;
-  }
-  
-  input[type="submit"]:hover {
-    background-color: #ef7b2d;
-  }
-  
-  .section-divider {
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  .flex-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    margin-bottom: 10px;
-  }
-  
-  .flex-item {
-    margin-right: 10px;
-  }
-  </style>
+.container {
+  max-width: 1254px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 113px;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: black;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.btn-submit {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+  position: relative;
+  right: -1089px;
+}
+
+.btn-submit:hover {
+  background-color: #F7941E;
+}
+</style>

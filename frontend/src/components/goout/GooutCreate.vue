@@ -9,39 +9,27 @@
           <div class="label">신청자</div>
           <div class="input">
             <select v-model="employeeId">
-              <option
-                  v-for="employee in employees"
-                  :key="employee.id"
-                  :value="employee.id"
-              >
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">
                 {{ employee.name }}
-              </option></select
-            ><br />
+              </option>
+            </select><br />
           </div>
         </div>
         <div class="row">
           <div class="label">대리인</div>
           <div class="input">
             <select v-model="agentId">
-              <option
-                  v-for="agent in employees"
-                  :key="agent.id"
-                  :value="agent.id"
-              >
+              <option v-for="agent in employees" :key="agent.id" :value="agent.id">
                 {{ agent.name }}
-              </option></select
-            ><br />
+              </option>
+            </select><br />
           </div>
         </div>
         <div class="row">
           <div class="label">근태 사유</div>
           <div class="input-and-remaining-days">
             <select v-model="gooutTypeId" class="select-reason">
-              <option
-                  v-for="gooutType in gooutTypes"
-                  :key="gooutType.id"
-                  :value="gooutType.id"
-              >
+              <option v-for="gooutType in gooutTypes" :key="gooutType.id" :value="gooutType.id">
                 {{ gooutType.name }}
               </option>
             </select>
@@ -71,24 +59,16 @@
           <div class="input">
             <p>결재자1</p>
             <select v-model="confirmer1Id">
-              <option
-                  v-for="employee in employees"
-                  :key="employee.id"
-                  :value="employee.id"
-              >
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">
                 {{ employee.name }}
-              </option></select
-            ><br />
+              </option>
+            </select><br />
             <p>결재자2</p>
             <select v-model="confirmer2Id">
-              <option
-                  v-for="employee in employees"
-                  :key="employee.id"
-                  :value="employee.id"
-              >
+              <option v-for="employee in employees" :key="employee.id" :value="employee.id">
                 {{ employee.name }}
-              </option></select
-            ><br />
+              </option>
+            </select><br />
           </div>
         </div>
         <div class="row">
@@ -99,6 +79,33 @@
       </form>
     </div>
   </div>
+  <br>
+  <br>
+  <br>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 </template>
 
 <script>
@@ -170,7 +177,7 @@ export default {
     async createGooutRequest() {
       if (this.confirmer1Id === this.confirmer2Id) {
         alert(
-            "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
+          "결재라인 생성 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
         );
         return; // 메소드 실행을 중단
       }
@@ -234,13 +241,13 @@ export default {
       if (this.gooutTypeId && this.employeeId) {
         try {
           const response = await axios.get(
-              `${this.backend}/goout/remainingVacationDays`,
-              {
-                params: {
-                  employeeId: this.employeeId,
-                  gooutTypeId: this.gooutTypeId,
-                },
-              }
+            `${this.backend}/goout/remainingVacationDays`,
+            {
+              params: {
+                employeeId: this.employeeId,
+                gooutTypeId: this.gooutTypeId,
+              },
+            }
           );
           this.remainingVacationDays = response.data.result;
           if (this.remainingVacationDays < 0) {
@@ -270,12 +277,15 @@ export default {
 }
 
 .select-reason {
-  width: 50%; /* 근태 사유 선택 창의 크기 조절 */
-  margin-right: 10px; /* 남은 휴가 일수와의 간격 조절 */
+  width: 50%;
+  /* 근태 사유 선택 창의 크기 조절 */
+  margin-right: 10px;
+  /* 남은 휴가 일수와의 간격 조절 */
 }
 
 .remaining-days {
-  margin-left: auto; /* 남은 휴가 일수를 오른쪽 정렬 */
+  margin-left: auto;
+  /* 남은 휴가 일수를 오른쪽 정렬 */
 }
 
 .header {

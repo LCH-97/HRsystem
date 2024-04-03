@@ -11,7 +11,7 @@
             <div class="row" style="width: 100%">
               <div class="col-xl-6">
                 <div class="card mb-4">
-                  <div class="card-header">Area Chart Example</div>
+                  <div class="card-header">일정 관리</div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
