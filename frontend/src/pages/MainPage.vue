@@ -28,7 +28,7 @@
               <div class="col-xl-4">
                 <div class="card mb-3">
                   <div class="card-header">
-                    <a href="/board"> 공지사항 </a>
+                    <a href="/board/list"> 공지사항 </a>
                   </div>
 
                   <div class="card-body">
@@ -197,7 +197,7 @@ import SideBar from "../components/SideBar.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 import LoadingPage from "@/components/LoadingPage.vue";
 
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 // 달력
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -270,7 +270,8 @@ export default {
       })
         .catch(error => {
           console.error('Error post commute data:', error);
-          alert("출근 실패");
+          if(isAxiosError)
+            alert("출근 실패");
           // if (error.response.data.code === "USER-004") {
           //   this.popTitle = "로그인에 실패하였습니다.";
           //   this.popText = "다시 시도해주세요.";
@@ -323,7 +324,8 @@ export default {
         })
         .catch((error) => {
           console.error("Error updating data:", error);
-          alert("퇴근 실패");
+          if(isAxiosError)
+            alert("퇴근 실패");
         }).finally(() => {
           this.isLoading = false;
         });

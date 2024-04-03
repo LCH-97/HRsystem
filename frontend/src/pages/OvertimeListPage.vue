@@ -114,7 +114,11 @@
     methods: {
       async fetchOvertimeList() {
         try {
-          const response = await axios.get("http://192.168.0.51/api/employee/overtime/list");
+          const token = sessionStorage.getItem("token");
+          const response = await axios.get("http://192.168.0.51/api/employee/overtime/list",{
+          headers: { "Content-Type": "multipart/form-data", Authorization: "Bearer " + token, },
+
+        });
           this.overtimeList = response.data.result;
         } catch (error) {
           console.error("Error:", error);

@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent />
-      <SideBar />
+    <SideBar />
 
     <h1>초과 근무 신청</h1>
 
@@ -53,15 +53,15 @@
 
 <script>
 import axios from 'axios';
-  import SideBar from '../components/SideBar.vue';
-  import HeaderComponent from '../components/HeaderComponent.vue';
+import SideBar from '../components/SideBar.vue';
+import HeaderComponent from '../components/HeaderComponent.vue';
 
 export default {
   name: 'OvertimeCreatePage',
   components: {
-        SideBar,
-      HeaderComponent,
-    },
+    SideBar,
+    HeaderComponent,
+  },
   data() {
     return {
       form: {
@@ -80,8 +80,8 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         let response = await axios.post("http://192.168.0.51/api/employee/overtime/create", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-          Authorization: "Bearer " + token,
+          headers: { "Content-Type": "multipart/form-data", Authorization: "Bearer " + token, },
+
         });
 
         console.log("ID:", response.data.result.id);
@@ -95,14 +95,14 @@ export default {
     async submitForm() {
       try {
         const formData = new FormData();
-       
+
         formData.append("date", this.date);
         formData.append("shift", this.shift);
         formData.append("startTime", this.startTime);
         formData.append("endTime", this.endTime);
         formData.append("reason", this.reason);
-        console.log("create overtime data:",this.form);
-      
+        console.log("create overtime data:", this.form);
+
         await this.sendData(formData);
       } catch (error) {
         console.error("Error:", error);
@@ -138,79 +138,111 @@ export default {
 </script>
 
 <style scoped>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: rgba(255, 254, 254, 0.955); /* 회색 배경 */
-        }
-        h1 {
-            text-align: left;
-            font-size: 30px; /* 크기 작게 */
-            margin-bottom: -14px; /* 간격 추가 */
-            margin-top: 70px;
-            margin-left: 249px;
-        }
-        p {
-            text-align: left;
-            font-size: 14px;
-            margin-left: 249px;
-            margin-top: -54px;
-        }
-        form {
-            max-width: 1170px; /* 전체 폼의 최대 너비 조정 */
-            margin: 37 auto;
-            padding: 47px;
-            background-color: #fff; /* 흰색 배경 */
-            border-radius: 6px;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-            border: 0px solid #ffffff; /* 테두리 색 설정 */
-            text-align: left; /* 왼쪽 정렬 */
-            margin-left: 201px;
-        }
-        label {
-            display: inline-block; /* 인라인 블록 요소로 설정 */
-            width: 120px; /* 레이블 너비 설정 */
-            margin-bottom: 5px;
-            margin-right: 10px;
-        }
-        input[type="date"],
-        select,
-        textarea {
-            width: calc(100% - 130px); /* 테두리 고려하여 너비 조정 */
-            padding: 8px;
-            margin-bottom: 10px;
-            border:1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            background-color: #1a1817; /* 오렌지색 버튼 */
-            color: white;
-            padding: 10px 15px; /* 작은 사이즈로 조정 */
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px; /* 폰트 크기 조정 */
-            float: right; /* 우측 정렬 */
-            margin-top: 40px;
-        }
-        input[type="submit"]:hover {
-            background-color: #ef7b2d; /* 오렌지색 버튼 호버 상태 */
-        }
-        .section-divider {
-            border-bottom: 1px solid #ccc; /* 밑줄 추가 */
-            margin-bottom: 20px; /* 간격 추가 */
-            padding-bottom: 10px; /* 간격 추가 */
-            font-weight: bold; /* 제목 굵게 */
-        }
-        .flex-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start; /* 왼쪽 정렬 */
-            margin-bottom: 10px; /* 간격 추가 */
-        }
-        .flex-item {
-            margin-right: 10px; /* 간격 추가 */
-        }
-    </style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: rgba(255, 254, 254, 0.955);
+  /* 회색 배경 */
+}
+
+h1 {
+  text-align: left;
+  font-size: 30px;
+  /* 크기 작게 */
+  margin-bottom: -14px;
+  /* 간격 추가 */
+  margin-top: 70px;
+  margin-left: 249px;
+}
+
+p {
+  text-align: left;
+  font-size: 14px;
+  margin-left: 249px;
+  margin-top: -54px;
+}
+
+form {
+  max-width: 1170px;
+  /* 전체 폼의 최대 너비 조정 */
+  margin: 37 auto;
+  padding: 47px;
+  background-color: #fff;
+  /* 흰색 배경 */
+  border-radius: 6px;
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+  border: 0px solid #ffffff;
+  /* 테두리 색 설정 */
+  text-align: left;
+  /* 왼쪽 정렬 */
+  margin-left: 201px;
+}
+
+label {
+  display: inline-block;
+  /* 인라인 블록 요소로 설정 */
+  width: 120px;
+  /* 레이블 너비 설정 */
+  margin-bottom: 5px;
+  margin-right: 10px;
+}
+
+input[type="date"],
+select,
+textarea {
+  width: calc(100% - 130px);
+  /* 테두리 고려하여 너비 조정 */
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="submit"] {
+  background-color: #1a1817;
+  /* 오렌지색 버튼 */
+  color: white;
+  padding: 10px 15px;
+  /* 작은 사이즈로 조정 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  /* 폰트 크기 조정 */
+  float: right;
+  /* 우측 정렬 */
+  margin-top: 40px;
+}
+
+input[type="submit"]:hover {
+  background-color: #ef7b2d;
+  /* 오렌지색 버튼 호버 상태 */
+}
+
+.section-divider {
+  border-bottom: 1px solid #ccc;
+  /* 밑줄 추가 */
+  margin-bottom: 20px;
+  /* 간격 추가 */
+  padding-bottom: 10px;
+  /* 간격 추가 */
+  font-weight: bold;
+  /* 제목 굵게 */
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  /* 왼쪽 정렬 */
+  margin-bottom: 10px;
+  /* 간격 추가 */
+}
+
+.flex-item {
+  margin-right: 10px;
+  /* 간격 추가 */
+}
+</style>
