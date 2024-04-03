@@ -18,6 +18,15 @@ spring:
       hibernate.show_sql: true
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 1000
+  redis:
+    #    lettuce:
+    #      pool:
+    #        max-active: 10
+    #        max-idle: 10
+    #        min-idle: 2
+    host: localhost       # 추후 환경변수 처리
+    port: 6379            # 추후 환경변수 처리
+    password: 'qwer1234'  # 추후 환경변수 처리
 
 cloud:
   aws:
