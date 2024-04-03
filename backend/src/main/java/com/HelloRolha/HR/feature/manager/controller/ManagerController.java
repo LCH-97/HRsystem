@@ -51,6 +51,16 @@ public class ManagerController {
 
         return ResponseEntity.ok().body(res);
     }
+    @RequestMapping(method = RequestMethod.GET, value = "/check")
+    public ResponseEntity<BaseRes> check() {
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("check Success")
+                .result(null)
+                .build();
+        return ResponseEntity.ok().body(res);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/employee")
     public ResponseEntity<BaseRes> listEmployee() {

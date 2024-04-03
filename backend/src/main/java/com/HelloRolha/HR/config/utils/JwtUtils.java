@@ -1,5 +1,6 @@
 package com.HelloRolha.HR.config.utils;
 
+import com.HelloRolha.HR.error.UserAccountException;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,6 +20,7 @@ public class JwtUtils {
 
         Claims claims = Jwts.claims();
         claims.put("ID", employee.getId());
+        claims.put("NAME", employee.getName());
         claims.put("DEPARTMENT", employee.getDepartment().getDepartmentName());
         claims.put("POSITION", employee.getPosition().getPositionName());
         claims.put("ROLE", employee.getAuthority());
@@ -42,10 +44,10 @@ public class JwtUtils {
     }
 
     // 사용자 이름 가져오는 메서드
-    public static String getUserEmail(String token, String key) {
-        return extractAllClaims(token, key).get("email", String.class);
-    }
 
+    public static String getName(String token, String key) {
+        return extractAllClaims(token, key).get("NAME", String.class);
+    }
     public static String getAuthority(String token, String key) {
         return extractAllClaims(token, key).get("ROLE", String.class);
     }
@@ -56,11 +58,17 @@ public class JwtUtils {
     // 토근에서 정보를 가져오는 코드가 계속 중복되어 사용되기 때문에 별도의 메서드로 만들어서 사용하기 위한 것
     public static Claims extractAllClaims(String token, String key) {
 
-        return Jwts.parserBuilder()
+        try {
+            return Jwts.parserBuilder()
                     .setSigningKey(getSignKey(key))
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+        } catch (SignatureException e) {
+            throw UserAccountException.forInvalidToken(token);
+        } catch (ExpiredJwtException e) {
+            throw UserAccountException.forExpiredToken(token);
+        }
 
     }
 }
