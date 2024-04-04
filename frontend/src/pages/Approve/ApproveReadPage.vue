@@ -126,7 +126,13 @@ export default {
   methods: {
     fetchFiles() {
       // 특정 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
-      axios.get(`${this.backend}/approve/files/${this.id}`)
+      const token = sessionStorage.getItem("token");
+      axios.get(`${this.backend}/approve/files/${this.id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
           .then(response => {
             this.files = response.data; // 파일 목록 업데이트
           })
@@ -146,11 +152,18 @@ export default {
 
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
-        try {
+        try {        
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/approve/line/confirm1`, {
             approveId: this.id,
             confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
             comment: "결재자1 승인", // 코멘트
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
@@ -169,10 +182,17 @@ export default {
     async confirm2() {
       if (confirm("결재하시겠습니까?")) {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/approve/line/confirm2`, {
             approveId: this.id,
             confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
             comment: "결재자2 승인",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
@@ -193,10 +213,17 @@ export default {
       const reason = prompt("반려 사유를 입력해주세요.");
       if (reason !== null && reason.trim() !== "") {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/approve/line/reject1`, {
             approveId: this.id,
             confirmerId: this.confirmer1.confirmerId,
             comment: reason,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
@@ -218,10 +245,17 @@ export default {
       const reason = prompt("반려 사유를 입력해주세요.");
       if (reason !== null && reason.trim() !== "") {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/approve/line/reject2`, {
             approveId: this.id,
             confirmerId: this.confirmer2.confirmerId,
             comment: reason,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
@@ -245,8 +279,14 @@ export default {
           id: this.id,
           status: status,
         };
-
-        await axios.patch(`${this.backend}/approve/return`, payload);
+        const token = sessionStorage.getItem("token");
+        await axios.patch(`${this.backend}/approve/return`, payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
         alert("결재 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
       } catch (error) {
         console.error("결재 정보의 상태 업데이트에 실패했습니다:", error);
@@ -254,6 +294,7 @@ export default {
     },
     async fetchApprove() {
       try {
+        const token = sessionStorage.getItem("token");
         const approveResponse = await axios.get(
           `http://localhost:8080/approve/read/${this.id}`
         );
@@ -271,6 +312,7 @@ export default {
     },
     async fetchApproveLine(approveId) {
       try {
+        const token = sessionStorage.getItem("token");
         const response = await axios.get(
           `http://localhost:8080/approve/line/2/${approveId}`
         );
@@ -334,15 +376,21 @@ export default {
     },
 
     async deleteApprove() {
-      if (confirm("정말로 이 결재를 삭제하시겠습니까?")) {
+      if (confirm("정말로 이 결재를 회수  하시겠습니까?")) {
         try {
-          await axios.delete(`http://localhost:8080/approve/cancel/${this.id}`);
+          const token = sessionStorage.getItem("token");
+          await axios.delete(`http://192.168.0.51/api/approve/cancel/${this.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
 
-          alert("결재가 성공적으로 삭제되었습니다.");
+          alert("결재가 성공적으로 회수되었습니다.");
           this.$router.push("/approve/list");
         } catch (error) {
           console.error("결재 삭제 중 오류 발생:", error);
-          alert("결재 삭제 중 오류가 발생했습니다.");
+          alert("결재 회수 중 오류가 발생했습니다.");
         }
       }
     },

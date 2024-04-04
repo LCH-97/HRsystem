@@ -140,8 +140,14 @@ export default {
   methods: {
     fetchFiles() {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
+      const token = sessionStorage.getItem("token");
       axios
-          .get(`${this.backend}/goout/files/${this.id}`)
+          .get(`${this.backend}/goout/files/${this.id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
           .then((response) => {
             this.files = response.data; // 파일 목록 업데이트
           })
@@ -159,11 +165,18 @@ export default {
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/gooutLine/confirm1`, {
             id: this.confirmer1.id,
             gooutId: this.id, // 휴가 ID
             confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
             comment: "결재자1 승인", // 코멘트
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
           await this.returnGooutStatus(1);
@@ -179,11 +192,18 @@ export default {
     async confirm2() {
       if (confirm("결재하시겠습니까?")) {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/gooutLine/confirm2`, {
             id: this.confirmer2.id,
             gooutId: this.id, // 휴가 ID
             confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
             comment: "결재자2 승인", // 코멘트
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 승인되었습니다.");
           await this.returnGooutStatus(2);
@@ -201,16 +221,29 @@ export default {
       const reason = prompt("반려 사유를 입력해주세요.");
       if (reason !== null && reason.trim() !== "") {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/gooutLine/reject1`, {
             id: this.confirmer1.id,
             gooutId: this.id,
             confirmerId: this.confirmer1.confirmerId,
             comment: reason, // 사용자 입력 반려 사유 사용
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 반려되었습니다.");
           await this.returnGooutStatus(3);
           this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
             this.$router.go(0);
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
         } catch (error) {
           console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
@@ -225,11 +258,18 @@ export default {
       const reason = prompt("반려 사유를 입력해주세요.");
       if (reason !== null && reason.trim() !== "") {
         try {
+          const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/gooutLine/reject2`, {
             id: this.confirmer2.id,
             gooutId: this.id,
             confirmerId: this.confirmer2.confirmerId,
             comment: reason, // 사용자 입력 반려 사유 사용
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
           });
           console.log("결재라인이 성공적으로 반려되었습니다.");
           await this.returnGooutStatus(3);
@@ -251,7 +291,14 @@ export default {
           status: status, // 변경할 상태
         };
         // 수정된 객체를 사용하여 백엔드에 요청
-        await axios.patch(`${this.backend}/goout/return`, payload);
+        const token = sessionStorage.getItem("token");
+        await axios.patch(`${this.backend}/goout/return`, payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
         alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
       } catch (error) {
         console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
@@ -259,8 +306,14 @@ export default {
     },
     async fetchGoout() {
       try {
+        const token = sessionStorage.getItem("token");
         const gooutResponse = await axios.get(
-            `${this.backend}/goout/check/${this.id}`
+            `${this.backend}/goout/check/${this.id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }
         );
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
@@ -275,8 +328,14 @@ export default {
     },
     async fetchGooutLine(gooutId) {
       try {
+        const token = sessionStorage.getItem("token");
         const response = await axios.get(
-            `http://localhost:8080/gooutLine/2/${gooutId}`
+            `http://localhost:8080/gooutLine/2/${gooutId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
@@ -331,7 +390,13 @@ export default {
     async deleteGoout() {
       if (confirm("휴가 등록을 취소하시겠습니까?")) {
         try {
-          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {});
+          const token = sessionStorage.getItem("token");
+          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
           console.log("휴가 등록을 취소하였습니다.");
           alert("휴가 등록을 취소하였습니다.");
           this.$router.push(`/goout/list`);
@@ -397,14 +462,19 @@ th {
 .input-field {
   width: 200px;
 }
-.button {
+button {
+  color: white;
   margin-top: 10px;
   padding: 5px 10px;
   font-size: 16px;
   font-weight: bold;
   border: 1px solid #ddd;
-  background-color: #fff;
+  background-color: #111111;
   cursor: pointer;
+  border-radius: 10px;
+}
+button:hover {
+  background-color: #f75c29;
 }
 .input-group {
   margin-bottom: 10px;

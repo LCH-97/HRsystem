@@ -43,7 +43,8 @@ export default {
         updateGooutType() {
       axios.patch(`http://localhost:8080/gooutType/update`, this.gooutTypeInfo, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + token,
         }
       })
         .then(() => {

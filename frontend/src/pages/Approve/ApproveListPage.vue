@@ -168,7 +168,13 @@ export default {
     async fetchApprovals() {
       const api = `http://localhost:8080/approve/list?page=${this.currentPage - 1}&size=${this.pageSize}`;
       try {
-        const response = await axios.get(api);
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(api,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      });
         if (response.data && response.data.result && Array.isArray(response.data.result.content)) {
           this.approvals = response.data.result.content;
           this.filteredApprovals = this.approvals;
@@ -322,5 +328,4 @@ button:hover {
   margin-top: 20px;
 }
 
-.card mb-4 {}
 </style>

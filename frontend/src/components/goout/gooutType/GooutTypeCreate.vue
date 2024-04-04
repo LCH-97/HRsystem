@@ -46,10 +46,12 @@ export default {
         detail: detail,
         maxHoliday: maxHoliday
     };
-
+    const token = sessionStorage.getItem("token");
     let response = await axios.post(`${this.backend}/gooutType/create`, jsonData, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: "Bearer " + token,
+
         }
     });
 
