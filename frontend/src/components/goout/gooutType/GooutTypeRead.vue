@@ -32,7 +32,13 @@ export default {
   },
   methods: {
     fetchGooutType() {
-      axios.get(`http://localhost:8080/gooutType/${this.id}`)
+      const token = sessionStorage.getItem("token");
+      axios.get(`http://localhost:8080/gooutType/${this.id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
         .then(response => {
           if (response.data.isSuccess) {
             this.gooutType = response.data.result;
@@ -53,7 +59,13 @@ export default {
 
     deleteGooutType() {
       if (confirm("정말로 이 휴가타입을 삭제하시겠습니까?")) {
-        axios.delete(`http://localhost:8080/gooutType/delete/${this.id}`)
+        const token = sessionStorage.getItem("token");
+        axios.delete(`http://localhost:8080/gooutType/delete/${this.id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
           .then(() => {
             alert("휴가가 성공적으로 삭제되었습니다.");
             this.$router.push("/gooutType/list"); // 휴가타입 목록 페이지로 리디렉션
