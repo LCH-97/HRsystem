@@ -296,7 +296,13 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const approveResponse = await axios.get(
-          `http://localhost:8080/approve/read/${this.id}`
+          `http://localhost:8080/approve/read/${this.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
         );
 
         if (approveResponse.data.isSuccess) {
@@ -314,7 +320,13 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:8080/approve/line/2/${approveId}`
+          `http://localhost:8080/approve/line/2/${approveId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           this.confirmer1 = response.data.result[0];

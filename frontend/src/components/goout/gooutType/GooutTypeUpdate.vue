@@ -41,6 +41,7 @@ export default {
   },
   methods: {
         updateGooutType() {
+          const token = sessionStorage.getItem("token");
       axios.patch(`http://localhost:8080/gooutType/update`, this.gooutTypeInfo, {
         headers: {
           'Content-Type': 'application/json',
