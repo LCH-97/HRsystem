@@ -173,6 +173,7 @@ public class EmployeeService {
             employeeDtos.add(EmployeeDto.builder()
                             .id(employee.getId())
                             .name(employee.getName())
+                            .username(employee.getUsername())
                             .department(employee.getDepartment().getDepartmentName())
                             .position(employee.getPosition().getPositionName())
                             .build());
