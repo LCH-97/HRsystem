@@ -75,7 +75,7 @@ export default {
     async fetchOvertimeList() {
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/employee/overtime/list", {
+        const response = await axios.get("http://192.168.0.51/api/employee/overtime/list", {
           headers: { Authorization: "Bearer " + token, },
         });
         this.overtimeList = response.data.result;

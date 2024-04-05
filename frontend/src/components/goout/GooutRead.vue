@@ -131,7 +131,7 @@ export default {
       goout: null,
       gooutLine: null,
       id: this.$route.params.id,
-      backend: "http://localhost:8080", // 백엔드 서버 주소
+      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
       confirmer1: null,
       confirmer2: null,
       files: [], // 파일 목록을 저장할 배열
@@ -330,7 +330,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-            `http://localhost:8080/gooutLine/2/${gooutId}`, {
+            `http://192.168.0.51/api/gooutLine/2/${gooutId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

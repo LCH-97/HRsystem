@@ -81,7 +81,7 @@ export default {
     return {
       board: null,
       id: this.$route.params.id,
-      backend: "http://localhost:8080", // 백엔드 서버 주소
+      backend: "http://192.168.0.51/api", // 백엔드 서버 주소
       files: [], // 파일 목록을 저장할 배열
       loggedInUserId: null, // 현재 로그인한 사용자의 ID
     };
@@ -102,9 +102,16 @@ export default {
     },
     // 공지사항 상세 정보 조회
     async fetchBoard() {
+      const token = sessionStorage.getItem("token");
       try {
         const response = await axios.get(
-          `${this.backend}/board/check/${this.id}`
+          `${this.backend}/board/check/${this.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+            },
+          }
         );
         this.board = response.data.result;
       } catch (error) {

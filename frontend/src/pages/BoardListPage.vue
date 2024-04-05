@@ -103,9 +103,14 @@ export default {
       this.$router.push("/board/create");
     },
     async fetchBoards() {
+      const token = sessionStorage.getItem("token");
       try {
-        const response = await axios.get(`http://localhost:8080/board/check`, {
+        const response = await axios.get(`http://192.168.0.51/api/board/check`, {
           params: { page: this.currentPage, size: this.pageSize },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },
         });
         this.boards = response.data.result.boards;
         this.totalPages = Math.ceil(
