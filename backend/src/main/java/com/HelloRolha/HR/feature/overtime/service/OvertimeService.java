@@ -48,7 +48,7 @@ public class OvertimeService {
                     .date(createOvertimeReq.getDate())
                     .shift(createOvertimeReq.getShift())
                     .startTime(createOvertimeReq.getStartTime())
-                    .endTime(createOvertimeReq.getEndTime())
+                    .endTime(createOvertimeReq.getEndTime
                     .reason(createOvertimeReq.getReason())
                     .status("대기 중")
                     .employee(employee)
