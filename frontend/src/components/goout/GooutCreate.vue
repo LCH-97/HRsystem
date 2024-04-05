@@ -126,7 +126,7 @@
         </div> -->
         <div class="row">
           <div class="button">
-            <button type="submit" class="btn-submit">제출</button>
+            <button @click="createGooutRequest" type="submit" class="btn-submit">제출</button>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default {
   },
   data() {
     return {
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",

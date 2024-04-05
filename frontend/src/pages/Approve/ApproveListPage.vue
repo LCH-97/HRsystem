@@ -114,13 +114,12 @@ export default {
       return pages;
     },
 
-
     // 상태별 개수를 계산하는 계산된 속성
     statusCounts() {
       const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
 
       // 모든 approvals를 순회하며 상태별로 개수를 계산합니다.
-      this.approvals.forEach(approve => {
+      this.approvals.forEach((approve) => {
         counts.total += 1;
         const statusText = this.getStatusText(approve.status);
         if (counts[statusText] !== undefined) {
@@ -129,7 +128,7 @@ export default {
       });
 
       return counts;
-    }
+    },
   },
   async mounted() {
     await this.fetchApprovals();
@@ -161,21 +160,29 @@ export default {
       if (status === null) {
         this.filteredApprovals = this.approvals;
       } else {
-        this.filteredApprovals = this.approvals.filter(approve => approve.status === status);
+        this.filteredApprovals = this.approvals.filter(
+          (approve) => approve.status === status
+        );
       }
     },
 
     async fetchApprovals() {
-      const api = `http://localhost:8080/approve/list?page=${this.currentPage - 1}&size=${this.pageSize}`;
+      const api = `http://192.168.0.51/api/approve/list?page=${
+        this.currentPage - 1
+      }&size=${this.pageSize}`;
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get(api,{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
-        if (response.data && response.data.result && Array.isArray(response.data.result.content)) {
+        const response = await axios.get(api, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        });
+        if (
+          response.data &&
+          response.data.result &&
+          Array.isArray(response.data.result.content)
+        ) {
           this.approvals = response.data.result.content;
           this.filteredApprovals = this.approvals;
           // this.approvals = Array.isArray(response.data.result) ? response.data.result : [];
@@ -216,48 +223,41 @@ export default {
       };
       return statusMap[status] || "알 수 없음";
     },
-
   },
 };
 </script>
 
 <style scoped>
-.container-fluid {
-  padding: 2rem;
+.container {
+  max-width: 1254px;
+  margin: 0 auto;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 113px;
+  height: auto;
 }
-
-h1.mt-4 {
-  padding-top: 10px;
-  margin-left: 1px;
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+h1 {
+  font-size: 24px;
+  margin-bottom: 32px;
+  margin-left: 13px;
 }
 
 /* 브레드크럼 스타일 */
 .breadcrumb.mb-4 {
-  background-color: #f8f9fa;
-  padding: 0.75rem 1rem 50px;
+  background-color: white;
+  padding: 0.75rem 1rem 30px;
   border-radius: 0.375rem;
-}
-
-/* 카드 스타일 */
-.card.mb-4 {
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  display: 100%;
-  margin-left: 50px;
-}
-
-.card-header {
-  background-color: #fff;
-  border-bottom: 1px solid #e3e6f0;
-  padding: 0.75rem 1.25rem;
-}
-
-.card-body {
-  padding: 1.25rem;
 }
 
 /* 버튼 스타일 */
 button {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   padding: 5px 10px;
   color: white;
@@ -281,22 +281,24 @@ button:hover {
 
 #datatablesSimple th,
 #datatablesSimple td {
-  padding: 0.75rem;
+  padding: 7px;
   vertical-align: top;
-  border-top: 1px solid #e3e6f0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-right : 1px solid #ddd;
 }
 
 #datatablesSimple th {
   color: #495057;
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #e3e6f0;
+  background-color: rgb(245, 245, 245);
+  border-bottom: 2px solid #ddd;
 }
 
 .make-approve {
   position: absolute;
-  right: 5%;
+  right: 10px;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   padding: 7px 10px;
   color: white;
@@ -304,7 +306,7 @@ button:hover {
   border: none;
   border-radius: 10px;
   background-color: #111111;
-  margin: -5px 0px 15px 10px;
+  margin-top: 13px;
 }
 
 .make-approve:hover {
@@ -327,5 +329,10 @@ button:hover {
   align-items: center;
   margin-top: 20px;
 }
-
+.filter {
+  margin-top: 17px;
+}
+.active {
+  color: red;
+}
 </style>
