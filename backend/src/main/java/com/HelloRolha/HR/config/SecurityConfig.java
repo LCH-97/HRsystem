@@ -46,7 +46,7 @@ public class SecurityConfig{
                     .antMatchers("/employee/login").permitAll()
                     .antMatchers("/employee/signup").permitAll()
                     .antMatchers("/employee/init").permitAll()
-                    .anyRequest().hasAnyRole()
+                    .anyRequest().authenticated()
                     .and()
                     .exceptionHandling()
                     .accessDeniedHandler(customAccessDeniedHandler) // 인가에 대한 예외 처리

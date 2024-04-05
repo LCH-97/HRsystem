@@ -66,5 +66,11 @@ public class CommuteController {
                 .build();
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/test")
+    public String testController() {
+        commuteService.test();
+        return "Test method called successfully!";
+    }
 }
 

@@ -14,6 +14,7 @@ import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,17 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CommuteService {
     private final CommuteRepository commuteRepository;
 
+    //redis 도입으로 추가된 부분
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    //redis 도입으로 추가된 부분
 
     @Transactional
     public CommuteDto commute() {
@@ -49,14 +55,15 @@ public class CommuteService {
 
         try{
             commute = commuteRepository.save(commute);
+            //redis 도입으로 추가된 부분
+            String commuteKey = "commute:" + employee.getId();
+            String currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            redisTemplate.opsForValue().set(commuteKey, currentTime);
+            //redis 도입으로 추가된 부분
         }
         catch (Exception e){
             throw new CoummuteSQLException(ErrorCode.DB_ERROR_SQL,"Commute Create Fail");
         }
-        finally {
-
-        }
-
 
         return CommuteDto.builder()
                 .id(commute.getId())
@@ -66,8 +73,7 @@ public class CommuteService {
 
     @Transactional
     public CommuteDto leave(Integer id) {
-
-
+        Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         Commute commute = commuteRepository.findById(id)
                 .orElseThrow(() -> new CommuteNotFoundException(""));
 
@@ -87,11 +93,21 @@ public class CommuteService {
 
         Commute updatedCommute = commuteRepository.save(commute);
 
+        //redis 도입으로 추가된 부분
+        String employeeId = String.valueOf(updatedCommute.getEmployee().getId());
+        String leaveKey = "leave:" + employeeId;
+        String leaveTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String sumTimeKey = "sumTime:" + employeeId;
+        redisTemplate.opsForValue().set(leaveKey, leaveTime);
+        redisTemplate.opsForValue().set(sumTimeKey, sumTime);
+        //redis 도입으로 추가된 부분
+
         return CommuteDto.builder()
                 .id(updatedCommute.getId())
                 .startTime(updatedCommute.getCreateAt())
                 .endTime(updatedCommute.getUpdateAt())
                 .sumTime(updatedCommute.getSumTime())
+                .employeeName(employee.getName())
                 .build();
     }
 
@@ -116,40 +132,56 @@ public class CommuteService {
 
     public CommuteCheckRes check() {
         Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        String commuteKey = "commute:" + employee.getId();
+        String leaveKey = "leave:" + employee.getId();
+        String sumTimeKey = "sumTime:" + employee.getId();
 
-        List<Commute> Commutes = commuteRepository.findAllByEmployee(employee);
-        //        null일 경우
-        if(Commutes.isEmpty()){
-            throw new CommuteNotFoundException("");
-        }
-        Commute lastCommute = Commutes.get(Commutes.size()-1);
-//        1.시작 시간이 오늘인지 확인 -- > 어제 날짜면 출근 안함?
-        LocalDate today = LocalDate.now();
-        LocalDate dateTimeDate = lastCommute.getCreateAt().toLocalDate();
-        Boolean isCommute = false;
-        Boolean isLeave = true;
-        if(dateTimeDate.equals(today)){
-            isCommute = true;
-            // 오늘 출근했음.
-            if(lastCommute.getSumTime() == null){
-                // 출근하고 퇴근은 안한 상태
-                isLeave =  false;
-                lastCommute.setSumTime("오늘도 화이팅!");
+        // Redis에서 출근 정보 조회
+        String startTimeRedis = redisTemplate.opsForValue().get(commuteKey);
+        String endTimeRedis = redisTemplate.opsForValue().get(leaveKey);
+        String sumTimeRedis = redisTemplate.opsForValue().get(sumTimeKey);
+        Boolean isCommuteRedis = startTimeRedis != null;
+        Boolean isLeaveRedis = endTimeRedis != null;
+
+        // 최종 값 초기화
+        String finalStartTime = startTimeRedis;
+        String finalEndTime = endTimeRedis;
+        String finalSumTime = sumTimeRedis;
+        Boolean finalIsCommute = isCommuteRedis;
+        Boolean finalIsLeave = isLeaveRedis;
+
+        // Redis에서 정보를 찾을 수 없는 경우 DB에서 조회
+        if (!isCommuteRedis) {
+            LocalDate today = LocalDate.now();
+            Optional<Commute> optionalCommuteToday = commuteRepository.findByEmployeeAndDate(employee, today);
+
+            if (optionalCommuteToday.isPresent()) {
+                Commute commuteToday = optionalCommuteToday.get();
+                finalStartTime = commuteToday.getCreateAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                finalEndTime = commuteToday.getUpdateAt() != null ? commuteToday.getUpdateAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null;
+                finalSumTime = commuteToday.getSumTime();
+                finalIsCommute = true;
+                finalIsLeave = commuteToday.getUpdateAt() != null;
+
+                // Redis에 정보 저장
+                redisTemplate.opsForValue().set(commuteKey, finalStartTime);
+                if (finalEndTime != null) {
+                    redisTemplate.opsForValue().set(leaveKey, finalEndTime);
+                }
+                if (finalSumTime != null) {
+                    redisTemplate.opsForValue().set(sumTimeKey, finalSumTime);
+                }
             }
         }
 
-
-//        2.업데이트 시간이 있는지 확인
-//        3. 업데이트 시간이 있으면 퇴큰
-//나중에 sql문으로 1개만 가져오게 만들 수 있음.
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // 결과 반환
         return CommuteCheckRes.builder()
-                .id(lastCommute.getId())
-                .isCommute(isCommute)
-                .isLeave(isLeave)
-                .startTime(lastCommute.getCreateAt().format(formatter))
-                .endTime(lastCommute.getUpdateAt().format(formatter))
-                .sumTime(lastCommute.getSumTime())
+                .id(employee.getId())
+                .isCommute(finalIsCommute)
+                .isLeave(finalIsLeave)
+                .startTime(finalStartTime)
+                .endTime(finalEndTime)
+                .sumTime(finalSumTime)
                 .build();
     }
 
@@ -195,5 +227,10 @@ public class CommuteService {
 
         }
         return counter;
+    }
+
+    @Transactional
+    public void test() {
+        Employee employee = ((Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 }
