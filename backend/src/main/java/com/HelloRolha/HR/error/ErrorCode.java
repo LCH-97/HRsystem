@@ -60,6 +60,7 @@ public enum ErrorCode {
 
     INIT_FAIL(HttpStatus.BAD_REQUEST,"INIT_FAIL","관리자가 이미 존재합니다."),
 
+    DB_NULL(HttpStatus.INTERNAL_SERVER_ERROR,"DB-NULL","DB가 비어있습니다."),
     DB_ERROR_SQL(HttpStatus.INTERNAL_SERVER_ERROR,"DB-ERROR","SQL문 실행이 실패했습니다."),
     DB_ERROR_CREATE_SQL(HttpStatus.INTERNAL_SERVER_ERROR, "DB-ERROR-CREATE" ,"CREATE 실행이 실패했습니다." ),
     EMPLOYEE_GET_FAIL_IN_SECURITYCONTEXTHOLDER(HttpStatus.INTERNAL_SERVER_ERROR, "EMPLOYEE-002", "인가된 유저 정보를 가져오는 것에 실패하였습니다.");

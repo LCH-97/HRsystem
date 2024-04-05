@@ -17,6 +17,11 @@ spring:
       hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
       hibernate.show_sql: true
       hibernate.format_sql: true
+      hibernate.default_batch_fetch_size: 1000
+  redis:
+    host: 10.10.10.10  # 마스터 서버 주소 (추후 쿠버네티스 클러스터 ip로 바꿔야함)
+    port: 6379         # Redis 기본 포트
+    password: qwer1234 # 설정된 패스워드
 
 cloud:
   aws:

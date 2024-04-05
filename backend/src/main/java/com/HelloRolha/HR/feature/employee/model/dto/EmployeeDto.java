@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class EmployeeDto {
     private Integer id;
     private String name;
+    private String username;
     private LocalDate employmentDate;
     private String department;
     private String position;

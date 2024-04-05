@@ -90,12 +90,11 @@ public class EmployeeService {
         }
         return employeeDtos;
     }
+    public List<Employee> listEmployeeEntity() {
 
+        List<Employee> employeeList = employeeRepository.findAll();
 
-
-    public List<Employee> getWorkingEmployListForCalculateSalary() {
-
-        return employeeRepository.getWorkingEmployListForCalculateSalary();
+        return employeeList;
     }
 
     public Boolean authorize(Integer employeeId) {
@@ -141,7 +140,7 @@ public class EmployeeService {
 
     public Object createAdmin(SignUpReq signUpReq) {
 
-        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("USER_ADMIN");
+        List<Employee> employeeOptional = employeeRepository.findALLByAuthority("ROLE_ADMIN");
         if(!employeeOptional.isEmpty()) {
             throw new CanNotInitException();
         }
@@ -164,5 +163,21 @@ public class EmployeeService {
         return SignUpRes.builder()
                 .result(true)
                 .build();
+    }
+
+    public List<EmployeeDto> listEmployeeByDepartmentId(Integer departmentId) {
+        List<Employee> employees = employeeRepository.findByDepartmentId(departmentId);
+        List<EmployeeDto> employeeDtos = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            employeeDtos.add(EmployeeDto.builder()
+                            .id(employee.getId())
+                            .name(employee.getName())
+                            .username(employee.getUsername())
+                            .department(employee.getDepartment().getDepartmentName())
+                            .position(employee.getPosition().getPositionName())
+                            .build());
+        }
+        return employeeDtos;
     }
 }
