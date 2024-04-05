@@ -35,7 +35,7 @@
       },
       fetchGooutTypes() {
         const token = sessionStorage.getItem("token");
-        axios.get('http://localhost:8080/gooutType/list',{
+        axios.get('http://192.168.0.51/api/gooutType/list',{
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

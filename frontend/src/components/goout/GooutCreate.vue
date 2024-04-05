@@ -153,6 +153,8 @@ export default {
       files: [], // 여러 파일을 저장할 배열
       confirmer1Id: "",
       confirmer2Id: "",
+      confirmer1Name: "",
+      confirmer2Name: "",
       loggedInUserId: null, // 로그인한 사용자 ID 저장
       sortColumn: null, // 분류할 열 (예: 'name' 또는 'startDate')
       sortOrder: "asc", // 분류 순서 (오름차순 또는 내림차순)

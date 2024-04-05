@@ -37,7 +37,7 @@ components: {
   },
   async created() {
     try {
-      const response = await axios.patch(`http://localhost:8080/employee/overtime/read/${this.$route.params.id}`);
+      const response = await axios.patch(`http://192.168.0.51/api/employee/overtime/read/${this.$route.params.id}`);
       const overtime = response.data;
       this.details = this.details.map(detail => {
         return { ...detail, value: overtime[detail.id] };

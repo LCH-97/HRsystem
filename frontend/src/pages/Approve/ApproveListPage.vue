@@ -167,9 +167,8 @@ export default {
     },
 
     async fetchApprovals() {
-      const api = `http://192.168.0.51/api/approve/list?page=${
-        this.currentPage - 1
-      }&size=${this.pageSize}`;
+
+      const api = `http://192.168.0.51/api/approve/list?page=${this.currentPage - 1}&size=${this.pageSize}`;
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(api, {
