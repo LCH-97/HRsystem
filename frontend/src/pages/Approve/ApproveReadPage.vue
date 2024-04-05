@@ -119,7 +119,7 @@ export default {
 
       confirmer1: "",
       confirmer2: "",
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api",
       files: [],
     };
   },
@@ -296,7 +296,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const approveResponse = await axios.get(
-          `http://localhost:8080/approve/read/${this.id}`,
+          `http://192.168.0.51/api/approve/read/${this.id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -320,7 +320,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:8080/approve/line/2/${approveId}`,
+          `http://192.168.0.51/api/approve/line/2/${approveId}`,
           {
             headers: {
               "Content-Type": "application/json",

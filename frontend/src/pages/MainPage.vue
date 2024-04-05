@@ -294,7 +294,7 @@ export default {
       console.log("click");
 
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -348,7 +348,7 @@ export default {
       const token = sessionStorage.getItem("token");
       let commuteId = localStorage.getItem('commuteId');
       axios
-        .patch("http://localhost:8080/employee/leave/" + commuteId, null, {
+        .patch("http://192.168.0.51/api/employee/leave/" + commuteId, null, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
@@ -378,7 +378,7 @@ export default {
     },
     async check() {
       console.log("check START");
-      const api = "http://localhost:8080";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       const token = sessionStorage.getItem("token");
 
@@ -421,7 +421,7 @@ export default {
       // API 호출 시 사용할 인증 토큰을 세션 스토리지에서 가져옵니다.
       const token = sessionStorage.getItem("token");
       axios
-        .get(`http://localhost:8080/board/check?page=1&size=6`, {
+        .get(`http://192.168.0.51/api/board/check?page=1&size=6`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.

@@ -105,7 +105,7 @@ export default {
     async fetchBoards() {
       const token = sessionStorage.getItem("token");
       try {
-        const response = await axios.get(`http://localhost:8080/board/check`, {
+        const response = await axios.get(`http://192.168.0.51/api/board/check`, {
           params: { page: this.currentPage, size: this.pageSize },
           headers: {
             "Content-Type": "application/json",
