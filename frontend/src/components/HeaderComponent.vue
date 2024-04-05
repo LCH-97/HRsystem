@@ -64,7 +64,7 @@ export default {
       // formData.append('username', this.username);
       // formData.append('password', this.password);
       const token = sessionStorage.getItem("token");
-      axios.get(api + "/manager/authorize", {
+      axios.get(api + "/manager/check", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -84,7 +84,7 @@ export default {
         .catch((error) => {
           console.error("Error checkIsAdmin:", error);
           // alert();
-          throw new Error("권한 확인 실패");
+          //throw new Error("권한 확인 실패");
 
         }).finally(()=>{
           console.log("getAuthorizeList END");

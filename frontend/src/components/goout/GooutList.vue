@@ -130,22 +130,30 @@ export default {
       this.$router.push("/goout/create");
     },
     async fetchGoouts() {
-      try {
-        const response = await axios.get(`http://192.168.0.52:8080/goout/check`, {
-          params: {
-            page: this.currentPage,
-            size: this.pageSize,
-          },
-        });
-        const data = response.data.result; // 결과 데이터 구조에 따라 조정 필요
-        this.goouts = data.goouts;
-        this.filteredGoouts = data.goouts;
-        // 총 페이지 수 계산
-        this.totalPages = Math.ceil(data.totalElements / this.pageSize);
-      } catch (error) {
-        console.error("Failed to fetch goouts:", error);
-      }
-    },
+  try {
+    const token = sessionStorage.getItem("token");
+    const response = await axios.get(`http://192.168.0.52:8080/goout/check`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      params: {
+        page: this.currentPage, // API가 페이지를 0부터 계산한다고 가정
+        size: this.pageSize,
+      },
+    });
+    if (response.data.code === 1200 && response.data.isSuccess) {
+      const data = response.data.result; // 결과 데이터 구조에 따라 조정
+      this.goouts = data.goouts;
+      this.filteredGoouts = this.goouts;
+      this.totalPages = Math.ceil(data.totalElements / this.pageSize);
+    } else {
+      console.error("API call successful, but unexpected response structure:", response.data);
+    }
+  } catch (error) {
+    console.error("Failed to fetch goouts:", error.response ? error.response.data : error);
+  }
+},
     goToGooutReadPage(id) {
       if (id) {
         this.$router.push(`/goout/read/${id}`);

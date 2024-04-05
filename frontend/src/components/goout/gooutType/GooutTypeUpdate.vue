@@ -41,9 +41,11 @@ export default {
   },
   methods: {
         updateGooutType() {
+          const token = sessionStorage.getItem("token");
       axios.patch(`http://192.168.0.51/api/gooutType/update`, this.gooutTypeInfo, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + token,
         }
       })
         .then(() => {

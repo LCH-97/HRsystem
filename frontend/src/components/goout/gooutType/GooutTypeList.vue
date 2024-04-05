@@ -34,8 +34,13 @@
         this.$router.push("/gooutType/create");
       },
       fetchGooutTypes() {
-        // 여기서 백엔드 API를 호출하여 휴가타입 목록을 가져옵니다.
-        axios.get('http://192.168.0.51/api/gooutType/list')
+        const token = sessionStorage.getItem("token");
+        axios.get('http://192.168.0.51/api/gooutType/list',{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
           .then(response => {
             this.gooutTypes = response.data.result;
           })
