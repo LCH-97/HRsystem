@@ -102,9 +102,16 @@ export default {
     },
     // 공지사항 상세 정보 조회
     async fetchBoard() {
+      const token = sessionStorage.getItem("token");
       try {
         const response = await axios.get(
-          `${this.backend}/board/check/${this.id}`
+          `${this.backend}/board/check/${this.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+            },
+          }
         );
         this.board = response.data.result;
       } catch (error) {
