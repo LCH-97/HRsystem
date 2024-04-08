@@ -138,15 +138,15 @@ public class Employee extends BaseEntity implements UserDetails {
 
 
     @Transactional
-    public Integer getPaidVacationCount(LocalDate startDate, LocalDate endDate) {
-        Integer counter = 0;
+    public Long getPaidVacationCount(LocalDate startDate, LocalDate endDate) {
+        Long counter = 0L;
         //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
         //sql 문을 month 에 맞는 데이터만 가져오도록 만들 수 있다.
 
         if(this.goouts.isEmpty()){
 
             System.out.println("오류 예외 처리해라");
-            return 0;
+            return 0L;
         }
 
         for (Goout goout:this.goouts){

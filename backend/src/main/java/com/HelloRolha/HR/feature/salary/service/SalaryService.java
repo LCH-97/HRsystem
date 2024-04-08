@@ -83,7 +83,7 @@ public class SalaryService {
 
     public SalaryDto createEmployeeSalary(Employee employee,LocalDate startDate, LocalDate endDate){
         Long commuteCount = employee.getWorkTimeByMinutes(startDate,endDate);
-        Integer paidVacation = employee.getPaidVacationCount(startDate,endDate);
+        Long paidVacation = employee.getPaidVacationCount(startDate,endDate);
         Long overtime = overtimeService.getOverTimeOf(employee,startDate,endDate);
         return SalaryDto.builder()
                 ///개인 정보
@@ -104,7 +104,7 @@ public class SalaryService {
                 .build();
     }
 
-    private Long calculateTotalSalary(Long salary, LocalDate startDate, LocalDate endDate,Long commuteCount, Integer paidVacation, Long overtime) {
+    private Long calculateTotalSalary(Long salary, LocalDate startDate, LocalDate endDate,Long commuteCount, Long paidVacation, Long overtime) {
         // 총 근무 일을 구하자
         Long total = 0L;
         Long salaryHourly = salary/209;
