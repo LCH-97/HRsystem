@@ -1,69 +1,53 @@
 <template>
   <HeaderComponent />
   <SideBar />
-
-  <div id="layoutSidenav">
-    <div id="layoutSidenav_content">
-      <main>
-        <div class="container-fluid px-4">
-          <h1 class="mt-4">결재 목록</h1>
-          <ol class="breadcrumb mb-4">
-            <a class="make-approve" href="/approve/create">결재만들기 </a>
-          </ol>
-          <div class="card mb-4">
-            <div class="card-header">
-              <i class="fas fa-table me-1"></i>
-              내 결재들
-            </div>
-            <div class="card-body">
-              <button @click="filterApprovalsByStatus(null)">전체</button>
-              <button @click="filterApprovalsByStatus(0)">
-                기안중 {{ statusCounts.대기중 }}
-              </button>
-              <button @click="filterApprovalsByStatus(1)">
-                진행중 {{ statusCounts.결재자1승인 }}
-              </button>
-              <button @click="filterApprovalsByStatus(3)">
-                반려 {{ statusCounts.반려 }}
-              </button>
-              <button @click="filterApprovalsByStatus(2)">결재 완료</button>
-              <table id="datatablesSimple">
-                <thead>
-                  <tr>
-                    <th>순번</th>
-                    <th>기안일자</th>
-                    <th>제목</th>
-                    <th>기안자</th>
-                    <th>결재자1</th>
-                    <th>결재자2</th>
-                    <th>진행상태</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="approve in filteredApprovals" :key="approve.id" @click="goToApproveReadPage(approve.id)"
-                    class="approvelist">
-                    <td>{{ approve.id }}</td>
-                    <td>{{ approve.createAt }}</td>
-                    <td>{{ approve.title }}</td>
-                    <td>{{ approve.employeeName }}</td>
-                    <td>{{ approve.confirmer1Name }}</td>
-                    <td>{{ approve.confirmer2Name }}</td>
-                    <td>{{ getStatusText(approve.status) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="pagination">
-              <button @click="prevGroup">이전</button>
-              <button v-for="page in pageGroup" :key="page" :class="{ active: page === currentPage }"
-                @click="changePage(page)">
-                {{ page }}
-              </button>
-              <button @click="nextGroup">다음</button>
-            </div>
-          </div>
-        </div>
-      </main>
+  <h1>결재 목록</h1>
+  <div class="container with-shadow">
+    <div class="filter">
+      <button @click="filterApprovalsByStatus(null)">전체</button>
+      <button @click="filterApprovalsByStatus(0)">기안중 {{ statusCounts.대기중 }} </button>
+      <button @click="filterApprovalsByStatus(1)">진행중 {{ statusCounts.결재자1승인 }} </button>
+      <button @click="filterApprovalsByStatus(3)">반려 {{ statusCounts.반려 }} </button>
+      <button @click="filterApprovalsByStatus(2)">결재 완료</button>
+      <button @click="filterApprovalsByStatus(4)">회수</button>
+    </div>
+    <div>
+      <a class="make-approve" href="/approve/create">결재만들기 </a>
+    </div>
+    <div class="approveList">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: center">순번</th>
+            <th style="text-align: center">기안일자</th>
+            <th style="text-align: center">제목</th>
+            <th style="text-align: center">기안자</th>
+            <th style="text-align: center">결재자1</th>
+            <th style="text-align: center">결재자2</th>
+            <th style="text-align: center">진행상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="approve in filteredApprovals" :key="approve.id" @click="goToApproveReadPage(approve.id)"
+            class="approveItem">
+            <td>{{ approve.id }}</td>
+            <td>{{ approve.createAt }}</td>
+            <td>{{ approve.title }}</td>
+            <td>{{ approve.employeeName }}</td>
+            <td>{{ approve.confirmer1Name }}</td>
+            <td>{{ approve.confirmer2Name }}</td>
+            <td>{{ getStatusText(approve.status) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button @click="prevGroup">이전</button>
+      <button v-for="page in pageGroup" :key="page" :class="{ active: page === currentPage }"
+        @click="changePage(page)">
+        {{ page }}
+      </button>
+      <button @click="nextGroup">다음</button>
     </div>
   </div>
 </template>
@@ -114,13 +98,12 @@ export default {
       return pages;
     },
 
-
     // 상태별 개수를 계산하는 계산된 속성
     statusCounts() {
       const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
 
       // 모든 approvals를 순회하며 상태별로 개수를 계산합니다.
-      this.approvals.forEach(approve => {
+      this.approvals.forEach((approve) => {
         counts.total += 1;
         const statusText = this.getStatusText(approve.status);
         if (counts[statusText] !== undefined) {
@@ -129,7 +112,7 @@ export default {
       });
 
       return counts;
-    }
+    },
   },
   async mounted() {
     await this.fetchApprovals();
@@ -161,21 +144,28 @@ export default {
       if (status === null) {
         this.filteredApprovals = this.approvals;
       } else {
-        this.filteredApprovals = this.approvals.filter(approve => approve.status === status);
+        this.filteredApprovals = this.approvals.filter(
+          (approve) => approve.status === status
+        );
       }
     },
 
     async fetchApprovals() {
+
       const api = `http://192.168.0.51/api/approve/list?page=${this.currentPage - 1}&size=${this.pageSize}`;
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get(api,{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
-        if (response.data && response.data.result && Array.isArray(response.data.result.content)) {
+        const response = await axios.get(api, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        });
+        if (
+          response.data &&
+          response.data.result &&
+          Array.isArray(response.data.result.content)
+        ) {
           this.approvals = response.data.result.content;
           this.filteredApprovals = this.approvals;
           // this.approvals = Array.isArray(response.data.result) ? response.data.result : [];
@@ -216,48 +206,76 @@ export default {
       };
       return statusMap[status] || "알 수 없음";
     },
-
   },
 };
 </script>
 
 <style scoped>
-.container-fluid {
-  padding: 2rem;
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 300px;
+  height: auto;
+  margin-left: -50px;
+  width: 80%;
+}
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.active {
+  font-weight: bold;
+  color: red;
 }
 
-h1.mt-4 {
-  padding-top: 10px;
-  margin-left: 1px;
+.approveItem {
+  cursor: pointer;
+  margin: 10px 0;
+  transition: color 0.3s ease;
 }
 
-/* 브레드크럼 스타일 */
-.breadcrumb.mb-4 {
-  background-color: #f8f9fa;
-  padding: 0.75rem 1rem 50px;
-  border-radius: 0.375rem;
+.approveList table {
+  width: 98%;
+  border-collapse: collapse;
+  margin-left: 10px;
+  margin-top: 30px;
 }
-
-/* 카드 스타일 */
-.card.mb-4 {
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  display: 100%;
-  margin-left: 50px;
+.approveList th,
+.approveList td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
-
-.card-header {
-  background-color: #fff;
-  border-bottom: 1px solid #e3e6f0;
-  padding: 0.75rem 1.25rem;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
-
-.card-body {
-  padding: 1.25rem;
+.make-approve{
+  position: absolute;
+  right: 50px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 7px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #111111;
+  margin-top: -45px;
 }
-
-/* 버튼 스타일 */
+.make-approve:hover {
+  background-color: #f75c29;
+}
+.filter {
+  margin-top: 20px;
+}
 button {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   padding: 5px 10px;
   color: white;
@@ -271,61 +289,4 @@ button {
 button:hover {
   background-color: #f75c29;
 }
-
-/* 테이블 스타일 */
-#datatablesSimple {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-}
-
-#datatablesSimple th,
-#datatablesSimple td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #e3e6f0;
-}
-
-#datatablesSimple th {
-  color: #495057;
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #e3e6f0;
-}
-
-.make-approve {
-  position: absolute;
-  right: 5%;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 600;
-  padding: 7px 10px;
-  color: white;
-  letter-spacing: 0.2px;
-  border: none;
-  border-radius: 10px;
-  background-color: #111111;
-  margin: -5px 0px 15px 10px;
-}
-
-.make-approve:hover {
-  background-color: #f75c29;
-}
-
-.approvelist {
-  cursor: pointer;
-  margin: 10px 0;
-  transition: color 0.3s ease;
-}
-
-.approvelist:hover {
-  color: #007bff;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
 </style>
