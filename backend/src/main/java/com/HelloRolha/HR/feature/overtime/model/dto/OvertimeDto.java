@@ -13,6 +13,7 @@ public class OvertimeDto {
     private String shift;
     private String startTime;
     private String endTime;
+    private String sumTime;
     private String reason;
     private String status;
 

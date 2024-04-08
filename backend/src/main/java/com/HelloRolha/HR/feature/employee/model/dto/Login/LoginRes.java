@@ -10,4 +10,6 @@ import lombok.*;
 public class LoginRes {
     private String name;
     private String token;
+    private String refreshToken;
+    private String refreshTokenKey;
 }

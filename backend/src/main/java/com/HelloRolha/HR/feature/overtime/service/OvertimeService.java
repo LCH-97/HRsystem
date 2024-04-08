@@ -49,6 +49,7 @@ public class OvertimeService {
                     .shift(createOvertimeReq.getShift())
                     .startTime(createOvertimeReq.getStartTime())
                     .endTime(createOvertimeReq.getEndTime())
+                    .sumTime(createOvertimeReq.calculateOvertime())
                     .reason(createOvertimeReq.getReason())
                     .status("대기 중")
                     .employee(employee)
@@ -72,6 +73,7 @@ public class OvertimeService {
                         .shift(overtime.getShift())
                         .startTime(overtime.getStartTime())
                         .endTime(overtime.getEndTime())
+                        .sumTime(overtime.getSumTime().toString())
                         .date(overtime.getDate())
                         .reason(overtime.getReason())
                         .status(overtime.getStatus())
@@ -95,6 +97,7 @@ public class OvertimeService {
             List<OvertimeDto> overtimeDtos = new ArrayList<>();
             for (Overtime overtime : overtimes) {
 
+
                 OvertimeDto overtimeDto = OvertimeDto.builder()
                         .id(overtime.getId())
                         .shift(overtime.getShift())
@@ -105,6 +108,7 @@ public class OvertimeService {
                         .status(overtime.getStatus())
                         .build();
                 overtimeDtos.add(overtimeDto);
+
 
             }
             return overtimeDtos;

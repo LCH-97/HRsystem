@@ -109,6 +109,7 @@ public class Employee extends BaseEntity implements UserDetails {
     }
     //
 
+
     public Long getWorkTimeByMinutes(LocalDate startDate,LocalDate endDate) {
         Long counter = 0L;
         //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
@@ -134,6 +135,7 @@ public class Employee extends BaseEntity implements UserDetails {
         }
         return counter;
     }
+
 
     @Transactional
     public Integer getPaidVacationCount(LocalDate startDate, LocalDate endDate) {

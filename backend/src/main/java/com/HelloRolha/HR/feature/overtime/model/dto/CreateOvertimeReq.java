@@ -11,4 +11,12 @@ public class CreateOvertimeReq {
     private String startTime;
     private String endTime;
     private String reason;
+
+    public Long calculateOvertime(){
+        String[] start = this.startTime.split(":");
+        String[] end = this.endTime.split(":");
+        Long hour = Long.parseLong(end[0]) - Long.parseLong(start[0]);
+        Long min = Long.parseLong(end[1]) - Long.parseLong(start[1]);
+        return hour*60+min;
+    }
 }
