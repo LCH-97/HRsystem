@@ -12,7 +12,9 @@ import com.HelloRolha.HR.feature.salary.repo.SalaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,13 +46,31 @@ public class SalaryService {
         salaryRepository.saveAll(entityList);
         return list;
     }
+    public List<SalaryDto> createSalary(LocalDate batchDate){
+        //ex 3월의 월급을 계산하면
+        // 2월달의 근무 내용이 필요하다.
+//        LocalDate batchDate = LocalDate.now();
+        batchDate = batchDate.minusMonths(1);
+        LocalDate firstDay= batchDate.withDayOfMonth(1);;
+        LocalDate lastDay = batchDate.withDayOfMonth(batchDate.lengthOfMonth());;
+
+
+        List<SalaryDto> list = createAllEmployeeSalary(firstDay,lastDay);
+        List<Salary> entityList = new ArrayList<>();
+        for(SalaryDto salaryDto : list){
+            salaryDto.setBatchDate(batchDate);
+            entityList.add(salaryDto.toEntity());
+        }
+        salaryRepository.saveAll(entityList);
+        return list;
+    }
 
 
      //시작일자에서 종료일자까지 급여 계산
     public List<SalaryDto> createAllEmployeeSalary(LocalDate startDate, LocalDate endDate){
         List<SalaryDto> salaryDtoList = new ArrayList<>();
         // 전직원 리스트 가져오기
-        List<Employee> employeeList = employeeService.getWorkingEmployListForCalculateSalary();
+        List<Employee> employeeList = employeeService.listEmployeeEntity();
 
         // 반복문 //직원마다 총 월급 계산
         for(Employee employee: employeeList){
@@ -149,5 +169,29 @@ public class SalaryService {
     }
     public LocalDate getFirstDateOfSalary() {
         return salaryRepository.readFirstDateOfSalary();
+    }
+    @Transactional
+    public List<SalaryDto> init() {
+        // 맨 처음 달 구하기
+        // 맨 마지막 달 구하기
+        List<SalaryDto> list = new ArrayList<>();
+        LocalDate firstDate = LocalDate.of(2023,1,1);
+        LocalDate lastDate = LocalDate.of(2023,12,31);
+
+
+        Period period = Period.between(firstDate, lastDate);
+        int getMonths = period.getMonths();
+
+        // DB에서 저 기간안의 모든 데이터를 가져오기
+
+        // 반복문으로 모든 월급 계산 전부 실행
+
+        for(int i = 1; i <= getMonths;i++){
+
+            LocalDate batchDate= firstDate.plusMonths(i);
+            list.addAll(createSalary(batchDate));
+        }
+        return list;
+
     }
 }

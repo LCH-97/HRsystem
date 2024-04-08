@@ -1,5 +1,7 @@
 package com.HelloRolha.HR.feature.salary.repo;
 
+import com.HelloRolha.HR.error.BusinessException;
+import com.HelloRolha.HR.error.ErrorCode;
 import com.HelloRolha.HR.feature.department.model.entity.QDepartment;
 import com.HelloRolha.HR.feature.employee.model.entity.QEmployee;
 import com.HelloRolha.HR.feature.position.model.entity.QPosition;
@@ -47,7 +49,13 @@ public class SalaryRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
         // 쿼리 실행
         List<Salary> orders = query.fetch();
-        return orders.get(0).getSalaryDate();
+        try{
+            return orders.get(0).getSalaryDate();
+        }
+        catch (IndexOutOfBoundsException e){
+            throw new BusinessException(ErrorCode.DB_NULL,"salary table is empty");
+        }
+
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.HelloRolha.HR.feature.manager.controller;
 import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpReq;
 import com.HelloRolha.HR.feature.employee.service.EmployeeService;
+import com.HelloRolha.HR.feature.goout.model.Holiday;
+import com.HelloRolha.HR.feature.goout.model.dto.HolidayDto;
+import com.HelloRolha.HR.feature.goout.service.HolidayService;
 import com.HelloRolha.HR.feature.manager.service.ManagerService;
 import com.HelloRolha.HR.feature.salary.model.dto.GetDatesOfSalaryRes;
 import com.HelloRolha.HR.feature.salary.service.SalaryService;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -19,6 +23,7 @@ import java.time.LocalDate;
 public class ManagerController {
     private final ManagerService managerService;
     private final SalaryService salaryService;
+    private final HolidayService holidayService;
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/authorize/{employeeId}")
     public ResponseEntity authorize(@PathVariable Integer employeeId) {
@@ -44,6 +49,16 @@ public class ManagerController {
                 .build();
 
 
+        return ResponseEntity.ok().body(res);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "/check")
+    public ResponseEntity<BaseRes> check() {
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("check Success")
+                .result(null)
+                .build();
         return ResponseEntity.ok().body(res);
     }
 
@@ -84,6 +99,19 @@ public class ManagerController {
                 .isSuccess(true)
                 .message("직원 정보 성공")
                 .result(salaryService.createSalary())
+                .build();
+
+
+        return ResponseEntity.ok().body(res);
+    }
+    @RequestMapping(method = RequestMethod.GET, value = "/salary/init")
+    public ResponseEntity salaryInit() {
+
+        BaseRes res = BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("직원 정보 성공")
+                .result(salaryService.init())
                 .build();
 
 
@@ -177,4 +205,61 @@ public class ManagerController {
 //
 //        return ResponseEntity.ok().body(res);
 //    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/holiday/create")
+    public ResponseEntity<BaseRes> addHoliday(@RequestBody HolidayDto holidayDto) {
+        Holiday holiday = holidayService.addHoliday(holidayDto.getDate(), holidayDto.getDescription());
+        return ResponseEntity.ok(BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("공휴일 추가 성공")
+                .result(holiday)
+                .build());
+    }
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/holiday/update")
+    public ResponseEntity<BaseRes> updateHoliday(@PathVariable Integer id, @RequestBody HolidayDto holidayDto) {
+        Holiday updatedHoliday = holidayService.updateHoliday(id, holidayDto.getDate(), holidayDto.getDescription());
+        return ResponseEntity.ok(BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("공휴일 수정 성공")
+                .result(updatedHoliday)
+                .build());
+    }
+
+    // 공휴일 삭제
+    @RequestMapping(method = RequestMethod.DELETE, value = "/holiday/delete/{id}")
+    public ResponseEntity<BaseRes> deleteHoliday(@PathVariable Integer id) {
+        holidayService.deleteHoliday(id);
+        return ResponseEntity.ok(BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("공휴일 삭제 성공")
+                .build());
+    }
+
+    // 전체 공휴일 목록 조회
+    @RequestMapping(method = RequestMethod.GET, value = "/holiday/list")
+    public ResponseEntity<BaseRes> findAllHolidays() {
+        List<Holiday> holidays = holidayService.findAllHolidays();
+        return ResponseEntity.ok(BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("전체 공휴일 목록 조회 성공")
+                .result(holidays)
+                .build());
+    }
+
+    // 공휴일 상세 조회
+    @RequestMapping(method = RequestMethod.GET, value = "/holiday/{id}")
+    public ResponseEntity<BaseRes> findHolidayById(@PathVariable Integer id) {
+        Holiday holiday = holidayService.findHolidayById(id);
+        return ResponseEntity.ok(BaseRes.builder()
+                .code(200)
+                .isSuccess(true)
+                .message("공휴일 상세 조회 성공")
+                .result(holiday)
+                .build());
+    }
 }
