@@ -41,7 +41,7 @@ public class ApproveController {
     }
     @GetMapping("/list")
     public ResponseEntity<BaseRes> list(
-            @PageableDefault(size = 5) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
             ) {
         Page<ApproveList> approveLists = approveService.list(pageable);
         BaseRes response = BaseRes.builder()

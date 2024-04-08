@@ -90,7 +90,7 @@ public class CommuteService {
 
         // 시간과 분을 문자열로 결합하여 sumTime에 저장
         String sumTime = String.format("%d:%d", hours, minutes);
-        commute.setSumTime(sumTime);
+        commute.setSumTime(totalMinutes);
 
         Commute updatedCommute = commuteRepository.save(commute);
 
@@ -107,7 +107,7 @@ public class CommuteService {
                 .id(updatedCommute.getId())
                 .startTime(updatedCommute.getCreateAt())
                 .endTime(updatedCommute.getUpdateAt())
-                .sumTime(updatedCommute.getSumTime())
+                .sumTime(sumTime)
                 .employeeName(employee.getName())
                 .build();
     }
@@ -160,7 +160,7 @@ public class CommuteService {
                 Commute commuteToday = optionalCommuteToday.get();
                 finalStartTime = commuteToday.getCreateAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                 finalEndTime = commuteToday.getUpdateAt() != null ? commuteToday.getUpdateAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null;
-                finalSumTime = commuteToday.getSumTime();
+                finalSumTime = commuteToday.getSumTime().toString();
                 finalIsCommute = true;
                 finalIsLeave = commuteToday.getUpdateAt() != null;
 
@@ -216,14 +216,13 @@ public class CommuteService {
 
         for (Commute commute:Commutes){
             if(startDate.isBefore(commute.getCreateAt().toLocalDate())  && endDate.isAfter(commute.getCreateAt().toLocalDate())){
-                String hour = commute.getSumTime().split(":")[0];
-                String min = commute.getSumTime().split(":")[1];
+
 
                 // 하루 일한 총 시간 - 휴식 시간해야됨
 //                long totalMinutes = duration.toMinutes();
                 // 만약 8시간이 넘어간다면?
 
-                counter += Integer.parseInt(hour)*60 + Integer.parseInt(min);
+                counter += commute.getSumTime();
             }
 
         }
