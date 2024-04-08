@@ -14,6 +14,6 @@ public class SalaryScheduler {
     @Scheduled(fixedRate = 300000) // 1초에 1000
     public void test () throws IOException {
         System.out.println("test");
-        salaryService.init();
+        //salaryService.init();
     }
 }
