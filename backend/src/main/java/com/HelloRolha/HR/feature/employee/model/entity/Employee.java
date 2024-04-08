@@ -122,14 +122,13 @@ public class Employee extends BaseEntity implements UserDetails {
 
         for (Commute commute:this.commutes){
             if(startDate.isBefore(commute.getCreateAt().toLocalDate())  && endDate.isAfter(commute.getCreateAt().toLocalDate())){
-                String hour = commute.getSumTime().split(":")[0];
-                String min = commute.getSumTime().split(":")[1];
+
 
                 // 하루 일한 총 시간 - 휴식 시간해야됨
 //                long totalMinutes = duration.toMinutes();
                 // 만약 8시간이 넘어간다면?
 
-                counter += Integer.parseInt(hour)*60 + Integer.parseInt(min);
+                counter += commute.getSumTime();
             }
 
         }
