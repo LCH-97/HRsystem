@@ -30,4 +30,15 @@ spring:
     port: 6379         # Redis 기본 포트
     password: qwer1234 # 설정된 패스워드
 
-
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+      auto: false
+    stack:
+      auto: false
