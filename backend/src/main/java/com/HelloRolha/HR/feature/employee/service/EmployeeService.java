@@ -13,8 +13,11 @@ import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpRes;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import com.HelloRolha.HR.feature.position.model.entity.Position;
+import com.HelloRolha.HR.feature.refreshToken.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +25,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @Value("${jwt.secret-key}")
     private String secretKey;
     @Value("${jwt.token.expired-time-ms}")
@@ -61,9 +68,17 @@ public class EmployeeService {
 
         Employee employee = result.get();
         if (passwordEncoder.matches(loginReq.getPassword(), employee.getPassword()) && employee.getStatus().equals(true)) {
+            // refreshToken 생성
+            String refreshToken = JwtUtils.generateRefreshToken(employee, secretKey);
+            // Redis에 refreshToken과 refreshTokenKey 저장
+            redisTemplate.opsForValue().set("refreshToken:" + employee.getId(), refreshToken, expiredTimeMs, TimeUnit.MILLISECONDS);
+
+
             return LoginRes.builder()
                     .name(employee.getName())
                     .token(JwtUtils.generateAccessToken(employee, secretKey, expiredTimeMs))
+                    .refreshToken(JwtUtils.generateRefreshToken(employee, secretKey))
+                    .refreshTokenKey("refreshToken:" + employee.getId())
                     .build();
 
 
@@ -85,7 +100,7 @@ public class EmployeeService {
                     .employmentDate(employee.getEmploymentDate())
                     .department(employee.getDepartment().getDepartmentName())
                     .position(employee.getPosition().getPositionName())
-                            .salary(employee.getSalary())
+                    .salary(employee.getSalary())
                     .build());
         }
         return employeeDtos;
@@ -171,12 +186,12 @@ public class EmployeeService {
 
         for (Employee employee : employees) {
             employeeDtos.add(EmployeeDto.builder()
-                            .id(employee.getId())
-                            .name(employee.getName())
-                            .username(employee.getUsername())
-                            .department(employee.getDepartment().getDepartmentName())
-                            .position(employee.getPosition().getPositionName())
-                            .build());
+                    .id(employee.getId())
+                    .name(employee.getName())
+                    .username(employee.getUsername())
+                    .department(employee.getDepartment().getDepartmentName())
+                    .position(employee.getPosition().getPositionName())
+                    .build());
         }
         return employeeDtos;
     }

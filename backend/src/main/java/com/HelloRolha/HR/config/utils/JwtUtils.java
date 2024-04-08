@@ -30,13 +30,27 @@ public class JwtUtils {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs*100000L))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
                 .signWith(Keys.hmacShaKeyFor(secretBytes), SignatureAlgorithm.HS256)
                 .compact();
 
         return token;
     }
 
+    public static String generateRefreshToken(Employee employee, String secretKey) {
+        byte[] secretBytes = secretKey.getBytes();
+        long refreshExpiredTimeMs = 3600000L; // 1시간 = 360만
+        Claims claims = Jwts.claims();
+        claims.put("ID", employee.getId());
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims) // 주로 사용자의 고유 식별자(username 등)을 사용합니다.
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiredTimeMs)) // 만료 시간 설정
+                .signWith(Keys.hmacShaKeyFor(secretBytes), SignatureAlgorithm.HS256)
+                .compact();
+        return refreshToken;
+    }
 
     // 키 변환 메서드
     public static Key getSignKey(String secretKey) {
@@ -70,5 +84,26 @@ public class JwtUtils {
             throw UserAccountException.forExpiredToken(token);
         }
 
+    }
+
+    // 토큰의 만료 여부를 확인하는 메소드
+    public static boolean isTokenExpired(String token, String secretKey) {
+        try {
+            // 토큰에서 Claims 추출 시도
+            Jwts.parserBuilder()
+                    .setSigningKey(getSignKey(secretKey))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return false; // 여기까지 정상적으로 수행되면 토큰은 만료되지 않은 것입니다.
+        } catch (ExpiredJwtException e) {
+            // 만약 ExpiredJwtException이 발생했다면, 토큰이 만료된 것입니다.
+            return true;
+        } catch (Exception e) {
+            // 기타 다른 예외 상황 (예: 서명 검증 실패 등)
+            // 이 경우는 토큰 만료와는 다른 문제이므로, 적절히 처리할 수 있도록 합니다.
+            // 예를 들어, 토큰의 서명이 유효하지 않은 경우에는 다른 예외를 던질 수 있습니다.
+            throw UserAccountException.forInvalidToken(token);
+        }
     }
 }

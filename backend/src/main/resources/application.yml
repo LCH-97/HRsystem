@@ -1,7 +1,9 @@
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   token:
-    expired-time-ms: 3000000
+    expired-time-ms: 10000
+  refresh-token:
+    expired-time-ms: 3600000
 spring:
   profiles:
     active: local
