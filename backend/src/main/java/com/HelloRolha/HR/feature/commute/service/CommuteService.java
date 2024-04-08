@@ -89,7 +89,9 @@ public class CommuteService {
         long minutes = totalMinutes % 60; // 분 계산
 
         // 시간과 분을 문자열로 결합하여 sumTime에 저장
+
         String sumTime = String.format("%d:%d", hours, minutes);
+
         commute.setSumTime(totalMinutes);
 
         Commute updatedCommute = commuteRepository.save(commute);
@@ -107,8 +109,10 @@ public class CommuteService {
                 .id(updatedCommute.getId())
                 .startTime(updatedCommute.getCreateAt())
                 .endTime(updatedCommute.getUpdateAt())
+
                 .sumTime(sumTime)
                 .employeeName(employee.getName())
+
                 .build();
     }
 
@@ -136,6 +140,7 @@ public class CommuteService {
         String commuteKey = "commute:" + employee.getId();
         String leaveKey = "leave:" + employee.getId();
         String sumTimeKey = "sumTime:" + employee.getId();
+
 
         // Redis에서 출근 정보 조회
         String startTimeRedis = redisTemplate.opsForValue().get(commuteKey);
@@ -172,6 +177,7 @@ public class CommuteService {
                 if (finalSumTime != null) {
                     redisTemplate.opsForValue().set(sumTimeKey, finalSumTime);
                 }
+
             }
         }
 
@@ -183,6 +189,7 @@ public class CommuteService {
                 .startTime(finalStartTime)
                 .endTime(finalEndTime)
                 .sumTime(finalSumTime)
+
                 .build();
     }
 
@@ -201,6 +208,7 @@ public class CommuteService {
         }
         return commuteDtos;
     }
+
 
 
     public Long getWorkTimeByMinutes(LocalDate startDate,LocalDate endDate, EmployeeDto employee) {

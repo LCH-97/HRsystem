@@ -19,12 +19,12 @@ public class Overtime {
     private String shift;
     private String startTime;
     private String endTime;
-    private String sumTime;
+    private Long sumTime;
+
     private String reason;
     private String status;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private Employee employee;
-
 
 }
