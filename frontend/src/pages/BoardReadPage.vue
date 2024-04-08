@@ -125,8 +125,15 @@ export default {
     // 첨부 파일 목록 조회
     fetchFiles() {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
+      const token = sessionStorage.getItem("token");
       axios
-        .get(`${this.backend}/board/files/${this.id}`)
+        .get(`${this.backend}/board/files/${this.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+            },
+          })
         .then((response) => {
           this.files = response.data; // 파일 목록 업데이트
         })
