@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @DynamicInsert
 @DynamicUpdate
 public class Commute extends BaseEntity {
-    private String sumTime;
+    private Long sumTime;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private Employee employee;

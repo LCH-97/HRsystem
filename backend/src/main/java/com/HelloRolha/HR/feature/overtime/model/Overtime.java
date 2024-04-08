@@ -17,13 +17,14 @@ public class Overtime {
     private String shift;
     private String startTime;
     private String endTime;
+    private String sumTime;
     private String reason;
     private String status;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private Employee employee;
     @Builder
-    public Overtime(Integer id, String shift, String startTime, String endTime,String reason, String date, String status,Employee employee) {
+    public Overtime(Integer id, String shift, String startTime, String endTime,String reason, String date, String status,Employee employee, String sumTime ) {
         this.id = id;
         this.shift = shift;
         this.startTime = startTime;
@@ -32,5 +33,6 @@ public class Overtime {
         this.date = date;
         this.status = status;
         this.employee = employee;
+        this.sumTime = sumTime;
     }
 }
