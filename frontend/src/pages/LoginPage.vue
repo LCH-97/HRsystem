@@ -107,6 +107,8 @@ export default {
           if (response.data.code === 200) {
             this.responseData = response.data;
             sessionStorage.setItem('token', response.data.result.token);
+            sessionStorage.setItem('refreshToken', response.data.result.refreshToken);
+            // sessionStorage.setItem('refreshTokenKey', response.data.result.refreshTokenKey);
             // main page로 이동
             this.$router.push('/main?name=' + response.data.result.name);
           }
