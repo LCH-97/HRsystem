@@ -1,61 +1,62 @@
 <template>
-  <div>
-    <div class="button-container">
-      <button @click="filterGoouts(null)">전체</button>
-      <button @click="filterGoouts(0)">기안중</button>
-      <button @click="filterGoouts(1)">진행중</button>
-      <button @click="filterGoouts(3)">반려</button>
-      <button @click="filterGoouts(2)">결재 완료</button>
-      <button @click="filterGoouts(4)">등록 취소</button>
-    </div>
-    <div class="gooutList">
-      <table>
-        <thead>
-        <tr>
-          <th>게시글 번호</th>
-          <th>이름</th>
-          <th>작성자 이름</th>
-          <th>휴가 유형</th>
-          <th>상태</th>
-          <th>시작 날짜</th>
-          <th>종료 날짜</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr
-            v-for="goout in filteredGoouts"
-            :key="goout.id"
-            @click="goToGooutReadPage(goout.id)"
-            class="gooutItem"
-        >
-          <td style="text-align: center">{{ goout.id }}</td>
-          <td>{{ goout.name }}</td>
-          <td>{{ goout.writerName }}</td>
-          <td>{{ goout.gooutTypeName }}</td>
-          <td>{{ getStatusText(goout.status) }}</td>
-          <td>{{ goout.first }}</td>
-          <td>{{ goout.last }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button @click="prevGroup">이전</button>
-      <button
+  <div class="container with-shadow">
+      <div class="filter">
+        <button @click="filterGoouts(null)">전체</button>
+        <button @click="filterGoouts(0)">기안중</button>
+        <button @click="filterGoouts(1)">진행중</button>
+        <button @click="filterGoouts(3)">반려</button>
+        <button @click="filterGoouts(2)">결재 완료</button>
+        <button @click="filterGoouts(4)">등록 취소</button>
+      </div>
+      <div class="make-goout">
+        <a @click="goToGooutCreate">휴가 등록</a>
+      </div>
+      <div class="gooutList">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: center">게시글 번호</th>
+              <th style="text-align: center">이름</th>
+              <th style="text-align: center">작성자 이름</th>
+              <th style="text-align: center">휴가 유형</th>
+              <th style="text-align: center">상태</th>
+              <th style="text-align: center">시작 날짜</th>
+              <th style="text-align: center">종료 날짜</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="goout in filteredGoouts"
+              :key="goout.id"
+              @click="goToGooutReadPage(goout.id)"
+              class="gooutItem"
+            >
+              <td style="text-align: center">{{ goout.id }}</td>
+              <td style="text-align: center">{{ goout.name }}</td>
+              <td style="text-align: center">{{ goout.writerName }}</td>
+              <td style="text-align: center">{{ goout.gooutTypeName }}</td>
+              <td style="text-align: center">
+                {{ getStatusText(goout.status) }}
+              </td>
+              <td style="text-align: center">{{ goout.first }}</td>
+              <td style="text-align: center">{{ goout.last }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button @click="prevGroup">이전</button>
+        <button
           v-for="page in pageGroup"
           :key="page"
           :class="{ active: page === currentPage }"
           @click="changePage(page)"
-      >
-        {{ page }}
-      </button>
-      <button @click="nextGroup">이후</button>
+        >
+          {{ page }}
+        </button>
+        <button @click="nextGroup">이후</button>
+      </div>
     </div>
-
-    <div class="button-container2">
-      <button @click="goToGooutCreate">휴가 등록</button>
-    </div>
-  </div>
 </template>
 <script>
 import axios from "axios";
@@ -79,9 +80,9 @@ export default {
     pageGroup() {
       // 현재 페이지가 포함된 페이지 그룹의 시작 페이지를 계산합니다.
       let startPage =
-          Math.floor((this.currentPage - 1) / this.pagesToShow) *
+        Math.floor((this.currentPage - 1) / this.pagesToShow) *
           this.pagesToShow +
-          1;
+        1;
       // 시작 페이지를 기준으로 pagesToShow만큼의 페이지 번호를 생성합니다.
       // 단, 전체 페이지 수를 초과하지 않도록 주의합니다.
       let pages = [];
@@ -130,30 +131,36 @@ export default {
       this.$router.push("/goout/create");
     },
     async fetchGoouts() {
-  try {
-    const token = sessionStorage.getItem("token");
-    const response = await axios.get(`http://192.168.0.52:8080/goout/check`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      params: {
-        page: this.currentPage, // API가 페이지를 0부터 계산한다고 가정
-        size: this.pageSize,
-      },
-    });
-    if (response.data.code === 1200 && response.data.isSuccess) {
-      const data = response.data.result; // 결과 데이터 구조에 따라 조정
-      this.goouts = data.goouts;
-      this.filteredGoouts = this.goouts;
-      this.totalPages = Math.ceil(data.totalElements / this.pageSize);
-    } else {
-      console.error("API call successful, but unexpected response structure:", response.data);
-    }
-  } catch (error) {
-    console.error("Failed to fetch goouts:", error.response ? error.response.data : error);
-  }
-},
+      try {
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          params: {
+            page: this.currentPage, // API가 페이지를 0부터 계산한다고 가정
+            size: this.pageSize,
+          },
+        });
+        if (response.data.code === 1200 && response.data.isSuccess) {
+          const data = response.data.result; // 결과 데이터 구조에 따라 조정
+          this.goouts = data.goouts;
+          this.filteredGoouts = this.goouts;
+          this.totalPages = Math.ceil(data.totalElements / this.pageSize);
+        } else {
+          console.error(
+            "API call successful, but unexpected response structure:",
+            response.data
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Failed to fetch goouts:",
+          error.response ? error.response.data : error
+        );
+      }
+    },
     goToGooutReadPage(id) {
       if (id) {
         this.$router.push(`/goout/read/${id}`);
@@ -166,7 +173,7 @@ export default {
         this.filteredGoouts = this.goouts;
       } else {
         this.filteredGoouts = this.goouts.filter(
-            (goout) => goout.status === status
+          (goout) => goout.status === status
         );
       }
     },
@@ -174,42 +181,26 @@ export default {
 };
 </script>
 <style scoped>
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 113px;
+  height: auto;
+  margin-left: -50px;
+  width: 90%;
+}
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
 .active {
   font-weight: bold;
   color: red;
 }
-.button-container {
-  text-align: left;
-  padding-right: 40px;
-  margin-bottom: 20px;
-}
-.button-container2 {
-  text-align: right;
-  padding-right: 40px;
-  margin-bottom: 20px;
-}
-.button-container button,
-.button-container2 button {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 5px 10px;
-  color: white; /* 글씨 색상을 흰색으로 설정 */
-  letter-spacing: 0.2px;
-  border: none;
-  border-radius: 10px;
-  background-color: #111111; /* 기본 배경색을 검정색으로 설정 */
-  margin-left: 10px; /* 버튼 간격 조정 */
-  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
-}
-.button-container button:hover,
-.button-container2 button:hover {
-  background-color: #f75c29; /* 마우스를 올렸을 때 배경색을 주황색으로 변경 */
-  color: white;
-}
-.gooutList ul {
-  list-style: none;
-  padding: 0;
-}
+
 .gooutItem {
   cursor: pointer;
   margin: 10px 0;
@@ -217,8 +208,10 @@ export default {
 }
 
 .gooutList table {
-  width: 100%;
+  width: 98%;
   border-collapse: collapse;
+  margin-left: 10px;
+  margin-top: 30px;
 }
 .gooutList th,
 .gooutList td {
@@ -231,4 +224,40 @@ export default {
   align-items: center;
   margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
+.make-goout{
+  position: absolute;
+  right: 40px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 7px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #111111;
+  margin-top: -45px;
+}
+.make-goout:hover {
+  background-color: #f75c29;
+}
+.filter {
+  margin-top: 20px;
+}
+button {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #111111;
+  margin: -5px 0px 15px 10px;
+}
+
+button:hover {
+  background-color: #f75c29;
+}
+
 </style>
