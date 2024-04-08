@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class CommuteService {
             //redis 도입으로 추가된 부분
             String commuteKey = "commute:" + employee.getId();
             String currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            redisTemplate.opsForValue().set(commuteKey, currentTime);
+            redisTemplate.opsForValue().set(commuteKey, currentTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
             //redis 도입으로 추가된 부분
         }
         catch (Exception e){
@@ -98,8 +99,8 @@ public class CommuteService {
         String leaveKey = "leave:" + employeeId;
         String leaveTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String sumTimeKey = "sumTime:" + employeeId;
-        redisTemplate.opsForValue().set(leaveKey, leaveTime);
-        redisTemplate.opsForValue().set(sumTimeKey, sumTime);
+        redisTemplate.opsForValue().set(leaveKey, leaveTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+        redisTemplate.opsForValue().set(sumTimeKey, sumTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
         //redis 도입으로 추가된 부분
 
         return CommuteDto.builder()
