@@ -1,8 +1,9 @@
 
 jwt:
   secret-key: ${JWT_SECRET_KEY}
+  secret-key2: ${JWT_SECRET_KEY2}
   token:
-    expired-time-ms: 10000
+    expired-time-ms: 100000000
   refresh-token:
     expired-time-ms: 3600000
 

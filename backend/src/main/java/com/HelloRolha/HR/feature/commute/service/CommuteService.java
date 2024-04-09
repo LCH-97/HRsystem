@@ -11,7 +11,10 @@ import com.HelloRolha.HR.feature.commute.model.dto.CommuteDto;
 import com.HelloRolha.HR.feature.commute.repository.CommuteRepository;
 import com.HelloRolha.HR.feature.employee.model.dto.EmployeeDto;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
+import com.HelloRolha.HR.feature.employee.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,6 +41,7 @@ public class CommuteService {
     //redis 도입으로 추가된 부분
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    private static final Logger log = LoggerFactory.getLogger(CommuteService.class);
     //redis 도입으로 추가된 부분
 
     @Transactional
@@ -56,11 +60,15 @@ public class CommuteService {
 
         try{
             commute = commuteRepository.save(commute);
-            //redis 도입으로 추가된 부분
             String commuteKey = "commute:" + employee.getId();
             String currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            redisTemplate.opsForValue().set(commuteKey, currentTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
-            //redis 도입으로 추가된 부분
+            try {
+                // Redis에 출근 시간 저장 시도
+                redisTemplate.opsForValue().set(commuteKey, currentTime, 16, TimeUnit.HOURS);
+            } catch (Exception e) {
+                // Redis 서버 접근 실패 시, 로그 남기기
+                log.error("Redis 서버 접근 실패: ", e);
+            }
         }
         catch (Exception e){
             throw new CoummuteSQLException(ErrorCode.DB_ERROR_SQL,"Commute Create Fail");
@@ -101,8 +109,14 @@ public class CommuteService {
         String leaveKey = "leave:" + employeeId;
         String leaveTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         String sumTimeKey = "sumTime:" + employeeId;
-        redisTemplate.opsForValue().set(leaveKey, leaveTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
-        redisTemplate.opsForValue().set(sumTimeKey, sumTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+        try {
+            // Redis에 퇴근 시간, 근무합계 저장 시도
+            redisTemplate.opsForValue().set(leaveKey, leaveTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+            redisTemplate.opsForValue().set(sumTimeKey, sumTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+        } catch (Exception e) {
+            // Redis 서버 접근 실패 시, 로그 남기기
+            log.error("Redis 서버 접근 실패: ", e);
+        }
         //redis 도입으로 추가된 부분
 
         return CommuteDto.builder()
@@ -169,14 +183,20 @@ public class CommuteService {
                 finalIsCommute = true;
                 finalIsLeave = commuteToday.getUpdateAt() != null;
 
-                // Redis에 정보 저장
-                redisTemplate.opsForValue().set(commuteKey, finalStartTime);
-                if (finalEndTime != null) {
-                    redisTemplate.opsForValue().set(leaveKey, finalEndTime);
+                try {
+                    // Redis에 정보 저장
+                    redisTemplate.opsForValue().set(commuteKey, finalStartTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+                    if (finalEndTime != null) {
+                        redisTemplate.opsForValue().set(leaveKey, finalEndTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+                    }
+                    if (finalSumTime != null) {
+                        redisTemplate.opsForValue().set(sumTimeKey, finalSumTime, 16, TimeUnit.HOURS); // 16시간 만료 시간 설정
+                    }
+                } catch (Exception e) {
+                    // Redis 서버 접근 실패 시, 로그 남기기
+                    log.error("Redis 서버 접근 실패: ", e);
                 }
-                if (finalSumTime != null) {
-                    redisTemplate.opsForValue().set(sumTimeKey, finalSumTime);
-                }
+
 
             }
         }
