@@ -62,7 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .refreshToken(storedRefreshToken)
                 .build();
 
-        // token 기간다되면 재발급
+        // token 기간 다되면 재발급
         boolean isTokenExpired = JwtUtils.isTokenExpired(token, secretKey);
         if (isTokenExpired) {
             refreshTokenService.refreshAccessToken(tokenReq);
