@@ -93,7 +93,7 @@ export default {
       this.isLoading = true;
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = 'http://192.168.0.51/api';
-      console.log(api);
+      console.log(api);s
       let formData = new FormData();
       formData.append('username', this.username);
       formData.append('password', this.password);
