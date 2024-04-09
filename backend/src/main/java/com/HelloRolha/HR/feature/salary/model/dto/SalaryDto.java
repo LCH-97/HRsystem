@@ -21,7 +21,7 @@ public class SalaryDto {
 
     private LocalDate batchDate;
     private Long commuteCount; // 출근 시간
-    private Integer paidVacationCount;
+    private Long paidVacationCount;
     private Long overTime; // 초과근무 시간
     private Long totalSalary;
 

@@ -33,7 +33,7 @@ public class Salary extends BaseEntity {
 
     private LocalDate salaryDate; // 월급날 배치처리 한 날
     private Long commuteCount; // 전 월 출근 시간
-    private Integer paidVacationCount; //전 월 휴가 일수
+    private Long paidVacationCount; //전 월 휴가 일수
     private Long overTime; // 전 월 초과근무 시간
     private Long totalSalary;
 
