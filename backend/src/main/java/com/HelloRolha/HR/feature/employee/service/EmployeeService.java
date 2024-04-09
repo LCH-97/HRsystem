@@ -118,9 +118,7 @@ public class EmployeeService {
     }
     public List<Employee> listEmployeeEntity() {
 
-        List<Employee> employeeList = employeeRepository.findAll();
-
-        return employeeList;
+        return employeeRepository.findAll();
     }
 
     public Boolean authorize(Integer employeeId) {

@@ -21,41 +21,8 @@ public enum ErrorCode {
     USER_NOT_EXISTS(HttpStatus.NOT_FOUND, "USER-003", "회원을 찾을 수 없는 경우"),
     DIFFERENT_USER_PASSWORD(HttpStatus.BAD_REQUEST, "USER-004", "회원의 패스워드가 저장된 데이터와 다른 경우"),
 
-    // 판매자
-    DUPLICATE_SELLER_SIGNUP_EMAIL(HttpStatus.BAD_REQUEST, "SELLER-001", "판매자 이메일이 중복된 경우"),
-    SELLER_NOT_EXISTS(HttpStatus.NOT_FOUND, "SELLER-002", "판매자 계정을 찾을 수 없는 경우"),
-    DIFFERENT_SELLER_PASSWORD(HttpStatus.BAD_REQUEST, "SELLER-003", "판매자의 패스워드가 저장된 데이터와 다른 경우"),
-    DIFFERENT_BRAND_UNIQUEKEY(HttpStatus.BAD_REQUEST, "SELLER-004", "판매자의 브랜드 고유키가 저장된 데이터와 다른 경우"),
 
-    // 질문
-    QUESTION_NOT_EXISTS(HttpStatus.NOT_FOUND, "QUESTION-001", "질문을 찾을 수 없는 경우"),
-
-    // 답변
-    ANSWER_NOT_EXISTS(HttpStatus.NOT_FOUND, "ANSWER-001", "답변을 찾을 수 없는 경우"),
-
-    // 브랜드
-    BRAND_NOT_EXISTS(HttpStatus.NOT_FOUND, "BRAND-001", "브랜드를 찾을 수 없는 경우"),
-
-    // 리뷰
-    REVIEW_NOT_EXISTS(HttpStatus.NOT_FOUND, "REVIEW-001", "리뷰를 찾을 수 없는 경우"),
-
-    // 좋아요
-    LIKES_NOT_EXISTS(HttpStatus.NOT_FOUND, "LIKES-001", "좋아요를 찾을 수 없는 경우"),
-
-    // 상품
-    PRODUCT_NOT_EXISTS(HttpStatus.NOT_FOUND, "PRDOCUT-001", "상품을 찾을 수 없는 경우"),
-
-    // 주문
-    ORDERS_NOT_EXISTS(HttpStatus.NOT_FOUND, "ORDERS-001", "주문번호를 찾을 수 없는 경우"),
-
-    // 스타일
-    DUPLICATE_STYLE_TYPE(HttpStatus.BAD_REQUEST, "STYLE-001", "스타일 유형이 중복된 경우"),
-    STYLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "STYLE-002", "스타일을 찾을 수 없는 경우"),
-
-    // 카테고리
-    DUPLICATE_CATEGORY_NAME(HttpStatus.BAD_REQUEST, "CATEGORY-001", "카테고리 이름이 중복된 경우"),
-    CATEGORY_NOT_EXISTS(HttpStatus.NOT_FOUND, "CATEGORY-002", "카테고리를 찾을 수 없는 경우"), 
-    AlreadyCommute(HttpStatus.BAD_REQUEST, "COMMUTE-001", "한 사람이 같은 날짜에 출근할 경우"), 
+    AlreadyCommute(HttpStatus.BAD_REQUEST, "COMMUTE-001", "한 사람이 같은 날짜에 출근할 경우"),
     USER_UNCERTIFIED(HttpStatus.UNAUTHORIZED, "EMPLOYEE-001" , "로그인 시도 시, 인증 받은 사용자가 아닌 경우"),
 
     INIT_FAIL(HttpStatus.BAD_REQUEST,"INIT_FAIL","관리자가 이미 존재합니다."),
