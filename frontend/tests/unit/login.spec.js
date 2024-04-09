@@ -8,7 +8,7 @@ describe('LoginPage.vue', () => {
 
     // You can assert how your component reacts to the login error here
     // For example:
-    // expect(wrapper.vm.popTitle).toBe("회원가입에 실패하였습니다.");
-    // expect(wrapper.vm.popText).toBe("다시 시도해주세요.");
+    expect(wrapper.vm.popTitle).toBe("회원가입에 실패하였습니다.");
+    expect(wrapper.vm.popText).toBe("다시 시도해주세요.");
   });
 });
