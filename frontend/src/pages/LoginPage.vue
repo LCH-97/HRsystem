@@ -110,7 +110,8 @@ export default {
             sessionStorage.setItem('refreshToken', response.data.result.refreshToken);
             // sessionStorage.setItem('refreshTokenKey', response.data.result.refreshTokenKey);
             // main page로 이동
-            this.$router.push('/main?name=' + response.data.result.name);
+            sessionStorage.setItem('name', response.data.result.name);
+            this.$router.push('/main');
           }
 
         })

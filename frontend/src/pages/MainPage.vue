@@ -103,6 +103,7 @@
                             <!-- 페이지 버튼은 자동으로 생성됩니다. -->
                             <!-- <a href="#" class="next">다음 &raquo;</a> -->
                           </div>
+                          <div id="boardsIsNull" v-if="boards.length == 0"> 공지사항이 없습니다.</div>
                         </div>
                       </div>
                       <div class="chartjs-size-monitor-shrink">
@@ -120,7 +121,7 @@
                       <div class="chartjs-size-monitor-expand">
                         <div id="commute-info">
                           <h2 style="font-size: 28px; position: relative; top: 99px;">안녕하세요</h2>
-                          <h2 style="font-size: 28px; position: relative; top: 120px;">{{ this.$route.query.name }}님</h2>
+                          <h2 style="font-size: 28px; position: relative; top: 120px;">{{ this.name }}님</h2>
                           <img class="profile-pic" src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg" alt="Profile Picture" />
 
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
@@ -133,7 +134,7 @@
 
                           <div class="main-button-container" v-show="isCommute && !isLeave">
                             <button id="leaveButton" @click="leave">
-                              퇴근 {{ commuteId }}
+                              퇴근
                             </button>
                           </div>
 
@@ -162,12 +163,14 @@
       </div>
     </div>
   </div>
+  <LoadingPage v-if="isLoading" @close-event="close" :-title="loadingTitle" :-text="loadingText"/>
 </template>
 
 <script>
 import SideBar from "../components/SideBar.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 import axios from "axios";
+import LoadingPage from "@/components/LoadingPage.vue";
 // 달력
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -179,14 +182,19 @@ export default {
     SideBar,
     HeaderComponent,
     FullCalendar,
+    LoadingPage,
   },
   data() {
     return {
+      name:"",
       startTime: "0",
       endTime: "0",
       sumTime: "0",
       isCommute: false,
       isLeave: true,
+      isLoading: false,
+      loadingTitle: "",
+      loadingText: "",
       commuteId: "",
       newTodo: '',
       todos: [],
@@ -207,8 +215,12 @@ export default {
   },
   methods: {
     commute() {
-      console.log("click");
-      const api = "http://localhost:8080";
+      console.log("click commute button");
+      if(this.isLoading) return;
+      this.isLoading = true;
+      this.loadingTitle = "출근 중"
+      this.loadingText = "잠시만 기다려주세요."
+      const api = "http://192.168.0.51/api";
       const token = sessionStorage.getItem("token");
       axios
         .post(api + "/employee/commute", null, {
@@ -226,11 +238,13 @@ export default {
         })
         .catch((error) => {
           console.error("Error updating data:", error);
-        });
+        }).finally(()=>{this.isLoading = false;});
     },
     leave() {
       console.log(" leave click");
-      const api = "http://localhost:8080";
+      if(this.isLoading) return;
+      this.isLoading = true;
+      const api = "http://192.168.0.51/api";
       const token = sessionStorage.getItem("token");
       axios
         .patch(api + "/employee/leave/" + this.commuteId, null, {
@@ -246,12 +260,17 @@ export default {
           this.isLeave = true;
         })
         .catch((error) => {
-          console.error("Error updating data:", error);
-        });
+          console.error("Error leave:", error);
+          alert("퇴근 실패");
+        }).finally(()=>{this.isLoading = false;});
     },
     check() {
       console.log("check");
-      const api = "http://localhost:8080";
+      if(this.isLoading) return;
+      this.isLoading = true;
+      this.loadingTitle = "출근 확인 중"
+      this.loadingText = "잠시만 기다려주세요."
+      const api = "http://192.168.0.51/api";
       const token = sessionStorage.getItem("token");
       axios
         .get(api + "/employee/commute/check", {
@@ -264,6 +283,7 @@ export default {
           console.log("Chcek Response:", response.data);
           this.isCommute = response.data.result ? response.data.result.isCommute : false;
           this.isLeave = response.data.result ? response.data.result.isLeave : true;
+          this.commuteId =  response.data.result.commuteId;
           if (this.isCommute) {
             this.commuteId = response.data.result.id;
             this.startTime = response?.data?.result?.startTime || '0';
@@ -275,14 +295,14 @@ export default {
         })
         .catch((error) => {
           console.error("Error updating data:", error);
-        });
+        }).finally(()=>{this.isLoading = false;});
     },
 
     fetchBoardData(page) {
       console.log("qweqwe");
       const itemsPerPage = 6;
       axios
-        .get(`http://localhost:8080/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
         .then((response) => {
           // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
           this.boards = response.data.result.boards;
@@ -312,6 +332,7 @@ export default {
   },
   mounted() {
     // 출근한 상태인지 확인해야함.
+    this.name= sessionStorage.getItem("name");
     this.check();
     this.fetchBoardData(1);
     // 결재 현황 데이터 가져오기
@@ -323,6 +344,11 @@ export default {
 
 <style scoped>
 /* 나머지 스타일은 여기에 추가 */
+#boardsIsNull{
+  text-align: center;
+  font-size: larger;
+}
+
 .approval-status-container {
   display: flex;
   margin-top: 45px;
