@@ -1,17 +1,23 @@
 package com.HelloRolha.HR.feature.refreshToken.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.error.TokenNotFoundException;
 import com.HelloRolha.HR.feature.refreshToken.model.dto.TokenReq;
 import com.HelloRolha.HR.feature.refreshToken.model.dto.TokenRes;
 import com.HelloRolha.HR.feature.refreshToken.service.RefreshTokenService;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import javax.servlet.http.HttpServletRequest;
+
+
 @CrossOrigin("*")
 @RequestMapping("/refresh")
 @RequiredArgsConstructor
+@RestControllerAdvice
 public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;
@@ -29,4 +35,6 @@ public class RefreshTokenController {
                 .build();
         return ResponseEntity.ok().body(response);
     }
+
+
 }
