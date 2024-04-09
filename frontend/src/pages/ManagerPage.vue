@@ -11,7 +11,7 @@
             <div class="row" style="width: 100%">
               <div class="col-xl-6">
                 <div class="card mb-4">
-                  <div class="card-header">Area Chart Example</div>
+                  <div class="card-header">{{ new Date().toLocaleDateString() }}</div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -28,7 +28,7 @@
               <div class="col-xl-4">
                 <div class="card mb-3">
                   <div class="card-header">
-                    <a href="/board"> 공지사항 </a>
+                    로그인 승인
                   </div>
 
                   <div class="card-body">
@@ -46,7 +46,9 @@
                                 <th>승인</th>
                               </tr>
 
-                              <tr v-for="employee in this.authorizeResult.result" v-bind:key="employee.id">
+                              <tr
+                                v-for="employee in this.authorizeResult.result.slice(currentPage * pageSize, (currentPage + 1) * pageSize)"
+                                v-bind:key="employee.id">
                                 <td>{{ employee.id }}</td>
                                 <td>{{ employee.name }}</td>
                                 <td>{{ employee.employmentDate }}</td>
@@ -63,9 +65,9 @@
                           </table>
 
                           <div class="pagination">
-                            <a href="#" class="prev">&laquo; 이전</a>
+                            <a href="#" class="prev" v-on:click="prev">&laquo; 이전</a>
                             <!-- 페이지 버튼은 자동으로 생성됩니다. -->
-                            <a href="#" class="next">다음 &raquo;</a>
+                            <a href="#" class="next" v-on:click="next">다음 &raquo;</a>
                           </div>
                         </div>
                       </div>
@@ -76,63 +78,14 @@
                   </div>
                 </div>
                 <div class="card mb-3">
-                  <div class="card-header"><a href="/salary/list">직원 월급</a></div>
+                  <div class="card-header"><a href="/salary/list">직원 월급 보러가기</a></div>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
                         <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                           <div class="datatable-container">
-                            <div><a href=""> </a></div>
-                            <table id="datatablesSimple" class="datatable-table">
-                              <thead>
-                                <tr>
-                                  <th data-sortable="true" style="width: 19.287833827893174%">
-                                    <a href="#" class="datatable-sorter">Name</a>
-                                  </th>
-                                  <th data-sortable="true" style="width: 30.56379821958457%">
-                                    <a href="#" class="datatable-sorter">Position</a>
-                                  </th>
-                                  <th data-sortable="true" style="width: 14.93570722057369%">
-                                    <a href="#" class="datatable-sorter">Office</a>
-                                  </th>
-                                  <th data-sortable="true" style="width: 8.605341246290802%">
-                                    <a href="#" class="datatable-sorter">Age</a>
-                                  </th>
-                                  <th data-sortable="true" style="width: 14.342235410484669%">
-                                    <a href="#" class="datatable-sorter">Start date</a>
-                                  </th>
-                                  <th data-sortable="true" style="width: 12.265084075173096%">
-                                    <a href="#" class="datatable-sorter">Salary</a>
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr data-index="0">
-                                  <td>Tiger Nixon</td>
-                                  <td>System Architect</td>
-                                  <td>Edinburgh</td>
-                                  <td>61</td>
-                                  <td>2011/04/25</td>
-                                  <td>$320,800</td>
-                                </tr>
-                                <tr data-index="1">
-                                  <td>Garrett Winters</td>
-                                  <td>Accountant</td>
-                                  <td>Tokyo</td>
-                                  <td>63</td>
-                                  <td>2011/07/25</td>
-                                  <td>$170,750</td>
-                                </tr>
-                                <tr data-index="2">
-                                  <td>Ashton Cox</td>
-                                  <td>Junior Technical Author</td>
-                                  <td>San Francisco</td>
-                                  <td>66</td>
-                                  <td>2009/01/12</td>
-                                  <td>$86,000</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                            마지막 계산일 : {{ this.lastDate }}
+
                           </div>
                         </div>
                       </div>
@@ -174,6 +127,9 @@ export default {
       // isCommute: false,
       // isLeave: true,
       // commuteId: "",
+      currentPage: 0,
+      pageSize: 10,
+      lastDate: "",
       authorizeResult: {
         result: [
 
@@ -203,10 +159,39 @@ export default {
     };
   },
   methods: {
+    fetchSalaryData() {
+      console.log("fetchSalaryData method start");
+      const api = "http://localhost:8080";
+      // 요청하면 월급 처음 준 날하고, 마지막으로 준 날 반환됨.
+      const token = sessionStorage.getItem("token");
+      axios
+        .get(
+          api + "/manager/salary/months", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+        )
+        .then((response) => {
+          this.salaryMonthsResult = response.data.result;
+          console.log(response.data.result);
+          this.lastDate = this.salaryMonthsResult.lastDate;
+
+
+
+          //   totalItems = response.data.total;
+        })
+        .catch((error) => {
+          console.error("Error fetchSalaryData :", error);
+          // 토큰  만료 예외처리
+        });
+      console.log("fetchSalaryData method end");
+    },
     getAuthorizeList() {
       console.log("getAuthorizeList");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://localhost:8080";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -233,7 +218,7 @@ export default {
     authorize(employeeId) {
       console.log("authorize");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://localhost:8080";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -249,16 +234,23 @@ export default {
         .then((response) => {
           console.log("Response:", response.data);
           alert("승인 완료");
-          
+
         })
         .catch((error) => {
           console.error("Error getAuthorizeList:", error);
           alert("승인 실패: 담당자에게 연락하세요");
-        }).finally(()=>{
+        }).finally(() => {
           this.getAuthorizeList(); // 목록 초기화
         });
     },
-
+    prev() {
+      if (this.currentPage > 0)
+        this.currentPage = this.currentPage - 1;
+    },
+    next() {
+      if ((this.currentPage + 1) * this.pageSize < this.authorizeResult.result.length)
+        this.currentPage = this.currentPage + 1;
+    }
 
   },
   mounted() {
@@ -267,11 +259,12 @@ export default {
     //   this.fetchNoticeData(1);
     try {
       this.getAuthorizeList();
+      this.fetchSalaryData();
     } catch (error) {
-      console.error( "ManagerPage Init Fail",error);
+      console.error("ManagerPage Init Fail", error);
     }
 
-    
+
 
 
   },
@@ -368,7 +361,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   overflow-x: auto;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .table {

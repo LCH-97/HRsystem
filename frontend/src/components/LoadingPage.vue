@@ -4,9 +4,10 @@
     <div id="popup-container">
         <h2>{{ Title }}</h2>
         <p>{{ Text }}</p>
+        <p></p>
+        <p></p>
         <p>로딩 중</p>
-        <p>로딩 중</p>
-        <button id="close-btn" @click="closePop">닫기</button>
+        <!-- <button id="close-btn" @click="closePop">닫기</button> -->
     </div>
 </template>
 

@@ -6,16 +6,16 @@
             <SideBar />
             <div id="layoutSidenav_content">
                 <main>
-                    <div id="container-fluid px-4">
+                    <div id="container-fluid px-6">
                         <!-- <h1 class="mt-4">MAIN PAGE</h1> -->
                         <div class="row" style="width: 100%">
 
 
-                            <div class="col-xl-11">
+                            <div class="col-xl-12">
                                 <div class="card mb-3">
-                                    <div class="card-header">
+                                    <!-- <div class="card-header">
                                         <a href="/board"> 월급 </a>
-                                    </div>
+                                    </div> -->
 
                                     <div class="card-body">
                                         <div class="chartjs-size-monitor">
@@ -32,7 +32,7 @@
                                                     <div class="form-group">
                                                         <label for="inputJobTitle">원하시는 월을 선택하세요</label>
                                                         <select class="form-control" id="inputJobTitle"
-                                                            v-model="selectedMonth">
+                                                            v-model="selectedMonth" v-on:change="getSalaryList(selectedYear,selectedMonth)">
                                                             <option value="01">01</option>
                                                             <option value="02">02</option>
                                                             <option value="03">03</option>
@@ -49,7 +49,7 @@
                                                         
                                                     </div>
                                                     
-                                                    <div> <button></button> </div>
+                                                    
 
                                                     <table class="table">
                                                         <thead>
@@ -138,17 +138,17 @@ export default {
                 "month": 13,
                 salaryDtoList: [
                     {
-                        "employeeId": 1,
-                        "employmentDate": "2024-03-15",
-                        "department": "사장실",
-                        "position": "사장",
-                        "employeeName": "asd",
-                        "employeeSalary": 5000000,
-                        "batchDate": "2024-02-10",
-                        "commuteCount": 0,
-                        "paidVacationCount": 0,
-                        "overTime": 0,
-                        "totalSalary": 38300723
+                        "employeeId": "",
+                        "employmentDate": "",
+                        "department": "",
+                        "position": "",
+                        "employeeName": "",
+                        "employeeSalary": "데이터가",
+                        "batchDate": "없습니다.",
+                        "commuteCount": "",
+                        "paidVacationCount": "",
+                        "overTime": "",
+                        "totalSalary": ""
                     },
                 ],
             }
@@ -161,17 +161,16 @@ export default {
         };
     },
     methods: {
-        getSalaryList() {
+        getSalaryList(year,month) {
             console.log("getSalaryList");
             // const api = process.env.VUE_APP_BACKEND_URL;
-            const api = "http://192.168.0.51/api";
-            console.log(api);
+            const api = "http://localhost:8080";
             // let formData = new FormData();
             // formData.append('username', this.username);
             // formData.append('password', this.password);
             const token = sessionStorage.getItem("token");
             axios
-                .get(api + "/manager/salary/list", {
+                .get(api + "/manager/salary/list/"+year+"/"+month, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: "Bearer " + token,
@@ -205,8 +204,6 @@ export default {
                 // months.push(month.toLocaleString('ko-KR', { year: 'numeric', month: 'long' }));
                 years.push(year-i);
                 
-                
-                
 
                 // months.push(month.toLocaleString('ko-KR', { year: 'numeric', month: 'long' }));
                 
@@ -217,7 +214,7 @@ export default {
         },
         fetchSalaryData() {
             console.log("fetchSalaryData method start");
-            const api = "http://192.168.0.51/api";
+            const api = "http://localhost:8080";
             // 요청하면 월급 처음 준 날하고, 마지막으로 준 날 반환됨.
             const token = sessionStorage.getItem("token");
             axios
@@ -248,10 +245,12 @@ export default {
         },
     },
     mounted() {
-
+        // const today = new Date();
         
         this.fetchSalaryData();
-        this.getSalaryList();
+        this.selectedYear = 2023;
+        this.selectedMonth = 1; 
+        this.getSalaryList(this.selectedYear,this.selectedMonth);
     },
 };
 </script>
@@ -387,5 +386,9 @@ body {
     background-color: #e29c41;
     color: white;
     border: 1px solid #e29c41;
+}
+
+.card-body{
+    border: none;
 }
 </style>
