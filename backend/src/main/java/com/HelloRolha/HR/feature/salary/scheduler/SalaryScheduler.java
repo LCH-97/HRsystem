@@ -11,9 +11,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SalaryScheduler {
     private final SalaryService salaryService;
-    @Scheduled(fixedRate = 300000) // 1초에 1000
+    @Scheduled(cron = "0 0 0 1 * *") // 매월 1일에 월급 계산
     public void test () throws IOException {
-        System.out.println("test");
-        //salaryService.init();
+        System.out.println("test");ㄴ
+        salaryService.createSalary();
     }
 }

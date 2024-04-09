@@ -13,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -53,4 +56,27 @@ class EmployeeServiceTest {
 //        assertEquals("요청 성공.",  response.getMessage());
 //        assertTrue(response.getSuccess());
     }
+//    @Test
+//        // method
+//    void employeeService_list_success_(){
+////given
+//        List<Employee> employees = new ArrayList<>();
+////        employees.add(Employee.builder().id(1).build());
+//        given(memberRepository.getAllEmployList()).willReturn(employees);
+//        SignUpReq request = SignUpReq.builder()
+//                .username("test01@test.com")
+//                .password("qwer1234")
+//                .name("test01")
+//                .build();
+//        employeeService.signUp(request);
+//        //when
+//        List<Employee> response = employeeService.listEmployeeEntity();
+//
+//        //then
+//        assertFalse(response.isEmpty());
+////        assertEquals(1000L,  response.getCode());
+////        assertEquals(1L,  response.getResult().get("idx"));
+////        assertEquals("요청 성공.",  response.getMessage());
+////        assertTrue(response.getSuccess());
+//    }
 }
