@@ -60,7 +60,7 @@
 
                 <div class="card mb-3">
                   <a1 href="" style="position: absolute; top: 8px; left: 20px;"> 공지사항 </a1>
-                  <a href="/board/list" style="position: relative; left: 440px; top: 30px; "> + 더보기 </a>
+                  <a href="/board/list" style="position: relative; left: 309px; top: 30px; "> + 더보기 </a>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -86,7 +86,7 @@
                           <div class="pagination">
                             
                           </div>
-                          <div id="boardsIsNull" v-if="boards.length == 0"> 공지사항이 없습니다.</div>
+                          <div id="boardsIsNull" v-if="boards.length == 0"> 공지사항이 존재하지 않습니다.</div>
                         </div>
                       </div>
                       <div class="chartjs-size-monitor-shrink">
@@ -103,8 +103,8 @@
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
                         <div id="commute-info">
-                          <h2 style="font-size: 28px; position: relative; top: 99px;">안녕하세요</h2>
-                          <h2 style="font-size: 28px; position: relative; top: 120px;">{{ this.name }}님</h2>
+                          <h2 style="font-size: 28px; position: relative; top: 93px;">안녕하세요</h2>
+                          <h2 style="font-size: 28px; position: relative; top: 106px;">{{ this.name }}님</h2>
                           <img class="profile-pic" src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg" alt="Profile Picture" />
 
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
@@ -323,6 +323,7 @@ export default {
 #boardsIsNull{
   text-align: center;
   font-size: larger;
+  margin-top: -130px;
 }
 
 .approval-status-container {
@@ -396,7 +397,7 @@ button:active {
 }
 
 #commute-info {
-  height: 788px;
+  height: 614px;
   font-size: 12px;
   text-align: center;
   border: 2px solid #fdfbfb;
@@ -449,8 +450,8 @@ body {
   border-radius: 5px;
   overflow-x: auto;
   font-size: 10px;
-  margin-top: 38px;
-  height: 577px;
+  margin-top: 24px;
+  height: 376px;
 }
 
 .table {
@@ -501,6 +502,9 @@ body {
   position: relative;
   left: 18px;
   top: 14px;
+}
+.mb-5{
+  margin-bottom: 2rem !important;
 }
 
 </style>
