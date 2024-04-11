@@ -14,6 +14,7 @@ import com.HelloRolha.HR.feature.employee.model.dto.SignUp.SignUpRes;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import com.HelloRolha.HR.feature.position.model.entity.Position;
+import com.HelloRolha.HR.feature.refreshToken.model.dto.TokenCreateReq;
 import com.HelloRolha.HR.feature.refreshToken.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class EmployeeService {
     private static final Logger log = LoggerFactory.getLogger(EmployeeService.class);
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Value("${jwt.secret-key}")
@@ -76,20 +78,28 @@ public class EmployeeService {
         if (passwordEncoder.matches(loginReq.getPassword(), employee.getPassword()) && employee.getStatus().equals(true)) {
 
 
-            // refreshToken 생성
+            String token = JwtUtils.generateAccessToken(employee, secretKey, expiredTimeMs);
             String refreshToken = JwtUtils.generateRefreshToken(employee, secretKey2);
+            String refreshTokenKey = "refreshToken: " + employee.getId();
+
             try {
                 // Redis에 refreshToken과 refreshTokenKey 저장
-                redisTemplate.opsForValue().set("refreshToken:" + employee.getId(), refreshToken, expiredTimeMs, TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set(refreshTokenKey, refreshToken, expiredTimeMs, TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 log.error("Redis 서버 접근 실패: ", e);
             }
 
+            TokenCreateReq tokenCreateReq = new TokenCreateReq();
+            tokenCreateReq.setUserId(employee.getId());
+            tokenCreateReq.setRefreshToken(refreshToken);
+            tokenCreateReq.setToken(token); // 이 토큰은 새롭게 생성된 액세스 토큰
+            refreshTokenService.create(tokenCreateReq); // RefreshToken 저장
+
             return LoginRes.builder()
                     .name(employee.getName())
-                    .token(JwtUtils.generateAccessToken(employee, secretKey, expiredTimeMs))
+                    .token(token)
                     .refreshToken(refreshToken)
-                    .refreshTokenKey("refreshToken:" + employee.getId())
+                    .refreshTokenKey(refreshTokenKey)
                     .build();
 
 

@@ -1,6 +1,8 @@
 package com.HelloRolha.HR.config.utils;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.error.TokenNotFoundException;
+import com.HelloRolha.HR.error.TokenRefreshException;
 import com.HelloRolha.HR.error.UserAccountException;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
 import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
+
 @RequiredArgsConstructor
 public class JwtUtils {
 
@@ -69,11 +72,26 @@ public class JwtUtils {
     public static String getName(String token, String key) {
         return extractAllClaims(token, key).get("NAME", String.class);
     }
+
     public static String getAuthority(String token, String key) {
         return extractAllClaims(token, key).get("ROLE", String.class);
     }
+
     public static Integer getId(String token, String key) {
-        return extractAllClaims(token, key).get("ID", Integer.class);
+        if (token == null || key == null) {
+            // 적절한 예외 처리 또는 로그 기록
+            throw new IllegalArgumentException("Token or key cannot be null");
+        }
+        try {
+            Claims claims = extractAllClaims(token, key);
+            return claims.get("ID", Integer.class);
+        } catch (ExpiredJwtException e) {
+            // 토큰 만료 예외 처리
+            throw new TokenNotFoundException("Token expired");
+        } catch (Exception e) {
+            // 기타 예외 처리
+            throw new TokenNotFoundException("Token expired");
+        }
     }
 
     // 토근에서 정보를 가져오는 코드가 계속 중복되어 사용되기 때문에 별도의 메서드로 만들어서 사용하기 위한 것
@@ -87,23 +105,9 @@ public class JwtUtils {
                     .getBody();
         } catch (ExpiredJwtException e) {
             // access 키가 기간이 지났으면 여기로 온다.
-           return null;
 
+return null;
         } catch (SignatureException e) {
-            // 리프레쉬 키를 secret키로 까면 여기로 온다.
-//            @ExceptionHandler(ExpiredJwtException.class)
-//            public ResponseEntity<BaseRes> handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest request) {
-//                String refreshToken = request.getHeader("refreshToken");
-//        TokenRes tokenRes = refreshTokenService.refreshAccessToken(new TokenReq(refreshToken));
-//                BaseRes response = BaseRes.builder()
-//                        .code(1200)
-//                        .isSuccess(true)
-//                        .message("새 token, refreshToken이 발급되었습니다.")
-//                        .result(null)
-//                        .build();
-//                return ResponseEntity.ok().body(response);
-//
-//            }
             return null;
         }
     }

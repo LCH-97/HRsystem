@@ -23,5 +23,5 @@ public class RefreshToken {
     private String refreshToken;
 
     @Column(nullable = false)
-    private Timestamp expirationTime;
+    private String token;
 }
