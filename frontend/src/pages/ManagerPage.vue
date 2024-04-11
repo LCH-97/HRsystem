@@ -94,7 +94,22 @@
                   </div>
                 </div>
               </div>
-
+              <div class="col-xl-2">
+                <div class="card mb-4">
+                  <div class="card-header"><router-link to="/gooutType/list" class="nav-link">휴가 타입 관리</router-link></div>
+                  <div class="card-body">
+                    <div class="chartjs-size-monitor">
+                      <div class="chartjs-size-monitor-expand">
+                        <div class="card-header"><router-link to="/gooutType/list" class="nav-link">바로 가기</router-link></div>
+                        
+                      </div>
+                      <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </main>

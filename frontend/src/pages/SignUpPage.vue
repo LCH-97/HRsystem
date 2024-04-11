@@ -102,7 +102,9 @@
     <p>인사담당자에게 연락하세요</p>
     <p>인사담당자 번호</p>
     <p>02-1111-2222</p>
-    <button id="close-btn" @click="goMainPage">메인 페이지로 이동</button>
+    <p>테스트 중이시라면 admin 계정으로 로그인해주세요.<br/> 인사관리 페이지에서 직접 승인할 수 있습니다.</p>
+    <p>id : admin <br/> pw : qwer1234</p>
+    <button id="close-btn" @click="goMainPage">로그인 페이지로 이동</button>
   </div>
 
 
@@ -219,8 +221,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
-  height: 300px;
+  width: 500px;
+  height: 400px;
   background-color: white;
   border-radius: 10px;
   z-index: 101;
