@@ -16,22 +16,7 @@
                       <div class="chartjs-size-monitor-expand1">
                         <FullCalendar :options="calendarOptions" />
                       </div>
-                      <div class="chartjs-size-monitor-shrink1">
-                        <div class="todolist" style="font-size: 22px;">TODO LIST</div>
-                        <ul id="todoList">
-                          <div>
-                            <input type="text" v-model="newTodo" style="width: 735px; margin-top: 35px; border: none; border-bottom: 1px solid grey;" placeholder="할 일을 입력하세요.">
-                            <button @click="addTodo" style="background-color: black; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; position: relative; left: 684px; top: -34px;">등록</button>
-                            <ul>
-                              <li v-for="(todo, index) in todos" :key="index">
-                                {{ todo }}
-                                <button @click="removeTodo(index)">삭제</button>
-                              </li>
-                            </ul>
-                          </div>
-                          <!-- 할일 목록이 여기에 추가됩니다. -->
-                        </ul>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -75,7 +60,7 @@
 
                 <div class="card mb-3">
                   <a1 href="" style="position: absolute; top: 8px; left: 20px;"> 공지사항 </a1>
-                  <a href="/board/check" style="position: absolute; left: 440px; top: 30px; "> + 더보기 </a>
+                  <a href="/board/list" style="position: relative; left: 440px; top: 30px; "> + 더보기 </a>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -94,14 +79,12 @@
                                 <td>{{ board.writerid }}</td>
                                 <td>{{ board.createAt }}</td>
                               </tr>
-                              <!-- 서버에서 받아온 데이터로 테이블이 채워질 자리 -->
+                              
                             </tbody>
                           </table>
 
                           <div class="pagination">
-                            <!-- <a href="#" class="prev">&laquo; 이전</a> -->
-                            <!-- 페이지 버튼은 자동으로 생성됩니다. -->
-                            <!-- <a href="#" class="next">다음 &raquo;</a> -->
+                            
                           </div>
                           <div id="boardsIsNull" v-if="boards.length == 0"> 공지사항이 없습니다.</div>
                         </div>
@@ -312,14 +295,7 @@ export default {
           console.error("Error fetching board data:", error);
         });
     },
-    addTodo() {
-      if (this.newTodo.trim() === '') return;
-      this.todos.push(this.newTodo.trim());
-      this.newTodo = '';
-    },
-    removeTodo(index) {
-      this.todos.splice(index, 1);
-    },
+    
     fetchApprovalData() {
       // 실제로는 서버에서 데이터를 가져와야 합니다.
       // 예시 데이터로 임시로 값을 할당합니다.
@@ -331,7 +307,7 @@ export default {
     },
   },
   mounted() {
-    // 출근한 상태인지 확인해야함.
+    // 출근한 상태인지 확인
     this.name= sessionStorage.getItem("name");
     this.check();
     this.fetchBoardData(1);
@@ -379,7 +355,6 @@ export default {
   margin: 15px;
   font-size: 17px;
   background-color: black;
-  /* 검은색으로 변경 */
   color: white;
   border: none;
   border-radius: 5px;
@@ -390,7 +365,7 @@ export default {
 
 #commuteButton:hover {
   background-color: #f7a129;
-  /* 마우스를 올리면 주황색으로 변경 */
+  
 }
 
 #leaveButton {
@@ -399,7 +374,6 @@ export default {
   margin: 10px;
   font-size: 12px;
   background-color: black;
-  /* 검은색으로 변경 */
   color: white;
   border: none;
   border-radius: 5px;
@@ -410,7 +384,7 @@ export default {
 
 #leaveButton:hover {
   background-color: #f7a129;
-  /* 마우스를 올리면 주황색으로 변경 */
+
 }
 
 button:hover {
@@ -529,12 +503,5 @@ body {
   top: 14px;
 }
 
-.todolist {
-  margin-top: 31px;
-}
-
-.todoo {
-  width: 10px;
-}
 </style>
 
