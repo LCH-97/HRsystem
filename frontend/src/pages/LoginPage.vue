@@ -22,8 +22,8 @@
                       <label for="inputPassword">Password</label>
                     </div>
                     <div class="form-check mb-3">
-                      <input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />
-                      <label class="form-check-label" for="inputRememberPassword">Remember Password</label>
+                      <label class="form-check-label" for="inputRememberPassword">관리자 계정으로 모든 테스트가 가능합니다.</label>
+                      <label class="form-check-label" for="inputRememberPassword">id: admin, pw: qwer1234</label>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                       <a class="small" href="password.html">Forgot Password?</a>
@@ -53,6 +53,7 @@
     <p v-text="popText"></p>
     <p>담당자 번호</p>
     <p>02-1111-2222</p>
+    
     <button id="close-btn" @click="closePop">닫기</button>
   </div>
 
@@ -117,12 +118,8 @@ export default {
         })
         .catch(error => {
           console.error('Error Login:', error);
-          if (axios.isAxiosError(error)){
-            this.popTitle = "로그인에 실패하였습니다.";
-            this.popText = "AxiosError: 서버와의 통신이 실패하였습니다. ";
           
-          }
-          else if (error.code === "ERR_NETWORK") {
+          if (error.code === "ERR_NETWORK") {
             this.popTitle = "로그인에 실패하였습니다.";
             this.popText = "ERR_NETWORK: 서버와의 통신이 실패하였습니다.";
           }
@@ -132,7 +129,12 @@ export default {
           } else if (error.response.data.code === "EMPLOYEE-001") {
             this.popTitle = "미승인 계정입니다.";
             this.popText = "인사담당자에게 연락하세요.";
-          } else {
+          } else if (axios.isAxiosError(error)){
+            this.popTitle = "로그인에 실패하였습니다.";
+            this.popText = "AxiosError: 서버와의 통신이 실패하였습니다. ";
+          
+          }
+          else {
             this.popTitle = "예상하지 못한 에러입니다. ";
             this.popText = "서버 관리자에게 연락하세요.";
           }
