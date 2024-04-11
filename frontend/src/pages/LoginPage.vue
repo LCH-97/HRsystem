@@ -93,7 +93,7 @@ export default {
       this.isLoading = true;
       // const api = process.env.VUE_APP_BACKEND_URL;
       const api = 'http://192.168.0.51/api';
-      console.log(api);s
+      console.log(api);
       let formData = new FormData();
       formData.append('username', this.username);
       formData.append('password', this.password);
@@ -110,7 +110,8 @@ export default {
             sessionStorage.setItem('refreshToken', response.data.result.refreshToken);
             // sessionStorage.setItem('refreshTokenKey', response.data.result.refreshTokenKey);
             // main page로 이동
-            this.$router.push('/main?name=' + response.data.result.name);
+            sessionStorage.setItem('name', response.data.result.name);
+            this.$router.push('/main');
           }
 
         })
