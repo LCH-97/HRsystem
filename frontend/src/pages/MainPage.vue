@@ -16,22 +16,7 @@
                       <div class="chartjs-size-monitor-expand1">
                         <FullCalendar :options="calendarOptions" />
                       </div>
-                      <div class="chartjs-size-monitor-shrink1">
-                        <div class="todolist" style="font-size: 22px;">TODO LIST</div>
-                        <ul id="todoList">
-                          <div>
-                            <input type="text" v-model="newTodo" style="width: 735px; margin-top: 35px; border: none; border-bottom: 1px solid grey;" placeholder="할 일을 입력하세요.">
-                            <button @click="addTodo" style="background-color: black; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; position: relative; left: 684px; top: -34px;">등록</button>
-                            <ul>
-                              <li v-for="(todo, index) in todos" :key="index">
-                                {{ todo }}
-                                <button @click="removeTodo(index)">삭제</button>
-                              </li>
-                            </ul>
-                          </div>
-                          <!-- 할일 목록이 여기에 추가됩니다. -->
-                        </ul>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -75,7 +60,7 @@
 
                 <div class="card mb-3">
                   <a1 href="" style="position: absolute; top: 8px; left: 20px;"> 공지사항 </a1>
-                  <a href="/board/check" style="position: absolute; left: 440px; top: 30px; "> + 더보기 </a>
+                  <a href="/board/list" style="position: relative; left: 440px; top: 30px; "> + 더보기 </a>
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
@@ -312,14 +297,7 @@ export default {
           console.error("Error fetching board data:", error);
         });
     },
-    addTodo() {
-      if (this.newTodo.trim() === '') return;
-      this.todos.push(this.newTodo.trim());
-      this.newTodo = '';
-    },
-    removeTodo(index) {
-      this.todos.splice(index, 1);
-    },
+    
     fetchApprovalData() {
       // 실제로는 서버에서 데이터를 가져와야 합니다.
       // 예시 데이터로 임시로 값을 할당합니다.
@@ -529,12 +507,5 @@ body {
   top: 14px;
 }
 
-.todolist {
-  margin-top: 31px;
-}
-
-.todoo {
-  width: 10px;
-}
 </style>
 
