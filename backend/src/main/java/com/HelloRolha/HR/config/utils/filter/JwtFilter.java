@@ -58,12 +58,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         }
 
+
         Integer accessTokenId = JwtUtils.getId(token, secretKey);
 
         Optional<Employee> employeeOptional = employeeRepository.findById(accessTokenId);
         Employee employee = employeeOptional.get();
 
-        // 토큰이 조작되었는지 확인하는 코드
         // 인가하는 코드
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 employee,
