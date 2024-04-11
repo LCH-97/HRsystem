@@ -307,7 +307,7 @@ export default {
     },
   },
   mounted() {
-    // 출근한 상태인지 확인해야함.
+    // 출근한 상태인지 확인
     this.name= sessionStorage.getItem("name");
     this.check();
     this.fetchBoardData(1);
@@ -355,7 +355,6 @@ export default {
   margin: 15px;
   font-size: 17px;
   background-color: black;
-  /* 검은색으로 변경 */
   color: white;
   border: none;
   border-radius: 5px;
@@ -366,7 +365,7 @@ export default {
 
 #commuteButton:hover {
   background-color: #f7a129;
-  /* 마우스를 올리면 주황색으로 변경 */
+  
 }
 
 #leaveButton {
@@ -375,7 +374,6 @@ export default {
   margin: 10px;
   font-size: 12px;
   background-color: black;
-  /* 검은색으로 변경 */
   color: white;
   border: none;
   border-radius: 5px;
@@ -386,7 +384,7 @@ export default {
 
 #leaveButton:hover {
   background-color: #f7a129;
-  /* 마우스를 올리면 주황색으로 변경 */
+
 }
 
 button:hover {
