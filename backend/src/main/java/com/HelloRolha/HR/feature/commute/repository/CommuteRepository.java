@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 public interface CommuteRepository extends JpaRepository<Commute, Integer> {
     List<Commute> findAllByEmployee(Employee employee);
-    @Query("SELECT c FROM Commute c WHERE c.employee = :employee AND DATE(c.createAt) = :date")
-    Optional<Commute> findByEmployeeAndDate(@Param("employee") Employee employee, @Param("date") LocalDate date);
+    @Query("SELECT c FROM Commute c WHERE c.employee = :employee AND DATE(c.createAt) = CURRENT_DATE()")
+    Optional<Commute> findByEmployee(@Param("employee") Employee employee);
 }

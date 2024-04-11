@@ -26,7 +26,7 @@ public class ManagerController {
     private final HolidayService holidayService;
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/authorize/{employeeId}")
-    public ResponseEntity authorize(@PathVariable Integer employeeId) {
+    public ResponseEntity<BaseRes> authorize(@PathVariable Integer employeeId) {
 
         BaseRes res = BaseRes.builder()
                 .code(200)
@@ -34,12 +34,10 @@ public class ManagerController {
                 .message("승인 성공")
                 .result(managerService.authorize(employeeId))
                 .build();
-
-
         return ResponseEntity.ok().body(res);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/authorize")
-    public ResponseEntity findAuthorize() {
+    public ResponseEntity<BaseRes> findAuthorize() {
 
         BaseRes res = BaseRes.builder()
                 .code(200)
@@ -78,7 +76,7 @@ public class ManagerController {
 
     //직원 상세보기
     @RequestMapping(method = RequestMethod.GET, value = "/employee/{employeeId}")
-    public ResponseEntity readEmployee(@PathVariable Integer employeeId) {
+    public ResponseEntity<BaseRes> readEmployee(@PathVariable Integer employeeId) {
 
         BaseRes res = BaseRes.builder()
                 .code(200)
@@ -91,7 +89,7 @@ public class ManagerController {
         return ResponseEntity.ok().body(res);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/salary")
-    public ResponseEntity salary() {
+    public ResponseEntity<BaseRes> salary() { // 이제 안 쓰는 매소드
         LocalDate startDate =LocalDate.parse("2024-01-01");
         LocalDate endDate =LocalDate.parse("2024-01-31");
         BaseRes res = BaseRes.builder()
@@ -105,7 +103,7 @@ public class ManagerController {
         return ResponseEntity.ok().body(res);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/salary/init")
-    public ResponseEntity salaryInit() {
+    public ResponseEntity<BaseRes> salaryInit() {
 
         BaseRes res = BaseRes.builder()
                 .code(200)
