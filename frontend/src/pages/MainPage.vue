@@ -79,14 +79,12 @@
                                 <td>{{ board.writerid }}</td>
                                 <td>{{ board.createAt }}</td>
                               </tr>
-                              <!-- 서버에서 받아온 데이터로 테이블이 채워질 자리 -->
+                              
                             </tbody>
                           </table>
 
                           <div class="pagination">
-                            <!-- <a href="#" class="prev">&laquo; 이전</a> -->
-                            <!-- 페이지 버튼은 자동으로 생성됩니다. -->
-                            <!-- <a href="#" class="next">다음 &raquo;</a> -->
+                            
                           </div>
                           <div id="boardsIsNull" v-if="boards.length == 0"> 공지사항이 없습니다.</div>
                         </div>
