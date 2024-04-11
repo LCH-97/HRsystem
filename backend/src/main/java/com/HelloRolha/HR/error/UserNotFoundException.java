@@ -10,6 +10,9 @@ public class UserNotFoundException extends EntityNotFoundException {
     public static UserNotFoundException forEmail(String email) {
         return new UserNotFoundException(ErrorCode.USER_NOT_EXISTS, String.format("User email [ %s ] is not exists.", email));
     }
+    public static UserNotFoundException forUsername(String username) {
+        return new UserNotFoundException(ErrorCode.USER_NOT_EXISTS, String.format("Username [ %s ] is not exists.", username));
+    }
 
     public static UserNotFoundException forIdx(Integer idx) {
         return new UserNotFoundException(ErrorCode.USER_NOT_EXISTS, String.format("UserIdx [ %s ] is not exists.", idx));

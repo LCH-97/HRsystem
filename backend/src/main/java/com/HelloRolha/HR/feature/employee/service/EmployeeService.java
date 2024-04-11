@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.employee.service;
 
 import com.HelloRolha.HR.config.utils.JwtUtils;
+import com.HelloRolha.HR.error.TokenRefreshException;
 import com.HelloRolha.HR.error.UserAccountException;
 import com.HelloRolha.HR.error.UserNotFoundException;
 import com.HelloRolha.HR.error.exception.CanNotInitException;
@@ -15,6 +16,8 @@ import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import com.HelloRolha.HR.feature.position.model.entity.Position;
 import com.HelloRolha.HR.feature.refreshToken.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,12 +34,15 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
+    private static final Logger log = LoggerFactory.getLogger(EmployeeService.class);
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Value("${jwt.secret-key}")
     private String secretKey;
+    @Value("${jwt.secret-key2}")
+    private String secretKey2;
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
     public SignUpRes signUp(SignUpReq signUpReq) {
@@ -63,21 +69,26 @@ public class EmployeeService {
         Optional<Employee> result = employeeRepository.findByUsername(loginReq.getUsername());
 
         if(result.isEmpty()) {
-            throw UserNotFoundException.forEmail(loginReq.getUsername());
+            throw UserNotFoundException.forUsername(loginReq.getUsername());
         }
 
         Employee employee = result.get();
         if (passwordEncoder.matches(loginReq.getPassword(), employee.getPassword()) && employee.getStatus().equals(true)) {
-            // refreshToken 생성
-            String refreshToken = JwtUtils.generateRefreshToken(employee, secretKey);
-            // Redis에 refreshToken과 refreshTokenKey 저장
-            redisTemplate.opsForValue().set("refreshToken:" + employee.getId(), refreshToken, expiredTimeMs, TimeUnit.MILLISECONDS);
 
+
+            // refreshToken 생성
+            String refreshToken = JwtUtils.generateRefreshToken(employee, secretKey2);
+            try {
+                // Redis에 refreshToken과 refreshTokenKey 저장
+                redisTemplate.opsForValue().set("refreshToken:" + employee.getId(), refreshToken, expiredTimeMs, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                log.error("Redis 서버 접근 실패: ", e);
+            }
 
             return LoginRes.builder()
                     .name(employee.getName())
                     .token(JwtUtils.generateAccessToken(employee, secretKey, expiredTimeMs))
-                    .refreshToken(JwtUtils.generateRefreshToken(employee, secretKey))
+                    .refreshToken(refreshToken)
                     .refreshTokenKey("refreshToken:" + employee.getId())
                     .build();
 

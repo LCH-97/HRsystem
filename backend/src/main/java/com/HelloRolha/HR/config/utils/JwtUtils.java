@@ -1,18 +1,25 @@
 package com.HelloRolha.HR.config.utils;
 
+import com.HelloRolha.HR.common.dto.BaseRes;
 import com.HelloRolha.HR.error.UserAccountException;
 import com.HelloRolha.HR.feature.employee.model.entity.Employee;
+import com.HelloRolha.HR.feature.employee.repo.EmployeeRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
-
+import java.util.Optional;
+@RequiredArgsConstructor
 public class JwtUtils {
 
     // 일반 로그인 사용자 토큰 생성
@@ -78,12 +85,27 @@ public class JwtUtils {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (SignatureException e) {
-            throw UserAccountException.forInvalidToken(token);
         } catch (ExpiredJwtException e) {
-            throw UserAccountException.forExpiredToken(token);
-        }
+            // access 키가 기간이 지났으면 여기로 온다.
+           return null;
 
+        } catch (SignatureException e) {
+            // 리프레쉬 키를 secret키로 까면 여기로 온다.
+//            @ExceptionHandler(ExpiredJwtException.class)
+//            public ResponseEntity<BaseRes> handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest request) {
+//                String refreshToken = request.getHeader("refreshToken");
+//        TokenRes tokenRes = refreshTokenService.refreshAccessToken(new TokenReq(refreshToken));
+//                BaseRes response = BaseRes.builder()
+//                        .code(1200)
+//                        .isSuccess(true)
+//                        .message("새 token, refreshToken이 발급되었습니다.")
+//                        .result(null)
+//                        .build();
+//                return ResponseEntity.ok().body(response);
+//
+//            }
+            return null;
+        }
     }
 
     // 토큰의 만료 여부를 확인하는 메소드

@@ -27,5 +27,14 @@ public class Commute extends BaseEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    public Boolean isLeave(){
+        return this.sumTime != null;
+    }
+    public String getEndTime(){
+        if(isLeave())
+            return super.getUpdateAt().toString();
+        else return "아직 근무 중입니다.";
+    }
+
 }
 

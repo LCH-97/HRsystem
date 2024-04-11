@@ -13,7 +13,9 @@ public class SalaryScheduler {
     private final SalaryService salaryService;
     @Scheduled(cron = "0 0 0 1 * *") // 매월 1일에 월급 계산
     public void test () throws IOException {
-        System.out.println("test");ㄴ
+
+        System.out.println("test");
+
         salaryService.createSalary();
     }
 }
