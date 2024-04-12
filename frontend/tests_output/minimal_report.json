@@ -1,1 +1,1 @@
-{"modules":{"templates\\sidebar":{"modulePath":"C:\\Users\\Playdata\\Desktop\\be02-fin-Hello_R_loha-HRsystem - frontend\\frontend\\nightwatch\\templates\\sidebar.js","status":"fail"}}}
+{"modules":{"templates\\login":{"modulePath":"C:\\Users\\Playdata\\Desktop\\be02-fin-Hello_R_loha-HRsystem - frontend\\frontend\\nightwatch\\templates\\login.js","status":"pass"},"templates\\failtologin":{"modulePath":"C:\\Users\\Playdata\\Desktop\\be02-fin-Hello_R_loha-HRsystem - frontend\\frontend\\nightwatch\\templates\\failtologin.js","status":"pass"}}}

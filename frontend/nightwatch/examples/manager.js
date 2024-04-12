@@ -24,67 +24,17 @@ describe('The Login Page', function () {
 
   
   /* The following will perform the actual test/assertions */
-  it('To check successful login', async function(browser) {
+  it('To check successful sidebar action', async function(browser) {
   
     browser.navigateTo('http://192.168.0.51');
 
-    /**
-     * Check if input box with id 'username' is present :
-     *   - Use elementPresent command, to check if the input box is present or not.
-     *     Read More : https://nightwatchjs.org/api/assert/#assert-elementPresent
-     *   
-     *   - Pass in the css locator to check if the input box (username) is present.
-     *     Read More: https://www.selenium.dev/documentation/webdriver/elements/locators/
-     * 
-     * Eg: browser.assert.elementPresent('input[id=username]');
-     */
+    
 
-    browser.assert.elementPresent('#inputEmail');
-
-
-    /**
-    * Enter the USERNAME :
-    *   - Use sendKeys command to fill the username input.
-    *     Read More : https://nightwatchjs.org/api/sendKeys.html
-    * 
-    *   - <USERNAME> is a placeholder. Replace it with the actual username
-    *   - <css locator> will be same as above in elementPresent
-    * 
-    * Eg: browser.sendKeys('input[id=username]', 'tomsmith');
-    */
-
+    browser.assert.elementPresent('#inputEmail');  
     browser.sendKeys('#inputEmail', 'admin');
-
-
-    /**
-     * Check if input box with id 'password' is present :
-     *   - Pass in the css locator to check if the input box (password) is present.
-     * 
-     * Eg: browser.assert.elementPresent('input[id=password]');
-     */
-
     browser.assert.elementPresent('#inputPassword');
-
-
-    /**
-      * Enter the Password and form submission :
-      *   - browser.Keys.ENTER is used to press ENTER keystroke after filling the password, to submit the form. 
-      *   - <PASSWORD> is a placeholder. Replace it with the actual password
-      *   - <css locator> will be same as above passed for password in elementPresent command
-      * 
-      * Eg: browser.sendKeys('input[id=password]', ['SuperSecretPassword!', browser.Keys.ENTER]);
-      */
-
     browser.sendKeys('#inputPassword', 'qwer1234');
-
-
-    /**
-     * If ENTER doesn't work for you then you can use 'click' command to click on submit button.
-     * Read More : https://nightwatchjs.org/api/click.html
-     * 
-     * Eg: browser.click('css selector', 'button[type="submit"]');
-     */
-    browser.click('.btn-primary');
+   
     await browser.pause(1000);
     /**
      * Check the new URL is correct :
@@ -95,10 +45,15 @@ describe('The Login Page', function () {
      * 
      * Eg: browser.assert.urlContains('/secure');
      */
+    browser.click('.btn-primary');
+    await browser.pause(1000);
+    browser.assert.urlContains('http://192.168.0.51/main');
 
-    browser.assert.urlContains('http://192.168.0.51/');
-
-
+    browser.click('#GooutMenu');
+    await browser.pause(1000);
+    browser.click('#GooutList');
+    await browser.pause(1000);
+    browser.assert.urlContains('http://192.168.0.51/goout/list');
     /**
      * Check session cookie is present after successful login.
      * Read More: https://nightwatchjs.org/api/getCookie.html
