@@ -170,13 +170,10 @@ public class OvertimeService {
 
             if (overtimeDate.isAfter(startDate) && overtimeDate.isBefore(endDate)) {
 
-                LocalTime startTime = LocalTime.parse(overtime.getStartTime());
-                LocalTime endTime = LocalTime.parse(overtime.getEndTime());
-                // 시작 시간과 종료 시간의 Duration 계산
-                Duration duration = Duration.between(startTime, endTime);
+
 
                 // 총 업무 시간 계산
-                totalMinutes += duration.toMinutes();
+                totalMinutes += overtime.getSumTime();
 
             }
         }
