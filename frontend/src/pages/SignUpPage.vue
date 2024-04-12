@@ -1,5 +1,5 @@
 <template>
-  <div id="layoutSidenav_content">
+  <div id="layoutSidenav_content1">
     <main>
       <div class="container-fluid px-4">
         <div class="container">
@@ -60,7 +60,7 @@
               <h2 class="sub-heading">직원 커스텀 필드</h2>
               <div class="form-group">
                 <label for="inputEmail">아이디</label>
-                <input type="email" class="form-control" id="inputEmail" placeholder="아이디를 입력하세요" v-model="username">
+                <input type="email" class="form-control" id="inputEmail" placeholder="아이디를 입력하세요(test1~50까지는 이미 있습니다.)" v-model="username">
               </div>
               <div class="form-group">
                 <label for="inputPassword">비밀번호</label>
@@ -80,19 +80,19 @@
 
       </div>
     </main>
-    
+
   </div>
   <!-- popup창 -->
 
   <div id="popup-bg" v-show="popUpStatus"></div>
 
   <div id="popup-container" v-show="popUpStatus">
-    <h2>회원가입이 완료 됐습니다.</h2>
-    <p>인사담당자에게 연락하세요</p>
+    <h2>{{ popUpTitle }}</h2>
+    <p>{{ popUpText }}</p>
     <p>인사담당자 번호</p>
     <p>02-1111-2222</p>
-    <p>테스트 중이시라면 admin 계정으로 로그인해주세요.<br/> 인사관리 페이지에서 직접 승인할 수 있습니다.</p>
-    <p>id : admin <br/> pw : qwer1234</p>
+    <p>테스트 중이시라면 admin 계정으로 로그인해주세요.<br /> 인사관리 페이지에서 직접 승인할 수 있습니다.</p>
+    <p>id : admin <br /> pw : qwer1234</p>
     <button id="close-btn" @click="goMainPage">로그인 페이지로 이동</button>
   </div>
 
@@ -119,7 +119,8 @@ export default {
       departmentId: "",
       username: null,
       password: null,
-
+      popUpTitle: "",
+      popUpText: "",
       popUpStatus: false,
     };
   },
@@ -137,13 +138,13 @@ export default {
       const today = new Date();
       const birthDate = new Date(this.birth);
       let age = today.getFullYear()
-          - birthDate.getFullYear()
-          + 1;
+        - birthDate.getFullYear()
+        + 1;
       console.log(api);
       let formData = new FormData();
       formData.append('name', this.name);
       formData.append('phoneNum', this.phoneNum);
-      formData.append('birth', ""+this.birth);
+      formData.append('birth', "" + this.birth);
       formData.append('address', this.address);
       formData.append('age', age);
       formData.append('positionId', this.positionId);
@@ -160,18 +161,23 @@ export default {
           this.responseData = response.data;
 
           // 결과가 200 이면 회원가입 성공했고 인사담당자에게 연락하라고 해야함.
-          if(response.data.code == 200){
+          if (response.data.code == 200) {
+            this.popTitle = "회원가입을 완료했습니다.";
+            this.popText = "인사담당자에게 연락하세요.";
+
             this.popUp();
           }
-          
+
 
         })
         .catch(error => {
           console.error('Error updating data:', error);
-          
-          this.popTitle="회원가입에 실패하였습니다.";
-          this.popText="다시 시도해주세요.";
-          
+          this.popTitle = "회원가입에 실패하였습니다.";
+          if(error.response.data.message.includes("UK")){
+            this.popText = "아이디가 중복되었습니다. 다시 시도해주세요.";
+          }
+          this.popUp();
+
         });
     }
   },
@@ -185,9 +191,9 @@ export default {
   padding-top: 50px;
 }
 
-#layoutSidenav_content {
+#layoutSidenav_content1 {
   padding-left: auto;
-  
+
 }
 
 
@@ -200,12 +206,12 @@ export default {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 100;
-  
+
 }
 
 /* 팝업창 내용 스타일 */
 #popup-container {
-  
+
   position: fixed;
   top: 50%;
   left: 50%;
