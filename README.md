@@ -89,7 +89,8 @@
 피그마 화면 설계서
 <hr>
 
-[Figma url](https://www.figma.com/file/1iFf0h27CtXPPjsuL7Ycg6/Untitled?type=design&node-id=0-1&mode=design&t=NuwToHFSmlC07Wak-0)
+[Figma url](https://www.figma.com/community/file/1360459368600151333/be02-fin-hello-r-loha-hrsystem)
+
 
 <br/>
 
