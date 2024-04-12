@@ -12,14 +12,14 @@
 <br>
 <br>
 
-### 🪷팀원 소개
-***
+## 🪷팀원 소개
+
 
 <br><br>
 
 &nbsp;　&nbsp;　&nbsp;　&nbsp;　&nbsp;　&nbsp;　&nbsp;　&nbsp;　 🎸 **[김태윤](https://github.com/thanks9807)**&nbsp;　 🎺 **[김지은](https://github.com/jiieunn2)** &nbsp;　 🥁 **[이창훈](https://github.com/LCH-97)** &nbsp;　 🎹 **[이준국](https://github.com/Lee-Jun-Guk)** &nbsp;　 🎤 **[김경미](https://github.com/kkm4232)**
 <br><br><br><br>
-***
+
 
 ## ✨ 기술 스택
 
@@ -38,11 +38,11 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=flat&logo=Amazon%20EC2&logoColor=white"></a></a>
 <br>
 <br>
-***
+
 
 
 ## 📌 프로젝트 기본 소개
-***
+
 
 > - 많은 스타트업 회사가 인사 시스템의 도입 이후 **"회사 실적 증가 및 직원 만족도 증가"** 로 긍정적인 영향을 끼친 만큼  &nbsp;**"인사시스템의 중요도"** &nbsp;가 높아지고 있다.
 > - 따라서 **기업내 직원관리, 급여관리, 결재시스템을 자동화**하여 인사 관리 프로세스를 향상시키고 효율화함으로써  **기존의 인사 시스템의 문제점들을** 충족시키는 **"<span style="color:Orange">자동화 인사 시스템"</span>** 제공을 목표로 한다.
@@ -54,8 +54,8 @@
 
 <br>
 
-### 🌷&nbsp;&nbsp;시스템 아키텍처
-***
+## 🌷&nbsp;&nbsp;시스템 아키텍처
+
 
 <br>
 
@@ -67,11 +67,11 @@
 ## ✔️ Api 명세서
 
 [API 명세서 url](https://www.notion.so/API-8c27a6f2844a47c29983097851ee43ba?pvs=4)
-***
+
 
 
 ## 🌻️ ERD 
-***
+
 
 [ERD 다이어그램 url](https://drive.google.com/file/d/1rbtHuxrIUOgK3eVmim1Ep22Cle-bNTAN/view?usp=sharing)
 
@@ -79,7 +79,7 @@
 
 
 ## 📝️ Frontend
-***
+
 <br>
 
 <details>
@@ -422,7 +422,7 @@
 
 
 ## 📝️ Backend
-***
+
 <br>
 
 ✔️ API 테스트 결과 <br>
@@ -525,7 +525,7 @@
 
 
 ## ️️ 📝️ CI/CD
-***
+
 <br>
 
 CI/CD 소개
