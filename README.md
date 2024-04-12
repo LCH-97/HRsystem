@@ -65,9 +65,9 @@
 
 
 ## ✔️ Api 명세서
-***
 
-[API 명세서 url]([https://www.notion.so/API-8c27a6f2844a47c29983097851ee43ba](https://quaint-farmhouse-401.notion.site/API-8c27a6f2844a47c29983097851ee43ba))
+[API 명세서 url](https://www.notion.so/API-8c27a6f2844a47c29983097851ee43ba?pvs=4)
+***
 
 
 ## 🌻️ ERD 
