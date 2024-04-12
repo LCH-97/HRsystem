@@ -42,7 +42,7 @@ export default {
   methods: {
         updateGooutType() {
           const token = sessionStorage.getItem("token");
-      axios.patch(`http://192.168.0.51/api/gooutType/update`, this.gooutTypeInfo, {
+      axios.patch(`http://www.hello-r-loha.kro.kr/api/gooutType/update`, this.gooutTypeInfo, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: "Bearer " + token,

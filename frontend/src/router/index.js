@@ -131,7 +131,7 @@ router.beforeEach(async (to, from, next) => {
       if (tokenData.exp < currentTime && refreshToken) {
         // accessToken 만료 & refreshToken 존재
         console.log("체크포인트3")
-        const response = await axios.post(`http://192.168.0.51/api/refresh/accessToken`, 
+        const response = await axios.post(`http://www.hello-r-loha.kro.kr/api/refresh/accessToken`, 
         {
           refreshToken: sessionStorage.getItem("refreshToken")
         }, { headers: { "Content-Type": "application/json",Authorization: "Bearer " + refreshToken, }});

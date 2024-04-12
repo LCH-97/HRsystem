@@ -144,7 +144,7 @@ export default {
     register() {
       console.log("click");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = 'http://192.168.0.51/api';
+      const api = 'http://www.hello-r-loha.kro.kr/api';
       const today = new Date();
       const birthDate = new Date(this.birth);
       let age = today.getFullYear()

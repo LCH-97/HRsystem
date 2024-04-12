@@ -84,7 +84,7 @@ export default {
 
       // 공지사항 생성 API를 호출합니다.
       axios
-        .post("http://192.168.0.51/api/board/create", formData, config)
+        .post("http://www.hello-r-loha.kro.kr/api/board/create", formData, config)
         .then((response) => {
           console.log(response.data);
           alert("공지사항이 성공적으로 생성되었습니다.");

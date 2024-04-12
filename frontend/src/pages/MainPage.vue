@@ -220,7 +220,7 @@ export default {
       this.isLoading = true;
       this.loadingTitle = "출근 중"
       this.loadingText = "잠시만 기다려주세요."
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.hello-r-loha.kro.kr/api";
       const token = sessionStorage.getItem("token");
       axios
         .post(api + "/employee/commute", null, {
@@ -244,7 +244,7 @@ export default {
       console.log(" leave click");
       if(this.isLoading) return;
       this.isLoading = true;
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.hello-r-loha.kro.kr/api";
       const token = sessionStorage.getItem("token");
       axios
         .patch(api + "/employee/leave/" + this.commuteId, null, {
@@ -270,7 +270,7 @@ export default {
       this.isLoading = true;
       this.loadingTitle = "출근 확인 중"
       this.loadingText = "잠시만 기다려주세요."
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.hello-r-loha.kro.kr/api";
       const token = sessionStorage.getItem("token");
       axios
         .get(api + "/employee/commute/check", {
@@ -302,7 +302,7 @@ export default {
       console.log("qweqwe");
       const itemsPerPage = 6;
       axios
-        .get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
+        .get(`http://www.hello-r-loha.kro.kr/api/board/check?page=${page}&perPage=${itemsPerPage}`)
         .then((response) => {
           // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
           this.boards = response.data.result.boards;
