@@ -19,7 +19,7 @@
                 메인 화면
               </a>
               <div class="sb-sidenav-menu-heading">Interface</div>
-              <a class="nav-link collapsed" href="/signUp" data-bs-toggle="collapse" data-bs-target="#collapseLayouts"
+              <a id="signUp" class="nav-link collapsed" href="/signUp" data-bs-toggle="collapse" data-bs-target="#collapseLayouts"
                  aria-expanded="false" aria-controls="collapseLayouts">
                 <div class="sb-nav-link-icon"><svg class="svg-inline--fa fa-table-columns" aria-hidden="true"
                                                    focusable="false" data-prefix="fas" data-icon="table-columns" role="img"
@@ -38,7 +38,7 @@
                 </svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
               </a>
 
-              <a class="nav-link collapsed" href="/login" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+              <a id="loginIn" class="nav-link collapsed" href="/login" data-bs-toggle="collapse" data-bs-target="#collapsePages"
                  aria-expanded="false" aria-controls="collapsePages">
                 <div class="sb-nav-link-icon"><svg class="svg-inline--fa fa-book-open" aria-hidden="true"
                                                    focusable="false" data-prefix="fas" data-icon="book-open" role="img"
@@ -57,7 +57,7 @@
                 </svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
               </a>
 
-              <a class="nav-link collapsed" @click.prevent="toggleGooutMenu">
+              <a id="GooutMenu" class="nav-link collapsed" @click.prevent="toggleGooutMenu">
                 <div class="sb-nav-link-icon">
                   <svg class="svg-inline--fa fa-table-columns" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="table-columns" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path fill="currentColor" d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zm64 64V416H224V160H64zm384 0H288V416H448V160z"></path>
@@ -72,8 +72,8 @@
               </a>
               <div class="collapse" :class="{ show: isGooutMenuOpen }" id="collapseOvertime">
                 <nav class="sb-sidenav-menu-nested nav">
-                  <router-link to="/goout/create" class="nav-link">휴가 생성</router-link>
-                  <router-link to="/goout/list" class="nav-link">휴가 목록</router-link>
+                  <router-link to="/goout/create" id="GooutCreate" class="nav-link">휴가 생성</router-link>
+                  <router-link to="/goout/list" id="GooutList" class="nav-link">휴가 목록</router-link>
                 </nav>
               </div>
 
@@ -92,8 +92,8 @@
               </a>
               <div class="collapse" :class="{ show: isApproveMenuOpen }" id="collapseOvertime">
                 <nav class="sb-sidenav-menu-nested nav">
-                  <router-link to="/approve/create" class="nav-link">결재 생성</router-link>
-                  <router-link to="/approve/list" class="nav-link">결재 목록</router-link>
+                  <router-link to="/approve/create" id="approveCreate" class="nav-link">결재 생성</router-link>
+                  <router-link to="/approve/list" id="approveList" class="nav-link">결재 목록</router-link>
                 </nav>
               </div>
 
@@ -112,10 +112,10 @@
               </a>
               <div class="collapse" :class="{ show: isOvertimeMenuOpen }" id="collapseOvertime">
                 <nav class="sb-sidenav-menu-nested nav">
-                  <router-link to="/overtimecreate" class="nav-link">초과 근무 생성</router-link>
-                  <router-link to="/overtimelist" class="nav-link">초과 근무 목록</router-link>
-                  <router-link to="/overtimemodify" class="nav-link">초과 근무 수정</router-link>
-                  <router-link to="/overtimeapprovea" class="nav-link">초과 근무 승인 목록</router-link>
+                  <router-link to="/overtimecreate" id="overtimecreate" class="nav-link">초과 근무 생성</router-link>
+                  <router-link to="/overtimelist" id="overtimelist" class="nav-link">초과 근무 목록</router-link>
+                  <router-link to="/overtimemodify" id="overtimemodify" class="nav-link">초과 근무 수정</router-link>
+                  <router-link to="/overtimeapprovea" id="overtimeapprovea" class="nav-link">초과 근무 승인 목록</router-link>
                 </nav>
               </div>
 
