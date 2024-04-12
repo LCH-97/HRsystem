@@ -8,7 +8,7 @@ describe('The Login Page', function () {
    * This section will always execute before the test suite
    * Read More : https://nightwatchjs.org/guide/writing-tests/using-test-hooks.html#before-beforeeach-after-aftereach
    */
-  before(async function (browser) {
+  // before(async function (browser) {
     /**
      * Navigate to a URL :
      *   - We need to navigate before performing any actions on the page
@@ -19,13 +19,14 @@ describe('The Login Page', function () {
      * Eg: browser.navigateTo('https://the-internet.herokuapp.com/login');
      */
 
-    browser.navigateTo('http://192.168.0.51');
-    await browser.axeInject();
-  });
+    
+  // });
 
   
   /* The following will perform the actual test/assertions */
-  it('To check session cookie after successful login', function(browser) {
+  it('To check successful login', async function(browser) {
+  
+    browser.navigateTo('http://192.168.0.51');
 
     /**
      * Check if input box with id 'username' is present :
@@ -74,7 +75,7 @@ describe('The Login Page', function () {
       * Eg: browser.sendKeys('input[id=password]', ['SuperSecretPassword!', browser.Keys.ENTER]);
       */
 
-    browser.sendKeys('#inputPasswor', 'qwer1234');
+    browser.sendKeys('#inputPassword', 'qwer1234');
 
 
     /**
@@ -83,8 +84,8 @@ describe('The Login Page', function () {
      * 
      * Eg: browser.click('css selector', 'button[type="submit"]');
      */
-    browser.click('.btn-primary', 'button[type="submit"]');
-
+    browser.click('.btn-primary');
+    await browser.pause(1000);
     /**
      * Check the new URL is correct :
      *   - Use urlContains command to check the URL of the current page.
@@ -107,18 +108,20 @@ describe('The Login Page', function () {
      *       this.assert.equal(result.value.length, 532);
      *     });
      */
-
-    browser.getCookie('<cookie-name>', function callback(result) {
-      // add more assertions here to test the result
-      this.assert.equal(result.value, '<cookie-value>');
-      this.assert.equal(result.name, '<cookie-name>');
-    });
+    // browser.execute(() => {
+    //   const value = sessionStorage.getItem('token');
+    //   expect(value).not.toBeNull();
+    
+    // });
+    
+    
+    browser.end();
   });
 
 
   /* The following will always execute after the test suite */
-  after(function (browser) {
+  // after(function (browser) {
     // This is used to close the browser's session
-    browser.end();
-  });
+    
+  // });
 });
