@@ -207,15 +207,25 @@ public class CommuteService {
 
         if (optionalCommuteToday.isPresent()) {
             Commute commuteToday = optionalCommuteToday.get();
-            return CommuteCheckRes.builder()
+            if(commuteToday.isLeave())
+                return CommuteCheckRes.builder()
                     .id(commuteToday.getId())
                     .isCommute(true)
                     .isLeave(commuteToday.isLeave())
                     .startTime(commuteToday.getCreateAt().toString())
                     .endTime(commuteToday.getEndTime())
-
-
+                    .sumTime(commuteToday.getSumTimeByHours())
                     .build();
+            else{
+                return CommuteCheckRes.builder()
+                        .id(commuteToday.getId())
+                        .isCommute(true)
+                        .isLeave(commuteToday.isLeave())
+                        .startTime(commuteToday.getCreateAt().toString())
+                        .endTime(commuteToday.getEndTime())
+                        .sumTime("0:00")
+                        .build();
+            }
         }else {
             return CommuteCheckRes.builder()
                     .isCommute(false)
