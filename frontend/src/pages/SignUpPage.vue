@@ -122,6 +122,7 @@ export default {
       popUpTitle: "",
       popUpText: "",
       popUpStatus: false,
+      status: false,
     };
   },
   methods: {
@@ -129,7 +130,10 @@ export default {
       this.popUpStatus = true;
     },
     goMainPage() {
-      this.$router.push('/');
+      if(this.status)
+        this.$router.push('/');
+      else
+        this.popUpStatus = false;
     },
     register() {
       console.log("click");
@@ -162,9 +166,9 @@ export default {
 
           // 결과가 200 이면 회원가입 성공했고 인사담당자에게 연락하라고 해야함.
           if (response.data.code == 200) {
-            this.popTitle = "회원가입을 완료했습니다.";
-            this.popText = "인사담당자에게 연락하세요.";
-
+            this.popUpTitle = "회원가입을 완료했습니다.";
+            this.popUpText = "인사담당자에게 연락하세요.";
+            this.status = true;
             this.popUp();
           }
 
@@ -172,9 +176,9 @@ export default {
         })
         .catch(error => {
           console.error('Error updating data:', error);
-          this.popTitle = "회원가입에 실패하였습니다.";
+          this.popUpTitle = "회원가입에 실패하였습니다.";
           if(error.response.data.message.includes("UK")){
-            this.popText = "아이디가 중복되었습니다. 다시 시도해주세요.";
+            this.popUpText = "아이디가 중복되었습니다. 다시 시도해주세요.";
           }
           this.popUp();
 
