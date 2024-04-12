@@ -197,6 +197,9 @@ export default {
     };
   },
   methods: {
+    splitDaltaTime(daltaTime){
+      return daltaTime.split('T')[1];
+    },
     commute() {
       console.log("click commute button");
       if(this.isLoading) return;
@@ -214,7 +217,7 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          this.startTime = response.data.result ? response.data.result.startTime : '0';
+          this.startTime = this.splitDaltaTime(response.data.result ? response.data.result.startTime : '0T0') ;
           this.commuteId = response.data.result ? response.data.result.id : '';
           this.isCommute = true;
           this.isLeave = false;
@@ -238,7 +241,7 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          this.endTime = response.data.result ? response.data.result.endTime : '0';
+          this.endTime = this.splitDaltaTime(response.data.result ? response.data.result.endTime : '0');
           this.sumTime = response.data.result ? response.data.result.sumTime : '0';
           this.isLeave = true;
         })
@@ -247,6 +250,7 @@ export default {
           alert("퇴근 실패");
         }).finally(()=>{this.isLoading = false;});
     },
+    
     check() {
       console.log("check");
       if(this.isLoading) return;
@@ -269,10 +273,10 @@ export default {
           this.commuteId =  response.data.result.commuteId;
           if (this.isCommute) {
             this.commuteId = response.data.result.id;
-            this.startTime = response?.data?.result?.startTime || '0';
+            this.startTime = this.splitDaltaTime(response?.data?.result?.startTime || '0T0') ;
           }
           if (this.isLeave) {
-            this.endTime = response.data.result.endTime;
+            this.endTime = this.splitDaltaTime(response.data.result.endTime) ;
             this.sumTime = response.data.result.sumTime;
           }
         })
@@ -280,7 +284,7 @@ export default {
           console.error("Error updating data:", error);
         }).finally(()=>{this.isLoading = false;});
     },
-
+    
     fetchBoardData(page) {
       console.log("qweqwe");
       const itemsPerPage = 6;
