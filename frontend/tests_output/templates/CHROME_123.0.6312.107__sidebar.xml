@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="2"
+            failures="1"
+            tests="1">
+
+  <testsuite name="templates.sidebar"
+    errors="2" failures="1" hostname="" id="" package="sidebar" skipped="0"
+    tests="1" time="42.57" timestamp="">
+  
+    <testcase name="To check successful sidebar action" classname="templates.sidebar" time="21.03" assertions="4">
+
+    
+
+    
+
+      <failure message="Testing if the URL contains &#39;http://192.168.0.51/goout/create&#39; in 5000ms - expected &#34;contains &#39;http://192.168.0.51/goout/create&#39;&#34; but got: &#34;http://192.168.0.51/&#34; (5329ms)">    at DescribeInstance.&lt;anonymous&gt; (C:\Users\Playdata\Desktop\be02-fin-Hello_R_loha-HRsystem - frontend\frontend\nightwatch\templates\sidebar.js:56:22)</failure>
+
+    
+    <error message="Testing if the URL contains [33m&#39;http://192.168.0.51/goout/create&#39;[39m in 5000ms - expected [32m&#34;contains &#39;http://192.168.0.51/goout/create&#39;&#34;[39m but got: [31m&#34;http://192.168.0.51/&#34;[39m [90m(5329ms)[39m" type="error"><![CDATA[
+    Error
+    at Proxy.&lt;anonymous&gt; (C:\Users\Playdata\Desktop\be02-fin-Hello_R_loha-HRsystem - frontend\frontend\node_modules\nightwatch\lib\api\index.js:161:30)
+    at DescribeInstance.&lt;anonymous&gt; (C:\Users\Playdata\Desktop\be02-fin-Hello_R_loha-HRsystem - frontend\frontend\nightwatch\templates\sidebar.js:56:22)
+    ]]></error>
+    
+    </testcase>
+  
+
+  
+    <system-err>
+       NoSuchElementError
+   An element could not be located on the page using the given search parameters.
+
+    Try fixing by :
+    1. Please inspect the html before the step
+    2. Verify if an element with the mentioned selector is present in the DOM tree
+
+    Error location:
+    C:\Users\Playdata\Desktop\be02-fin-Hello_R_loha-HRsystem - frontend\frontend\nightwatch\templates\sidebar.js:52
+    ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+     50 |       browser.assert.urlContains(&#39;http://192.168.0.51/&#39;);
+     51 |   
+     52 |       browser.click(&#39;#GooutMenu&#39;); 
+     53 |       await browser.pause(1000);
+     54 |       browser.click(&#39;#GooutCreate&#39;);
+    ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+ NoSuchElementError
+   An element could not be located on the page using the given search parameters.
+
+    Try fixing by :
+    1. Please inspect the html before the step
+    2. Verify if an element with the mentioned selector is present in the DOM tree
+
+    Error location:
+    C:\Users\Playdata\Desktop\be02-fin-Hello_R_loha-HRsystem - frontend\frontend\nightwatch\templates\sidebar.js:54
+    ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+     52 |       browser.click(&#39;#GooutMenu&#39;);
+     53 |       await browser.pause(1000);
+     54 |       browser.click(&#39;#GooutCreate&#39;); 
+     55 |       await browser.pause(1000);
+     56 |       browser.assert.urlContains(&#39;http://192.168.0.51/goout/create&#39;);
+    ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+    </system-err>
+  
+
+    
+
+  
+  </testsuite>
+</testsuites>
