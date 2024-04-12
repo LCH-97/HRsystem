@@ -17,8 +17,9 @@
     <a class="navbar-brand ps-3" href="/manager" v-if="isAdmin">인사관리</a>
 
     <!-- Navbar-->
-    
+
   </nav>
+  <div id="popup-bg"></div>
 </template>
 
 <script>
@@ -36,6 +37,13 @@ export default {
     };
   },
   methods: {
+    cookieCheck() {
+      const cookieName = 'myCookie';
+      const cookieValue = document.cookie.split('; ').find(row => row.startsWith(cookieName + '='));
+      const isCookieExists = cookieValue !== undefined;
+      console.log(isCookieExists); // 쿠키가 존재하면 true, 그렇지 않으면 false
+
+    },
     checkIsAdmin() {
       console.log("getAuthorizeList START");
       // const api = process.env.VUE_APP_BACKEND_URL;
@@ -56,6 +64,8 @@ export default {
           console.log(response);
           if (response.data.code == 200) {
             this.isAdmin = true;
+
+            this.cookieCheck();
           }
           else {
             this.isAdmin = false;
@@ -67,7 +77,7 @@ export default {
           // alert();
           //throw new Error("권한 확인 실패");
 
-        }).finally(()=>{
+        }).finally(() => {
           console.log("getAuthorizeList END");
         });
 
@@ -79,7 +89,7 @@ export default {
     } catch (error) {
       console.error("Error Header Init:", error);
     }
-    
+
 
   },
 }

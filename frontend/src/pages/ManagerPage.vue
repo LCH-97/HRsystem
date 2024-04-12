@@ -110,6 +110,22 @@
                   </div>
                 </div>
               </div>
+              <div class="col-xl-2">
+                <div class="card mb-4">
+                  <div class="card-header"><router-link to="/overtimeapprovea" class="nav-link">초과근무 승인</router-link></div>
+                  <div class="card-body">
+                    <div class="chartjs-size-monitor">
+                      <div class="chartjs-size-monitor-expand">
+                        <div class="card-header"><router-link to="/overtimeapprovea" class="nav-link">초과근무 승인</router-link></div>
+                        
+                      </div>
+                      <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -143,7 +159,7 @@ export default {
       // isLeave: true,
       // commuteId: "",
       currentPage: 0,
-      pageSize: 10,
+      pageSize: 5,
       lastDate: "",
       authorizeResult: {
         result: [
