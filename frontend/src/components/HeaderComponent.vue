@@ -19,7 +19,7 @@
     <!-- Navbar-->
 
   </nav>
-  <div id="popup-bg"></div>
+  <!-- <div id="popup-bg"></div> -->
 </template>
 
 <script>
