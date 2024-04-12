@@ -125,7 +125,7 @@ export default {
       };
 
       axios
-        .patch(`http://www.hello-r-loha.kro.kr/api/board/update`, formData, { headers })
+        .patch(`http://192.168.0.51/api/board/update`, formData, { headers })
         .then(() => {
           alert("공지사항이 성공적으로 수정되었습니다.");
           this.$router.push("/board/list");
@@ -138,7 +138,7 @@ export default {
 
     fetchFiles() {
       axios
-        .get(`http://www.hello-r-loha.kro.kr/api/board/files/${this.board.id}`)
+        .get(`http://192.168.0.51/api/board/files/${this.board.id}`)
         .then((response) => {
           this.files = response.data; // 파일 목록으로 응답 데이터 설정
         })
@@ -154,7 +154,7 @@ export default {
     // 파일 삭제 요청
     deleteFile(fileId) {
       axios
-        .delete(`http://www.hello-r-loha.kro.kr/api/board/files/delete/${fileId}`)
+        .delete(`http://192.168.0.51/api/board/files/delete/${fileId}`)
         .then(() => {
           alert("파일이 성공적으로 삭제되었습니다.");
           this.fetchFiles(); // 파일 목록 새로고침

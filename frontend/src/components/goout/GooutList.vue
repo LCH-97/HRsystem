@@ -133,7 +133,7 @@ export default {
     async fetchGoouts() {
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get(`http://www.hello-r-loha.kro.kr/api/goout/check`, {
+        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,

@@ -172,7 +172,7 @@ export default {
     async sendData(formData) {
       try {
         const token = sessionStorage.getItem("token");
-        let response = await axios.post("http://www.hello-r-loha.kro.kr/api/employee/overtime/create", formData, {
+        let response = await axios.post("http://192.168.0.51/api/employee/overtime/create", formData, {
           headers: { Authorization: "Bearer " + token, },
 
         });

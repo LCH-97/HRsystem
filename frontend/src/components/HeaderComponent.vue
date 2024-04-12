@@ -39,7 +39,7 @@ export default {
     checkIsAdmin() {
       console.log("getAuthorizeList START");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://www.hello-r-loha.kro.kr/api";
+      const api = "http://192.168.0.51/api";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);

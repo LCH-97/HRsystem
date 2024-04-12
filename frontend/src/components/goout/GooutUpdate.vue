@@ -87,7 +87,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      backend: "http://www.hello-r-loha.kro.kr/api",
+      backend: "http://192.168.0.51/api",
       updateInfo: {
         gooutTypeName: "",
         agentName: "",

@@ -33,7 +33,7 @@ export default {
   methods: {
     fetchGooutType() {
       const token = sessionStorage.getItem("token");
-      axios.get(`http://www.hello-r-loha.kro.kr/api/gooutType/${this.id}`,{
+      axios.get(`http://192.168.0.51/api/gooutType/${this.id}`,{
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -60,7 +60,7 @@ export default {
     deleteGooutType() {
       if (confirm("정말로 이 휴가타입을 삭제하시겠습니까?")) {
         const token = sessionStorage.getItem("token");
-        axios.delete(`http://www.hello-r-loha.kro.kr/api/gooutType/delete/${this.id}`,{
+        axios.delete(`http://192.168.0.51/api/gooutType/delete/${this.id}`,{
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
