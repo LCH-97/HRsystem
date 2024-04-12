@@ -13,8 +13,8 @@
                 <div class="card mb-4">
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
-                      <div class="chartjs-size-monitor-expand1">
-                        <FullCalendar :options="calendarOptions" />
+                      <div class="chartjs-size-monitor-expand1" style="margin-top: 28px; direction: ltr; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 33px;">
+                        <FullCalendar :options="calendarOptions" style="margin-top: 30px; direction: ltr; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 33px;" />
                       </div>
                       
                     </div>
@@ -103,8 +103,8 @@
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
                         <div id="commute-info">
-                          <h2 style="font-size: 28px; position: relative; top: 93px;">안녕하세요</h2>
-                          <h2 style="font-size: 28px; position: relative; top: 106px;">{{ this.name }}님</h2>
+                          <h2 style="font-size: 27px; position: relative; top: 85px;">안녕하세요</h2>
+                          <h2 style="font-size: 26px; position: relative; top: 102px;">{{ this.name }}님</h2>
                           <img class="profile-pic" src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg" alt="Profile Picture" />
 
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
@@ -197,6 +197,9 @@ export default {
     };
   },
   methods: {
+    splitDaltaTime(daltaTime){
+      return daltaTime.split('T')[1];
+    },
     commute() {
       console.log("click commute button");
       if(this.isLoading) return;
@@ -214,7 +217,7 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          this.startTime = response.data.result ? response.data.result.startTime : '0';
+          this.startTime = this.splitDaltaTime(response.data.result ? response.data.result.startTime : '0T0') ;
           this.commuteId = response.data.result ? response.data.result.id : '';
           this.isCommute = true;
           this.isLeave = false;
@@ -238,7 +241,7 @@ export default {
         })
         .then((response) => {
           console.log("Response:", response.data);
-          this.endTime = response.data.result ? response.data.result.endTime : '0';
+          this.endTime = this.splitDaltaTime(response.data.result ? response.data.result.endTime : '0');
           this.sumTime = response.data.result ? response.data.result.sumTime : '0';
           this.isLeave = true;
         })
@@ -247,6 +250,7 @@ export default {
           alert("퇴근 실패");
         }).finally(()=>{this.isLoading = false;});
     },
+    
     check() {
       console.log("check");
       if(this.isLoading) return;
@@ -269,10 +273,10 @@ export default {
           this.commuteId =  response.data.result.commuteId;
           if (this.isCommute) {
             this.commuteId = response.data.result.id;
-            this.startTime = response?.data?.result?.startTime || '0';
+            this.startTime = this.splitDaltaTime(response?.data?.result?.startTime || '0T0') ;
           }
           if (this.isLeave) {
-            this.endTime = response.data.result.endTime;
+            this.endTime = this.splitDaltaTime(response.data.result.endTime) ;
             this.sumTime = response.data.result.sumTime;
           }
         })
@@ -280,7 +284,7 @@ export default {
           console.error("Error updating data:", error);
         }).finally(()=>{this.isLoading = false;});
     },
-
+    
     fetchBoardData(page) {
       console.log("qweqwe");
       const itemsPerPage = 6;
@@ -397,7 +401,7 @@ button:active {
 }
 
 #commute-info {
-  height: 614px;
+  height: 591px;
   font-size: 12px;
   text-align: center;
   border: 2px solid #fdfbfb;
@@ -414,11 +418,11 @@ button:active {
 
 .profile-pic {
   width: 100px;
-  height: 100px;
+  height: 99px;
   border-radius: 50%;
   border: 2px solid #fff;
   position: absolute;
-  top: 246px;
+  top: 234px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -426,7 +430,7 @@ button:active {
 .main-button-container {
   position: relative;
   padding: 0px;
-  margin-top: 343px;
+  margin-top: 286px;
 }
 
 #sumTime {
@@ -451,7 +455,7 @@ body {
   overflow-x: auto;
   font-size: 10px;
   margin-top: 24px;
-  height: 376px;
+  height: 354px;
 }
 
 .table {
@@ -495,7 +499,14 @@ body {
 }
 
 .chartjs-size-monitor-expand1 {
-  margin-top: 9px;
+  margin-top: 1px;
+  direction: ltr;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 33px;
+  margin-top: 4px;
 }
 
 .card-header2 {
