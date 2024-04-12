@@ -150,37 +150,20 @@
 <details>
 <summary>결재 기능</summary>
 
-직원 결재 생성
+결재 생성
 <br>
 - 직원이 결재 생성 페이지에서 내용 입력과 결재자 선택 후 제출 버튼을 누르면 결재 생성이 된다.
 - 직원은 파일 선택 버튼을 누르면 파일을 첨부할 수 있다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/59feb284-c127-4b60-860a-469f35a186c3">
 </p>
 
-직원 결재 수정
+결재 조회
 <br>
-- 직원은 내용과 결재자를 새로 지정하고 수정 버튼을 누르면 결재가 수정된다.
-  <br>
-<hr>
-<p align="center">
-  <img src="">
-</p>
-
-직원 결재 삭제
-<br>
-- 직원은 수정과 삭제 버튼을 눌러 작성한 결재를 삭제할 수 있다.
-  <br>
-<hr>
-<p align="center">
-  <img src="">
-</p>
-
-직원 결재 목록조회
-<br>
-- 직원은 전체 버튼을 누르면 모든 상태의 결재 내역을 볼 수 있다.
+- 직원은 결재 조회 페이지에서 결재 기록을 전체 볼 수 있다.
 - 직원은 기안 중 버튼을 누르면 기안중인 상태의 결재 내역만 볼 수 있다.
 - 직원은 진행 중 버튼을 누르면 진행중인 상태의 결재 내역만 볼 수 있다.
 - 직원은 반려 버튼을 누르면 반려 상태의 결재 내역만 볼 수 있다.
@@ -190,18 +173,19 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/1a027569-0173-470c-8652-123e6c0debea">
 </p>
 
-직원 결재 조회
+결재 상세 조회
 <br>
-- 직원은 수정과 삭제 버튼을 누를 수 있다.
-- 결재자는 승인과 반려 버튼을 누를 수 있다.
-- 직원은 수정 버튼을 누르면 결재 수정 페이지로 이동한다.
+- 직원은 자신의 결재에 대한 상세 정보를 조회할 수 있다.
+- 결재자는 결재나 반려 버튼을 눌러 작성한 결재를 결재 또는 반려할 수 있다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/a028f1bc-14a1-48b3-b1eb-441f122ebf87">
 </p>
 
 </details>
@@ -302,7 +286,8 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/2e2fd672-2229-43c2-add7-9b20506f7a5a">
 </p>
 
 직원 초과 근무 수정
@@ -313,7 +298,8 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/29b73274-2e4d-40f0-a125-07fb1a419c04">
 </p>
 
 
@@ -324,7 +310,20 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/a89701cb-5c2b-4d6f-a722-0ed9abd7c79d">
+</p>
+
+직원 초과 근무 상세 목록 조회
+<br>
+- 직원은 초과 근무 목록에서 상세 목록 조회를 할 수 있다.
+- 직원은 초과 근무 상세 페이지에서 날짜, 시간, 사유, 상태를 볼 수 있다.
+- 인사 관리자는 직원이 신청한 초과 근무에 승인할 수 있다.
+- 직원은 인사 관리자가 승인한 초과 근무만 사용할 수 있다.
+  <br>
+<hr>
+<p align="center">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/27c28898-c160-4b89-b127-3eb7fbabf7ba">
 </p>
 
 </details>
