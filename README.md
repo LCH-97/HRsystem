@@ -110,11 +110,15 @@
 직원 회원 가입 & 로그인
 <br>
 - 인사 담당자가 직원의 인적사항을 입력 후 직원의 id를 부여하고 직원에게 알려준다.
-- 직원은 인사 담당자가 알려준 id, pw로만 가입이 가능하다.
+- 직원은 인사 담당자가 승인해준 id, pw로만 가입이 가능하다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/e29cb4d0-eb34-4320-98d7-997c60076803">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/6d1c6453-0161-4603-ab37-6b8ccebd6c2f">
+ 
+
 </p>
 
 
@@ -127,23 +131,19 @@
 인사 담당자 회원 가입 & 로그인
 <br>
 - 인사 담당자는 본인뿐만 아니라 직원의 회원가입도 담당한다.
-- 인사 담당자는 등록된 직원의 계정을 직원에게 알려줘야한다.
+- 인사 담당자는 신청한 직원의 계정을 승인해줘야한다.
+- 인사 담당자는 본인이 권한을 부여할 수 있다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/e29cb4d0-eb34-4320-98d7-997c60076803">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/6d1c6453-0161-4603-ab37-6b8ccebd6c2f">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/ffe79f67-4bc5-4914-a21c-1eb300aed7d2">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/d8441df9-4773-4437-a9a5-b45e1df42fc2">
+
 </p>
 <br>
 
-인사 담당자가 직원 id 생성
-<br>
-- 인사 담당자는 시스템에 로그인한 후 직원의 인적사항을 입력하고 계정을 생성할 수 있습니다.
-- 인사 담당자는 시스템에 로그인한 후 본인 및 직원의 인적사항 수정, 삭제 등의 기능을 수행할 수 있습니다.
-
-<hr>
-<p align="center">
-<img src=""> 
-</p>
 </details>
 
 <details>
@@ -215,7 +215,8 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+
+<img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/1c3311e7-a30c-4a03-adaf-962d1fd4c215">
 </p>
 
 직원 휴가 수정
@@ -226,27 +227,28 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
-</p>
 
-직원 휴가 삭제
-<br>
-- 결재 기안 중일때만 삭제 가능하다.
-- 휴가 결재는 휴가를 신청한 사람만 삭제가 가능하다.
-  <br>
-<hr>
-<p align="center">
-  <img src="">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/8d2374e6-802a-4405-8f56-12ec6b542030">
 </p>
 
 직원 휴가 조회
 <br>
 - 휴가 생성때 저장되었던 모든 정보가 보인다.
-- 로그인한 사람의 정보에 따라 수정, 삭제 버튼이 보이거나 결재, 반려 버튼이 보인다.
+- 로그인한 사람의 유에 따라 수정, 삭제 버튼이 보이거나 결재, 반려 버튼이 보인다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/a31b2042-985d-4d0f-9c4d-a341d58f726e">
+</p>
+
+직원 휴가 상세 조회
+<br>
+- 각 휴가의 생성때 저장되었던 모든 정보가 보인다.
+- 로그인한 사람의 유형에 따라 수정, 삭제 버튼이 보이거나 결재, 반려 버튼이 보인다.
+  <br>
+<hr>
+<p align="center">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/92948ad3-2ec7-43c2-8ddf-7bd630df3dab">
 </p>
 
 </details>
@@ -254,15 +256,27 @@
 <details>
 <summary>출퇴근 기능</summary>
 
-직원 출퇴근 생성
+직원 출근 생성
 <br>
 - 직원이 로그인 후 메인 페이지에서 출근 버튼을 누르면 해당 서버 시간으로 출근 시간이 등록 된다.
+  <br>
+<hr>
+<p align="center">
+  
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/20d97636-8bfe-4261-a8fd-2ff1e9145067">
+
+</p>
+
+직원 퇴근 생성
+<br>
 - 직원이 퇴근할 시 메인 페이지에서 퇴근 버튼을 누르면 퇴근 시간과 함께 총 업무시간이 계산되어 메인페이지에 출력이 된다.
   <br>
 <hr>
 <p align="center">
-  <img src="">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/d0ad5636-0544-4828-aace-24592cccbac5">
+   <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/636cece4-85ed-4c23-a945-b235f83fbf50">
 </p>
+
 
 직원 출퇴근 수정
 <br>
@@ -270,17 +284,10 @@
   <br>
 <hr>
 <p align="center">
-  <img src="">
+  
 </p>
 
-직원 출퇴근 목록조회
-<br>
-- 직원은 출퇴근 목록을 목록 페이지에서 조회할 수 있다.
-  <br>
-<hr>
-<p align="center">
-  <img src="">
-</p>
+
 
 </details>
 
@@ -320,12 +327,145 @@
 </p>
 
 </details>
+
+<details>
+<summary>급여 기능</summary>
+
+급여 조회
+<br>
+- 직원이 초과 근무 페이지에서 날짜, 시작/종료 시간, 초과 근무 사유를 입력하여 생성한다.
+- 직원은 승인이 된 초과 근무만 인정이 된다.
+  <br>
+<hr>
+<p align="center">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/9d117022-8ab4-4861-87be-f8ec8077ce14">
+</p>
+
+--
+<br>
+- 특수한 경우는 인사 담당자에세 문의해야한다.
+
+  <br>
+<hr>
+<p align="center">
+  <img src="">
+</p>
+
+
+--
+<br>
+- --
+
+  <br>
+<hr>
+<p align="center">
+  <img src="">
+</p>
+
+</details>
 </details>
 
 
 ## 📝️ Backend
 ***
 <br>
+
+API 테스트 결과
+
+<details>
+<summary>회원 기능</summary>
+
+직원/인사 관리자 회원가입
+<br>
+- 직원이 회원가입을 할 때, 사용자 이름, 비밀번호, 전화번호, 생일, 주소 등을 입력하여 생성한다.
+- 직원은 인사 관리자가 승인을 해줘야 로그인이 가능하다.
+  <br>
+<hr>
+<p align="center">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/d4925eae-7d0d-4565-ab46-a1c9dbbaa033">
+</p>
+
+직원/인사 관리자 로그인
+<br>
+- 직원은 인사 관리자가 승인해준 계정을 받아 로그인한다.
+- 특수한 경우는 인사 담당자에세 문의해야한다.
+- 인사 관리자 본인인은 승인이 필요없다.
+  <br>
+<hr>
+<p align="center">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/e6a1a862-62cf-4624-bc23-b51d6476ee58">
+</p>
+
+</details>
+
+<details>
+<summary>휴가 기능</summary>
+
+휴가 생성
+<br>
+- 직원이 초과 근무 페이지에서 날짜, 시작/종료 시간, 초과 근무 사유를 입력하여 생성한다.
+- 직원은 승인이 된 초과 근무만 인정이 된다.
+  <br>
+<hr>
+<p align="center">
+  <img src="">
+</p>
+
+휴가 수정
+<br>
+- 직원은 작성한 모든 요구사항에 대한 수정이 가능하다.
+- 특수한 경우는 인사 담당자에세 문의해야한다.
+- 직원이 수정한 초과 근무는 대기중으로 상태가 변경된다.
+  <br>
+<hr>
+<p align="center">
+  <img src="">
+</p>
+휴가 삭제
+<br>
+- 직원은 작성한 모든 요구사항에 대한 수정이 가능하다.
+- 특수한 경우는 인사 담당자에세 문의해야한다.
+- 직원이 수정한 초과 근무는 대기중으로 상태가 변경된다.
+  <br>
+
+
+
+
+<hr>
+<p align="center">
+  <img src="">
+</p>
+
+</details>
+
+<details>
+<summary>결재 기능</summary>
+
+결재 생성
+<br>
+- 직원이 초과 근무 페이지에서 날짜, 시작/종료 시간, 초과 근무 사유를 입력하여 생성한다.
+- 직원은 승인이 된 초과 근무만 인정이 된다.
+  <br>
+<hr>
+<p align="center">
+
+  <img src="">
+</p>
+
+결재 수정
+<br>
+- 직원은 작성한 모든 요구사항에 대한 수정이 가능하다.
+- 특수한 경우는 인사 담당자에세 문의해야한다.
+- 직원이 수정한 초과 근무는 대기중으로 상태가 변경된다.
+  <br>
+<hr>
+<p align="center">
+  <img src="">
+</p>
+
+</details>
 
 
 
