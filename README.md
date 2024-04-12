@@ -364,6 +364,60 @@
 </p>
 
 </details>
+
+<details>
+<summary>공지사항 기능</summary>
+
+공지사항 생성
+<br>
+- 인사 담당자와 직원은 언제든 공지사항을 작성할 수 있다.
+- 인사 담당자와 직원은 제목과 내용을 작성하여 공지사항을 생성할 수 있다.
+  <br>
+<hr>
+<p align="center">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/62a58d93-5b3e-42c4-99f4-6074a070a6a0">
+</p>
+
+
+<br>
+
+공지사항 수정
+<br>
+- 인사 담당자와 직원은 작성한 공지사항에 대해 수정할 수 있다.
+- 공지사항은 본인외 수정이 불가하다.
+  <br>
+<hr>
+<p align="center">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/aff9ef4d-c320-463a-9da7-cc9f256286a5">
+</p>
+
+
+<br>
+
+공지사항 조회
+<br>
+- 인사 담당자와 직원은 생성한 공지사항에 대해 조회가 가능하다.
+  <br>
+<hr>
+<p align="center">
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/23a7f703-2356-4fde-85a1-833edc94de0e">
+</p>
+
+공지사항 상세 조회
+<br>
+- 인사 담당자와 직원은 생성된 공지사항에 대해 상세 조회가 가능하다.
+- 생성된 공지사항을 클릭하면 그에 따른 상세정보 보기가 가능하다.
+  <br>
+<hr>
+<p align="center">
+
+  <img src="https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/f486114c-e255-4c47-a612-aefcd4b15c66">
+</p>
+
+
+<br>
+</details>
 </details>
 
 
@@ -371,7 +425,7 @@
 ***
 <br>
 
-API 테스트 결과
+✔️ API 테스트 결과 <br>
 
 <details>
 <summary>회원 기능</summary>
@@ -390,8 +444,8 @@ API 테스트 결과
 직원/인사 관리자 로그인
 <br>
 - 직원은 인사 관리자가 승인해준 계정을 받아 로그인한다.
-- 특수한 경우는 인사 담당자에세 문의해야한다.
 - 인사 관리자 본인인은 승인이 필요없다.
+- 특수한 경우는 인사 담당자에세 문의해야한다.
   <br>
 <hr>
 <p align="center">
