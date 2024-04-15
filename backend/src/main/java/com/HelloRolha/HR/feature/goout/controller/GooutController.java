@@ -43,7 +43,7 @@ public class GooutController {
                 .build();
         return ResponseEntity.ok().body(response);
     }
-    @RequestMapping(method = RequestMethod.GET, value = "/check")
+    @RequestMapping(method = RequestMethod.POST, value = "/check")
     public ResponseEntity<BaseRes> list(@RequestBody PaginationReq paginationReq) {
         GooutListRes gooutListRes = gooutService.list(paginationReq.getPage(), paginationReq.getSize());
         BaseRes response = BaseRes.builder()
