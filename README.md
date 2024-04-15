@@ -7,7 +7,7 @@
 
 <br>
 
-## &nbsp;🖥️ [ Hello_R_loha  Demo ](http://192.168.0.51)
+## &nbsp;🖥️ [ Hello_R_loha  Demo ](http://www.hello-r-loha.kro.kr/)
 
 <br>
 <br>
@@ -50,6 +50,11 @@
 
 <br>
 <br>
+
+## 🖼️ 프로젝트 시스템 아키텍쳐
+
+![HR 시스템 아키텍쳐](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/dd43c20e-b38f-40b7-a14a-41bdb294ae54)
+
 
 
 ## &nbsp;🖥️ [ Frontend ](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/frontend/develop) <br> 
