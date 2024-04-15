@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.board.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.common.dto.PaginationReq;
 import com.HelloRolha.HR.feature.board.model.Board;
 import com.HelloRolha.HR.feature.board.model.dto.*;
 import com.HelloRolha.HR.feature.board.service.BoardNotFoundException;
@@ -50,8 +51,8 @@ public class BoardController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/check")
-    public ResponseEntity<BaseRes> list(Integer page, Integer size) {
-        BoardListRes boardListRes = boardService.list(page, size);
+    public ResponseEntity<BaseRes> list(@RequestBody PaginationReq paginationReq) {
+        BoardListRes boardListRes = boardService.list(paginationReq.getPage(), paginationReq.getSize());
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("공지사항 확인 성공")

@@ -1,6 +1,7 @@
 package com.HelloRolha.HR.feature.goout.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.common.dto.PaginationReq;
 import com.HelloRolha.HR.feature.goout.model.Goout;
 import com.HelloRolha.HR.feature.goout.model.GooutFile;
 import com.HelloRolha.HR.feature.goout.model.dto.*;
@@ -43,8 +44,8 @@ public class GooutController {
         return ResponseEntity.ok().body(response);
     }
     @RequestMapping(method = RequestMethod.GET, value = "/check")
-    public ResponseEntity<BaseRes> list(Integer page, Integer size) {
-        GooutListRes gooutListRes = gooutService.list(page, size);
+    public ResponseEntity<BaseRes> list(@RequestBody PaginationReq paginationReq) {
+        GooutListRes gooutListRes = gooutService.list(paginationReq.getPage(), paginationReq.getSize());
         BaseRes response = BaseRes.builder()
                 .code(1200)
                 .message("휴가/외출 확인 성공")
