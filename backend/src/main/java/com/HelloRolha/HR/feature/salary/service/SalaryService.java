@@ -61,7 +61,8 @@ public class SalaryService {
             salaryDto.setBatchDate(batchDate);
             entityList.add(salaryDto.toEntity());
         }
-        salaryRepository.saveAll(entityList);
+        //임시로 데이터 베이스에 저장하지 않음.
+//        salaryRepository.saveAll(entityList);
         return list;
     }
 
