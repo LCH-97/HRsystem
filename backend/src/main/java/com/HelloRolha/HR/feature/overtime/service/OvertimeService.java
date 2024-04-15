@@ -120,7 +120,13 @@ public class OvertimeService {
     }
 
     public OvertimeDto read(Integer id) {
-        Overtime overtime = overtimeRepository.findById(id).orElseThrow(() -> new OvertimeNotFoundException(""));
+        Optional<Overtime> optionalOvertime = overtimeRepository.findByIdWithDetails(id);
+
+        return optionalOvertime.map(overtime -> {
+            Employee employee = overtime.getEmployee();
+            if (employee == null) {
+                throw new RuntimeException("작성자의 정보를 찾을 수 없습니다.");
+            }
 
         return OvertimeDto.builder()
                 .id(overtime.getId())
@@ -130,7 +136,10 @@ public class OvertimeService {
                 .date(overtime.getDate())
                 .reason(overtime.getReason())
                 .status(overtime.getStatus())
+                .employeeName(employee.getName())
+                .employeeId(employee.getId())
                 .build();
+        }).orElse(null);
     }
 
 
