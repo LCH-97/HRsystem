@@ -141,8 +141,13 @@ public class GooutService {
         return gooutCreateRes;
     }
 
-    @Transactional
     public GooutListRes list(Integer page, Integer size) {
+        if (page == null) {
+            page = 1; // 페이지 기본값을 1로 설정
+        }
+        if (size == null) {
+            size = 10; // 사이즈 기본값을 10으로 설정
+        }
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
         Page<Goout> gooutPage = gooutRepository.findList(pageable);
 
