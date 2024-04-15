@@ -49,15 +49,14 @@
 > - 이를통해 **직원들의 업무 효율성을 증대시키고,** 조직 내의 인적 자원을 효과적으로 관리하여 기업의 성과를 향상 시키는 것을 **목표로</span>** 한다.
 
 <br>
+<br>
 
-## 📝️ Frontend 
-[frontend](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/frontend/develop)
 
-## 📝️ Backend
-[Backend](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/backend/develop)
+## &nbsp;🖥️ [ Frontend ](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/frontend/develop) <br> 
 
-## 📝️ CI/CD
-[CI/CD](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/cicd/develop)
+## &nbsp;🖥️ [ Backend ](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/backend/develop) <br> 
+ 
+## &nbsp;🖥️ [ CI/CD ](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/tree/cicd/develop) <br> 
 
 
 
