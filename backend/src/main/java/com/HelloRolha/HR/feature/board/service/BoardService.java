@@ -84,7 +84,6 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    @Transactional
     public BoardListRes list(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
         Page<Board> boardPage = boardRepository.findList(pageable);
