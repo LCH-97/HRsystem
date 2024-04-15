@@ -5,7 +5,6 @@
 
 [ERD 다이어그램 url](https://drive.google.com/file/d/1rbtHuxrIUOgK3eVmim1Ep22Cle-bNTAN/view?usp=sharing)
 
-<br>
 
 
 ## 📝️ Frontend
