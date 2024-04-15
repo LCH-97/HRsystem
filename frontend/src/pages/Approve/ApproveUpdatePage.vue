@@ -1,89 +1,175 @@
 <template>
-  <!-- <HeaderComponent />
-  <SideBar /> -->
-  <div>
-    <div class="approveUpdateBanner">
-      <div class="approveUpdateBannerTxt">
-        <h2>결재 수정하기</h2>
+  <HeaderComponent />
+  <SideBar />
+  <main>
+    <div class="container">
+      <div class="header">
+        <h1>결재 수정하기</h1>
+      </div>
+      <div class="content">
+        <form @submit.prevent="handleFormSubmission">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="title">제목</label>
+                <textarea id="title" class="input" rows="1" v-model="updateInfo.title" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="content">내용</label>
+                <textarea id="content" class="input" rows="7" v-model="updateInfo.content" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <span class="label">결재자1:</span>
+              <span class="input">{{ updateInfo.confirmer1Name }}</span>
+              <button class="modalButton" @click="showModalForConfirmer1">결재자1 선택</button>
+            </div>
+            <div class="form-group">
+              <span class="label">결재자2:</span>
+              <span class="input">{{ updateInfo.confirmer2Name }}</span>
+              <button class="modalButton" @click="showModalForConfirmer2">결재자2 선택</button>
+            </div>
+          </div>
+
+        <department-list-modal
+          v-if="isModalVisibleForConfirmer1"
+          :departments="departments"
+          :backend="backend"
+          v-model:isVisible="isModalVisibleForConfirmer1"
+          @confirm="handleEmployeeSelectionForConfirmer1"
+          @close="closeModalForConfirmer1"
+        ></department-list-modal>
+
+        <department-list-modal
+          v-if="isModalVisibleForConfirmer2"
+          :departments="departments"
+          :backend="backend"
+          v-model:isVisible="isModalVisibleForConfirmer2"
+          @confirm="handleEmployeeSelectionForConfirmer2"
+          @close="closeModalForConfirmer2"
+        ></department-list-modal>
+        <br />
+        <div class="form-group">
+            <label for="files">첨부파일</label>
+            <input type="file" multiple @change="handleFilesUpload" />
+          </div>
+          <div class="button">
+            <button type="submit" class="btn-submit">제출</button>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="ReqBox">
-      <article class="ReqInputBox">
-        <div class="ReqInput">
-          <div class="form-group">
-            <label for="content">내용:</label>
-            <textarea
-              id="content"
-              class="form-control"
-              rows="10"
-              v-model="updateInfo.content"
-              required
-            ></textarea>
-          </div>
-          <p>결재자1</p>
-          <select v-model="confirmer1Id">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          ><br />
-          <p>결재자2</p>
-          <select v-model="confirmer2Id">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          ><br />
-        </div>
-      </article>
-      <button @click="updateApprove">수정</button><br /><br />
-    </div>
-  </div>
+  </main>
 </template>
 
 <script>
 import axios from "axios";
-// import HeaderComponent from "@/components/HeaderComponent.vue";
-// import SideBar from "@/components/SideBar.vue";
+import DepartmentListModal from "../../components/DepartmentListModal.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import SideBar from "@/components/SideBar.vue";
 
 export default {
-  name: "ApproveUpdatePage",
-  // components: {
-  //   SideBar,
-  //   HeaderComponent,
-  // },
+  components: {
+    SideBar,
+    HeaderComponent,
+    DepartmentListModal,
+  },
   data() {
-    return {
-      backend: "http://192.168.0.51/api",
-      updateInfo: {
-        content: "",
-      },
+  return {
+    backend: "http://192.168.0.51/api",
+    updateInfo: {
+      id: "",
+      title: "",
+      content: "",
+      first: "",
+      last: "",
       confirmer1Id: "",
       confirmer2Id: "",
-      employees: [],
-    };
-  },
+      confirmer1Name: "",
+      confirmer2Name: "",
+    },
+    employees: [],
+    gooutTypes: [], // gooutTypes 배열 추가
+    isModalVisibleForConfirmer1: false,
+    isModalVisibleForConfirmer2: false,
+    departments: [],
+    files: [],
+  };
+},
 
   async created() {
-    await this.loadUpdateInfo();
     await this.fetchEmployees();
+    await this.loadUpdateInfo();
+    this.fetchDepartments();
+  },
+
+  watch: {
+    // watch 속성 추가
+    employees: {
+      immediate: true,
+      handler() {
+        if (this.gooutTypes.length > 0 && this.employees.length > 0) {
+          this.loadUpdateInfo();
+        }
+      },
+    },
   },
 
   methods: {
+    showModalForConfirmer1() {
+      this.isModalVisibleForConfirmer1 = true;
+    },
+    showModalForConfirmer2() {
+      this.isModalVisibleForConfirmer2 = true;
+    },
+    handleEmployeeSelectionForConfirmer1({ id, name }) {
+      this.updateInfo.confirmer1Id = id;
+      this.updateInfo.confirmer1Name = name;
+      this.closeModalForConfirmer1();
+    },
+    handleEmployeeSelectionForConfirmer2({ id, name }) {
+      this.updateInfo.confirmer2Id = id;
+      this.updateInfo.confirmer2Name = name;
+      this.closeModalForConfirmer2();
+    },
+    closeModalForConfirmer1() {
+      this.isModalVisibleForConfirmer1 = false;
+    },
+    closeModalForConfirmer2() {
+      this.isModalVisibleForConfirmer2 = false;
+    },
+    fetchDepartments() {
+      const token = sessionStorage.getItem("token");
+      axios
+        .get(`${this.backend}/department/list`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          this.departments = response.data.result; // 수정됨
+        })
+        .catch((error) => {
+          console.error("부서 목록 조회 실패:", error);
+        });
+    },
+
+    handleFilesUpload(event) {
+      this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
+    },
+
     loadUpdateInfo() {
       const storedInfo = localStorage.getItem("updateApproveInfo");
       if (storedInfo) {
-        this.updateInfo = JSON.parse(storedInfo);
-        // 불러온 정보를 바탕으로 각 필드의 초기값 설정
-        this.content = this.updateInfo.content;
-        this.confirmer1Id = this.updateInfo.confirmer1Id;
-        this.confirmer2Id = this.updateInfo.confirmer2Id;
+        const info = JSON.parse(storedInfo);
+        this.updateInfo = info; // Directly bind the loaded data to updateInfo
       } else {
         console.error("수정할 정보가 존재하지 않습니다.");
       }
@@ -91,7 +177,12 @@ export default {
 
     async fetchEmployees() {
       try {
-        const response = await axios.get(`${this.backend}/employee/list`);
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(`${this.backend}/employee/list`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
         this.employees = response.data; // 백엔드 응답에 'result' 키가 없다면 이렇게 접근합니다.
       } catch (error) {
         console.error("직원 목록 로딩 실패:", error);
@@ -99,56 +190,155 @@ export default {
     },
 
     async updateApprove() {
-
-      if (this.confirmer1Id === this.confirmer2Id) {
+      if (this.updateInfo.employeeId === this.updateInfo.agentId) {
+        alert(
+          "결재 수정 실패: 신청직원의 ID와 대리자의 ID는 같을 수 없습니다."
+        );
+        return;
+      }
+      if (this.updateInfo.confirmer1Id === this.updateInfo.confirmer2Id) {
         alert(
           "결재라인 수정 실패: 결재자1의 ID와 결재자2의 ID는 같을 수 없습니다."
         );
-        return; // 메소드 실행을 중단
+        return;
       }
 
+      const token = sessionStorage.getItem("token");
+      let formData = new FormData();
+      formData.append(
+        "approveCreateReq",
+        new Blob(
+          [
+          JSON.stringify({
+              title: this.title,
+              content: this.content,
+              employeeId: this.loggedInUserId,
+              confirmer1Id: this.confirmer1Id,
+              confirmer2Id: this.confirmer2Id
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+
+      // 여러 파일을 formData에 추가
+      for (let i = 0; i < this.files.length; i++) {
+        formData.append("uploadFiles", this.files[i]); // 'uploadFiles'로 변경
+      }
+
+      // 요청 헤더에 인증 토큰 추가
+      const config = {
+        headers: {
+          // 여기에서 Authorization 헤더에 토큰 추가
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       try {
-        // 데이터 객체 동적 생성
-        let updateData = { id: this.updateInfo.id };
-        if (this.updateInfo.content) updateData.content = this.updateInfo.content; // content 추가
-
-        console.log(updateData);
-        // Approve 정보 업데이트 실행
-        await axios.patch(`${this.backend}/approve/update`, updateData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        console.log("Approve 정보 수정 성공");
-
-        // ApproveLine 업데이트를 위한 동적 데이터 객체 생성
-        let approveLineUpdateReq = { approveId: this.updateInfo.id };
-        if (this.confirmer1Id)
-          approveLineUpdateReq.confirmer1Id = this.confirmer1Id;
-        if (this.confirmer2Id)
-          approveLineUpdateReq.confirmer2Id = this.confirmer2Id;
-        console.log(approveLineUpdateReq);
-        // ApproveLine 정보 업데이트 실행
-        await axios.patch(
-          `${this.backend}/approve/line/update`,
-          approveLineUpdateReq,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await axios.post(
+          `${this.backend}/approve/create`,
+          formData,
+          config
         );
-        console.log("ApproveLine 정보 수정 성공");
+        console.log(response);
 
-        alert("휴가 정보 및 결재라인 정보가 성공적으로 수정되었습니다.");
-        this.$router.push("/approve/list"); // 수정 완료 후, 리스트 페이지로 리다이렉션
+        const approveId = response.data.result;
+        console.log("Created approve ID:", approveId);
+
+        alert("결재가 재등록되었습니다.");
+        this.$router.push(`/approve/list`);
       } catch (error) {
-        console.error("결재 정보 또는 결재라인 정보 수정 실패:", error);
-        alert("결재 정보 또는 결재라인 정보 수정에 실패하였습니다.");
+        console.error("결재 등록 실패:", error);
+        if (error.response) {
+          alert("결재 등록 실패: " + error.response.data.message);
+        } else {
+          alert("결재 등록 실패: 서버에서 응답이 없습니다.");
+        }
       }
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.container {
+  max-width: 1254px;
+  margin: 0 auto;
+  margin-left: 250px;
+  margin-top: 50px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 4px;
+  top: 14px;
+}
+.header h1 {
+  font-size: 24px;
+  margin-top: 15px;
+  margin-top: 15px;
+  margin-bottom: 32px;
+  color: black;
+  font-weight: bold;
+}
+.content {
+  padding: 15px;
+}
+.row {
+  display: flex;
+  margin-bottom: 10px;
+}
+.col-md-6 {
+  flex: 1;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.label {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.input {
+  flex: 1;
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.button {
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-submit {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.btn-submit:hover {
+  background-color: #f7941e;
+}
+.modalButton {
+  font-size: 13px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #111111;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+</style>

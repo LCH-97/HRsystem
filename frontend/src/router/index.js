@@ -8,7 +8,7 @@ import OvertimeApproveaPage from "../pages/OvertimeApproveaPage.vue";
 import OvertimeDetailPage from "../pages/OvertimeDetailPage.vue";
 
 import ApproveListPage from "@/pages/Approve/ApproveListPage.vue";
-
+import ApproveUpdatePage from "@/pages/Approve/ApproveUpdatePage.vue";
 import ApproveCreatePage from "@/pages/Approve/ApproveCreatePage.vue";
 import ApproveReadPage from "@/pages/Approve/ApproveReadPage.vue";
 
@@ -52,7 +52,7 @@ const router = createRouter({
     { path: "/overtime/read/:id", component: OvertimeDetailPage },
 
     { path: "/approve/list", component: ApproveListPage },
-
+    { path: "/approve/update", component: ApproveUpdatePage },
     { path: "/approve/create", component: ApproveCreatePage },
     { path: "/approve/read/:id", component: ApproveReadPage },
 

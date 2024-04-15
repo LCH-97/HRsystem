@@ -1,81 +1,136 @@
 <template>
-  <div>
-    <div class="gooutUpdateBanner">
-      <div class="gooutUpdateBannerTxt">
-        <h2>휴가 정보 수정하기</h2>
-      </div>
+  <div class="container">
+    <div class="header">
+      <h1>휴가 정보 수정하기</h1>
     </div>
-    <div class="ReqBox">
-      <article class="ReqInputBox">
-        <div class="ReqInput">
-          <p>휴가 유형</p>
-          <select v-model="updateInfo.gooutTypeId">
-            <option
-              v-for="gooutType in gooutTypes"
-              :key="gooutType.id"
-              :value="gooutType.id.toString()"
-            >
-              {{ gooutType.name }}
-            </option></select
-          ><br />
-          <p>신청직원</p>
-          <select v-model="updateInfo.employeeId">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          ><br />
-          <p>대리인</p>
-          <select v-model="updateInfo.agentId">
-            <option
-              v-for="agent in employees"
-              :key="agent.id"
-              :value="agent.id"
-            >
-              {{ agent.name }}
-            </option></select
-          ><br />
-
-          <p>시작 날짜</p>
-          <input type="date" v-model="updateInfo.first" /><br />
-          <p>종료 날짜</p>
-          <input type="date" v-model="updateInfo.last" /><br />
-
-          <div class="row">
-            <div class="label">첨부파일</div>
-            <div class="input">
-              <input type="file" multiple @change="handleFilesUpload" />
+    <div class="content">
+      <div @submit.prevent="updateGoout">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="employee">신청직원</label>
+              <div class="input">
+                <select v-model="updateInfo.employeeId">
+                  <option
+                    v-for="employee in employees"
+                    :key="employee.id"
+                    :value="employee.id"
+                  >
+                    {{ employee.name }}
+                  </option></select
+                ><br />
+              </div>
             </div>
           </div>
-
-          <p>결재자1</p>
-          <select v-model="updateInfo2.confirmer1Id">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          ><br />
-
-          <p>결재자2</p>
-          <select v-model="updateInfo2.confirmer2Id">
-            <option
-              v-for="employee in employees"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.name }}
-            </option></select
-          ><br />
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="agent">대리인</label>
+              <div class="input">
+                <select v-model="updateInfo.agentId">
+                  <option
+                    v-for="agent in employees"
+                    :key="agent.id"
+                    :value="agent.id"
+                  >
+                    {{ agent.name }}
+                  </option></select
+                ><br />
+              </div>
+            </div>
+          </div>
         </div>
-      </article>
-      <div class="button-container">
-        <button @click="updateGoout">수정</button><br /><br />
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="reason">근태 사유</label>
+              <div class="input">
+                <select v-model="updateInfo.gooutTypeId">
+                  <option
+                    v-for="gooutType in gooutTypes"
+                    :key="gooutType.id"
+                    :value="gooutType.id.toString()"
+                  >
+                    {{ gooutType.name }}
+                  </option></select
+                ><br />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="start-date">시작 날짜</label>
+              <div class="input">
+                <input type="date" v-model="updateInfo.first" /><br />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="end-date">종료 날짜</label>
+              <div class="input">
+                <input type="date" v-model="updateInfo.last" /><br />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="files">첨부파일</label>
+              <div class="input">
+                <input type="file" multiple @change="handleFilesUpload" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row">
+            <label class="approval-label">결재라인</label>
+          </div>
+
+          <div class="goout">
+            <span class="goout1">결재자1:</span>
+            <span class="goout1-name">{{ updateInfo2.confirmer1Name }}</span>
+            <button class="modalButton1" @click="showModalForConfirmer1">
+              결재자1 선택
+            </button>
+          </div>
+
+          <div class="goout">
+            <span class="goout2">결재자2:</span>
+            <span class="goout2-name">{{ updateInfo2.confirmer2Name }}</span>
+            <button class="modalButton2" @click="showModalForConfirmer2">
+              결재자2 선택
+            </button>
+          </div>
+        </div>
+        <department-list-modal
+          v-if="isModalVisibleForConfirmer1"
+          :departments="departments"
+          :backend="backend"
+          v-model:isVisible="isModalVisibleForConfirmer1"
+          @confirm="handleEmployeeSelectionForConfirmer1"
+          @close="closeModalForConfirmer1"
+        ></department-list-modal>
+
+        <department-list-modal
+          v-if="isModalVisibleForConfirmer2"
+          :departments="departments"
+          :backend="backend"
+          v-model:isVisible="isModalVisibleForConfirmer2"
+          @confirm="handleEmployeeSelectionForConfirmer2"
+          @close="closeModalForConfirmer2"
+        ></department-list-modal>
+        <div class="row">
+          <div class="button">
+            <button @click="updateGoout" type="submit" class="btn-submit">
+              제출
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -83,25 +138,34 @@
 
 <script>
 import axios from "axios";
+import DepartmentListModal from "../DepartmentListModal.vue";
 
 export default {
+  components: {
+    DepartmentListModal,
+  },
   data() {
     return {
       backend: "http://192.168.0.51/api",
       updateInfo: {
-        gooutTypeName: "",
-        agentName: "",
-        employeeName: "",
+        gooutTypeId: "",
+        employeeId: "",
+        agentId: "",
         first: "",
         last: "",
       },
       gooutTypes: [],
       employees: [],
+      isModalVisibleForConfirmer1: false,
+      isModalVisibleForConfirmer2: false,
+      departments: [],
       updateInfo2: {
         confirmer1Id: "",
         confirmer2Id: "",
+        confirmer1Name: "",
+        confirmer2Name: "",
       },
-      files: [], // 여러 파일을 저장할 배열
+      files: [],
     };
   },
 
@@ -110,6 +174,7 @@ export default {
     await this.fetchEmployees();
     await this.loadUpdateInfo();
     await this.loadUpdateInfo2();
+    this.fetchDepartments();
   },
 
   watch: {
@@ -133,6 +198,45 @@ export default {
   },
 
   methods: {
+    showModalForConfirmer1() {
+      this.isModalVisibleForConfirmer1 = true;
+    },
+    showModalForConfirmer2() {
+      this.isModalVisibleForConfirmer2 = true;
+    },
+    handleEmployeeSelectionForConfirmer1({ id, name }) {
+      this.updateInfo2.confirmer1Id = id;
+      this.updateInfo2.confirmer1Name = name;
+      this.closeModalForConfirmer1();
+    },
+    handleEmployeeSelectionForConfirmer2({ id, name }) {
+      this.updateInfo2.confirmer2Id = id;
+      this.updateInfo2.confirmer2Name = name;
+      this.closeModalForConfirmer2();
+    },
+    closeModalForConfirmer1() {
+      this.isModalVisibleForConfirmer1 = false;
+    },
+    closeModalForConfirmer2() {
+      this.isModalVisibleForConfirmer2 = false;
+    },
+    fetchDepartments() {
+      const token = sessionStorage.getItem("token");
+      axios
+        .get(`${this.backend}/department/list`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          this.departments = response.data.result; // 수정됨
+        })
+        .catch((error) => {
+          console.error("부서 목록 조회 실패:", error);
+        });
+    },
+
     handleFilesUpload(event) {
       this.files = event.target.files; // 선택된 파일들을 files 배열에 저장
     },
@@ -159,7 +263,12 @@ export default {
 
     async fetchGooutTypes() {
       try {
-        const response = await axios.get(`${this.backend}/gooutType/list`);
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(`${this.backend}/gooutType/list`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
         this.gooutTypes = response.data.result;
       } catch (error) {
         console.error("휴가 유형 목록 로딩 실패:", error);
@@ -168,7 +277,12 @@ export default {
 
     async fetchEmployees() {
       try {
-        const response = await axios.get(`${this.backend}/employee/list`);
+        const token = sessionStorage.getItem("token");
+        const response = await axios.get(`${this.backend}/employee/list`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
         this.employees = response.data; // 백엔드 응답에 'result' 키가 없다면 이렇게 접근합니다.
       } catch (error) {
         console.error("직원 목록 로딩 실패:", error);
@@ -297,72 +411,107 @@ export default {
 </script>
 
 <style scoped>
-.gooutUpdateBanner {
+.container {
+  max-width: 1254px;
   margin: 0 auto;
-  text-align: center;
-  padding-top: 15px;
-  padding-bottom: 20px;
-  background-color: #f7f8fa;
+  margin-top: 15px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 4px;
+  top: 14px;
 }
-
-.gooutUpdateBannerTxt {
-  font-size: 40px;
-  font-weight: 600;
-  color: rgb(85, 85, 85);
+.input-and-remaining-days {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
-
-.ReqBox {
-  text-align: center;
-  background-color: #f7f8fa;
-  border: 1px solid #f7f8fa;
-  border-radius: 12px;
+.select-reason {
+  width: 50%;
+  /* 근태 사유 선택 창의 크기 조절 */
+  margin-right: 10px;
+  /* 남은 휴가 일수와의 간격 조절 */
+}
+.remaining-days {
+  margin-left: auto;
+  /* 남은 휴가 일수를 오른쪽 정렬 */
+}
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 32px;
+  color: black;
+  font-weight: bold;
+  /* Added */
+}
+.content {
   padding: 20px;
 }
-
-.ReqInputBox {
+.row {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
+  margin-bottom: 10px;
 }
-
-.ReqInput {
-  width: 300px;
-}
-
-.ReqInput p {
-  font-size: 18px;
+.label {
+  width: 100px;
+  text-align: right;
+  margin-right: 10px;
   font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  /* Added */
 }
-
-.ReqInput select,
-.ReqInput input[type="date"] {
+.input {
+  flex: 1;
+}
+input,
+select,
+textarea {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
   width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
-
-.button-container {
-  margin-top: 20px;
+.button {
+  display: flex;
+  justify-content: flex-end;
 }
-
-.button-container button {
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 20px;
+.btn-submit {
+  background-color: black;
   color: white;
-  background-color: #fae14a;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+  top: 28px;
+}
+.btn-submit:hover {
+  background-color: #f7941e;
+}
+label {
+  display: inline-block;
+  font-weight: bold;
+}
+.modalButton1,
+.modalButton2 {
+  font-size: 13px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #111111;
+  color: white;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
+  margin-left: 100px;
 }
-
-.button-container button:hover {
-  background-color: #ffd700;
+.goout {
+  position: relative;
+}
+.goout1-name,
+.goout2-name {
+  margin-left: 10px;
+  min-width: 100px; /* 최소 너비 설정 */
+  display: inline-block; /* 블록 요소처럼 너비와 높이 적용 */
+  height: 30px;
 }
 </style>
