@@ -87,9 +87,5 @@ CI/CD 소개
 사진 넣을 예정
 </details>
 
-### 🌼화면 설계서
-
-https://www.figma.com/file/1iFf0h27CtXPPjsuL7Ycg6/Untitled?type=design&node-id=0-1&mode=design&t=OGc7niNt5Dcmnqaf-0
-
 
 
