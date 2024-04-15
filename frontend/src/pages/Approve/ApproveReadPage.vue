@@ -1,8 +1,8 @@
 <template>
   <HeaderComponent />
   <SideBar />
-  <div class="approve-read-all">
-    <div class="container">
+  <div class="container with-shadow">
+    <div class="container1">
       <table class="approve">
         <tr>
           <th>결재</th>
@@ -34,10 +34,20 @@
         <h1 class="title">{{ this.approve.title }}</h1>
         <br />
         <table class="table">
-          <tr v-if="files.length > 0">
-            <th>첨부파일</th>
-            <td v-for="file in files" :key = "file.name">
-            <a :href="file.downloadUrl" target = "_blank">{{ file.name }}</a>
+          <tr>
+            <th>첨부 파일</th>
+            <td>
+              <div v-if="files.length > 0">
+                <div class="file-list">
+                  <a
+                    :href="file.downloadUrl"
+                    v-for="file in files"
+                    :key="file.name"
+                    >{{ file.name }}</a
+                  >
+                </div>
+              </div>
+              <div v-else>첨부 파일 없음</div>
             </td>
           </tr>
           <tr>
@@ -63,7 +73,7 @@
           <tr>
             <th>내 용</th>
             <td>
-            <div class="contable">{{ this.approve.content }}</div>
+              <div class="contable">{{ this.approve.content }}</div>
             </td>
           </tr>
         </table>
@@ -89,7 +99,9 @@
         </div>
         <div
           class="confirm1-button"
-          v-else-if="approve?.employeeId === loggedInUserId && approve?.status != 4"
+          v-else-if="
+            approve?.employeeId === loggedInUserId && approve?.status != 4
+          "
         >
           <button @click="updateApprove">수 정</button>
           <button @click="deleteApprove">회 수</button>
@@ -97,6 +109,7 @@
       </div>
     </div>
   </div>
+  <footer><br /><br /><br /><br /><br /></footer>
 </template>
 
 <script>
@@ -127,18 +140,19 @@ export default {
     fetchFiles() {
       // 특정 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
       const token = sessionStorage.getItem("token");
-      axios.get(`${this.backend}/approve/files/${this.id}`,{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      })
-          .then(response => {
-            this.files = response.data; // 파일 목록 업데이트
-          })
-          .catch(error => {
-            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
-          });
+      axios
+        .get(`${this.backend}/approve/files/${this.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          this.files = response.data; // 파일 목록 업데이트
+        })
+        .catch((error) => {
+          console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+        });
     },
     setLoggedInUser() {
       const token = sessionStorage.getItem("token");
@@ -152,19 +166,22 @@ export default {
 
     async confirm1() {
       if (confirm("결재하시겠습니까?")) {
-        try {        
+        try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/approve/line/confirm1`, {
-            approveId: this.id,
-            confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
-            comment: "결재자1 승인", // 코멘트
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/approve/line/confirm1`,
+            {
+              approveId: this.id,
+              confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
+              comment: "결재자1 승인", // 코멘트
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
           await this.returnApproveStatus(1);
@@ -183,17 +200,20 @@ export default {
       if (confirm("결재하시겠습니까?")) {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/approve/line/confirm2`, {
-            approveId: this.id,
-            confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
-            comment: "결재자2 승인",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/approve/line/confirm2`,
+            {
+              approveId: this.id,
+              confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
+              comment: "결재자2 승인",
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 승인되었습니다.");
 
           await this.returnApproveStatus(2);
@@ -214,17 +234,20 @@ export default {
       if (reason !== null && reason.trim() !== "") {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/approve/line/reject1`, {
-            approveId: this.id,
-            confirmerId: this.confirmer1.confirmerId,
-            comment: reason,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/approve/line/reject1`,
+            {
+              approveId: this.id,
+              confirmerId: this.confirmer1.confirmerId,
+              comment: reason,
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
           this.$router
@@ -246,17 +269,20 @@ export default {
       if (reason !== null && reason.trim() !== "") {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/approve/line/reject2`, {
-            approveId: this.id,
-            confirmerId: this.confirmer2.confirmerId,
-            comment: reason,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/approve/line/reject2`,
+            {
+              approveId: this.id,
+              confirmerId: this.confirmer2.confirmerId,
+              comment: reason,
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 반려되었습니다.");
           await this.returnApproveStatus(3);
           this.$router
@@ -280,13 +306,12 @@ export default {
           status: status,
         };
         const token = sessionStorage.getItem("token");
-        await axios.patch(`${this.backend}/approve/return`, payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          });
+        await axios.patch(`${this.backend}/approve/return`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        });
         alert("결재 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
       } catch (error) {
         console.error("결재 정보의 상태 업데이트에 실패했습니다:", error);
@@ -359,7 +384,6 @@ export default {
         2: "최종 승인",
         3: "반려",
         4: "회수",
-
       };
       return statusMap[status] || "알 수 없음";
     },
@@ -411,7 +435,6 @@ export default {
   created() {
     this.fetchApprove();
     this.fetchFiles();
-
   },
   mounted() {
     this.setLoggedInUser();
@@ -420,16 +443,25 @@ export default {
 </script>
 
 <style scoped>
-.approve-read-all {
-  margin-top: 30px;
-  margin-left: 320px;
-  width: 80%;
-}
 .container {
-  width: 800px;
-  margin-top: 60px;
-  display: 100%;
-
+  margin-top: 65px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: auto;
+  width: 1000px;
+  margin-left: auto; /* 좌우 마진을 자동으로 설정 */
+  margin-right: auto; /* 좌우 마진을 자동으로 설정 */
+  left: 120px;
+}
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.container1 {
+  width: 770px;
+  margin: 0 auto;
 }
 .title {
   font-size: 24px;
@@ -437,8 +469,9 @@ export default {
   margin-left: 70px;
 }
 .table {
-  width: 100%;
+  width: 770px;
   border-collapse: collapse;
+  margin: 0 auto;
 }
 th,
 td {
@@ -462,8 +495,7 @@ th {
   text-align: left; /* 텍스트를 왼쪽으로 정렬 */
   vertical-align: top; /* 콘텐츠를 셀의 상단으로 정렬 */
   min-height: 400px;
-  width: 665px
-  
+  width: 665px;
 }
 .input-field {
   width: 200px;
@@ -490,12 +522,10 @@ button:hover {
   margin-top: 20px;
 }
 .approve-button {
-  text-align: right;
-  margin-top: 50px;
+  display: flex;
+  justify-content: flex-end;
 }
-.approve {
-  margin-bottom: 100px; /* 결재칸과 휴가신청서 사이에 공백 추가 */
-}
+
 .header {
   margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
   background-color: white;
@@ -504,14 +534,11 @@ button:hover {
 .approve {
   display: flex;
   justify-content: flex-end; /* 부모 요소를 오른쪽으로 정렬합니다. */
+  margin-bottom: 50px;
 }
 .approve th,
 .approve td {
-  padding: 8px;
   text-align: right; /* 텍스트를 오른쪽 정렬합니다. */
-}
-.approve .input-group {
-  margin-bottom: 10px;
 }
 .approve .input-label {
   width: auto; /* 결재자 라벨의 너비를 자동으로 설정합니다. */
@@ -519,7 +546,5 @@ button:hover {
 .approve .input-field {
   width: 200px;
 }
-.vac {
-  height: 500px;
-}
+
 </style>
