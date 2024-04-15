@@ -45,8 +45,10 @@ CI/CD 소개
 
 ## 🖼️ CI/CD 시스템 아키텍처
 <details>
-<summary>펼치기</summary>
-사진 넣을 예정
+<summary>아키텍쳐</summary>
+
+![](https://github.com/beyond-sw-camp/be02-fin-Hello_R_loha-HRsystem/assets/93915072/d62aaa78-56e7-4f61-b5b7-113935c809ae)
+
 </details>
 
 
