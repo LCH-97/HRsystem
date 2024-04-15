@@ -16,6 +16,8 @@ public class OvertimeDto {
     private String sumTime;
     private String reason;
     private String status;
+    private final String employeeName;
+    private final Integer employeeId;
 
 
 }
