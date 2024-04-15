@@ -1,4 +1,5 @@
 package com.HelloRolha.HR.feature.employee.model.entity;
+
 import com.HelloRolha.HR.common.entity.BaseEntity;
 import com.HelloRolha.HR.feature.approve.model.Approve;
 import com.HelloRolha.HR.feature.commute.model.Commute;
@@ -41,7 +42,7 @@ public class Employee extends BaseEntity implements UserDetails {
     @Column(unique = true)
     private String username;
     private String password;
-//    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_NEW'")
+    //    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'ROLE_NEW'")
     @ColumnDefault("'ROLE_NEW'")
     private String authority;
     private LocalDate employmentDate; // 입사일
@@ -110,22 +111,19 @@ public class Employee extends BaseEntity implements UserDetails {
     //
 
 
-    public Long getWorkTimeByMinutes(LocalDate startDate,LocalDate endDate) {
+    public Long getWorkTimeByMinutes(LocalDate startDate, LocalDate endDate) {
         Long counter = 0L;
         //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
         //sql 문을 month 에 맞는 데이터만 가져오도록 만들 수 있다.
 
-        if(this.commutes.isEmpty()){
+        if (this.commutes.isEmpty()) {
 
-            System.out.println("오류 예외 처리해라");
+//            System.out.println("오류 예외 처리해라");
             return counter;
         }
 
-        for (Commute commute:this.commutes){
-            if(startDate.isBefore(commute.getCreateAt().toLocalDate())  && endDate.isAfter(commute.getCreateAt().toLocalDate())){
-                // 하루 일한 총 시간 - 휴식 시간해야됨
-//                long totalMinutes = duration.toMinutes();
-                // 만약 8시간이 넘어간다면?
+        for (Commute commute : this.commutes) {
+            if (startDate.isBefore(commute.getCreateAt().toLocalDate()) && endDate.isAfter(commute.getCreateAt().toLocalDate())) {
                 counter += commute.getSumTime();
             }
 
@@ -140,18 +138,18 @@ public class Employee extends BaseEntity implements UserDetails {
         //Todo 비효율적인 쿼리임. 바꿀 수 있으면 바꾸자.
         //sql 문을 month 에 맞는 데이터만 가져오도록 만들 수 있다.
 
-        if(this.goouts.isEmpty()){
+        if (this.goouts.isEmpty()) {
 
-            System.out.println("오류 예외 처리해라");
+//            System.out.println("오류 예외 처리해라");
             return 0L;
         }
 
-        for (Goout goout:this.goouts){
+        for (Goout goout : this.goouts) {
             //휴가 출발일부터 마지막 날까지 반복,  월급을 계산하는 날 사이에 있다면
-            for(LocalDate date = goout.getFirst(); !date.isEqual(goout.getLast()) ;date=date.plusDays(1)){
-                if( date.isAfter(startDate) && date.isBefore(endDate)){
+            for (LocalDate date = goout.getFirst(); !date.isEqual(goout.getLast()); date = date.plusDays(1)) {
+                if (date.isAfter(startDate) && date.isBefore(endDate)) {
                     counter++;
-                }
+                } else break;
             }
         }
         return counter;
