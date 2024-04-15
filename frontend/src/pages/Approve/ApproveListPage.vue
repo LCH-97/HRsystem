@@ -1,8 +1,8 @@
 <template>
   <HeaderComponent />
   <SideBar />
-  <h1>결재 목록</h1>
   <div class="container with-shadow">
+    <h2>결재 목록</h2>
     <div class="filter">
       <button @click="filterApprovalsByStatus(null)">전체</button>
       <button @click="filterApprovalsByStatus(0)">기안중 {{ statusCounts.대기중 }} </button>
@@ -12,7 +12,7 @@
       <button @click="filterApprovalsByStatus(4)">회수</button>
     </div>
     <div>
-      <a class="make-approve" href="/approve/create">결재만들기 </a>
+      <a class="make-approve" href="/approve/create">결재 생성 </a>
     </div>
     <div class="approveList">
       <table>
@@ -42,12 +42,11 @@
       </table>
     </div>
     <div class="pagination">
-      <button @click="prevGroup">이전</button>
-      <button v-for="page in pageGroup" :key="page" :class="{ active: page === currentPage }"
-        @click="changePage(page)">
-        {{ page }}
+      <button v-if="currentPage > 1" @click="fetchApprovals(currentPage - 1)">이전</button>
+      <button v-for="n in totalPages" :key="n" @click="fetchApprovals(n)" :class="{ active: n === currentPage }">
+        {{ n }}
       </button>
-      <button @click="nextGroup">다음</button>
+      <button v-if="currentPage < totalPages" @click="fetchApprovals(currentPage + 1)">다음</button>
     </div>
   </div>
 </template>
@@ -73,36 +72,33 @@ export default {
       confirmer2: "",
       currentPage: 1,
       pageSize: "",
-      pagesToShow: 5,
+      pagesToShow: "",
       pageGroupStart: 1,
+      totalPages: 0,
+
     };
   },
   computed: {
-    totalPages() {
-      return Math.ceil(this.approvals.length / this.pageSize);
-    },
+
     pageGroup() {
-      // 현재 페이지가 포함된 페이지 그룹의 시작 페이지를 계산합니다.
       let startPage =
         Math.floor((this.currentPage - 1) / this.pagesToShow) *
         this.pagesToShow +
         1;
-      // 시작 페이지를 기준으로 pagesToShow만큼의 페이지 번호를 생성합니다.
-      // 단, 전체 페이지 수를 초과하지 않도록 주의합니다.
+
       let pages = [];
       for (let i = 0; i < this.pagesToShow; i++) {
         let page = startPage + i;
-        if (page > this.totalPages) break; // 전체 페이지 수를 초과하지 않도록 합니다.
+        if (page > this.totalPages) break;
         pages.push(page);
       }
       return pages;
     },
 
-    // 상태별 개수를 계산하는 계산된 속성
+
     statusCounts() {
       const counts = { total: 0, 대기중: 0, 결재자1승인: 0, 최종승인: 0, 반려: 0 };
 
-      // 모든 approvals를 순회하며 상태별로 개수를 계산합니다.
       this.approvals.forEach((approve) => {
         counts.total += 1;
         const statusText = this.getStatusText(approve.status);
@@ -115,7 +111,7 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchApprovals();
+    await this.fetchApprovals(this.currentPage);
     //   // await this.fetchApproveLine();
   },
   methods: {
@@ -161,33 +157,15 @@ export default {
             Authorization: "Bearer " + token,
           },
         });
-        if (
-          response.data &&
-          response.data.result &&
-          Array.isArray(response.data.result.content)
-        ) {
+        if (response.data && response.data.result) {
           this.approvals = response.data.result.content;
           this.filteredApprovals = this.approvals;
-          // this.approvals = Array.isArray(response.data.result) ? response.data.result : [];
-          // this.filteredApprovals = this.approvals; // 초기 로딩 시 전체 결재 목록을 보여줍니다.
-
-          // 모든 결재 항목에 대해 결재라인 정보를 불러옵니다.
-          // for (const approve of this.approvals) {
-          //   await this.fetchApproveLine(approve.id); // 각 결재 항목의 id를 사용하여 fetchApproveLine 호출
-          // }
-        } else {
-          this.approvals = [];
-          this.filteredApprovals = [];
+          this.totalPages = response.data.result.totalPages; // 전체 페이지 수 업데이트
+          this.currentPage = response.data.result.number + 1; // 현재 페이지 업데이트. 백엔드에서 0부터 시작하는 경우가 많으므로 +1
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        this.approvals = [];
-        this.filteredApprovals = [];
-      }
-      // const start = (this.currentPage - 1) * this.pageSize;
-      //   const end = this.currentPage * this.pageSize;
-      //   this.filteredApprovals = this.approvals.slice(start, end);
-    },
+      }},
 
     goToApproveReadPage(id) {
       if (id) {
@@ -218,7 +196,8 @@ export default {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  left: 300px;
+  left: 463px;
+  top: 50px;
   height: auto;
   margin-left: -50px;
   width: 80%;
@@ -247,6 +226,7 @@ export default {
 .approveList td {
   border: 1px solid #ddd;
   padding: 8px;
+  text-align: center;
 }
 .pagination {
   display: flex;
@@ -258,7 +238,7 @@ export default {
   position: absolute;
   right: 50px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   padding: 7px 10px;
   color: white;
@@ -266,7 +246,7 @@ export default {
   border: none;
   border-radius: 10px;
   background-color: #111111;
-  margin-top: -45px;
+  margin-top: -20px;
 }
 .make-approve:hover {
   background-color: #f75c29;
@@ -275,7 +255,7 @@ export default {
   margin-top: 20px;
 }
 button {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   padding: 5px 10px;
   color: white;
