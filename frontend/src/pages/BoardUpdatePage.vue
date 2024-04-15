@@ -2,56 +2,45 @@
   <HeaderComponent />
   <SideBar />
   <div class="container">
-    <h2>공지사항 수정</h2>
-    <form @submit.prevent="updateBoard">
-      <div class="form-group">
-        <label for="title">제목</label>
-        <input
-          type="text"
-          id="title"
-          v-model="board.title"
-          class="form-control"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="text">내용</label>
-        <textarea
-          id="text"
-          v-model="board.text"
-          class="form-control"
-          required
-        ></textarea>
-      </div>
-      <div class="form-group">
-        <label>첨부 파일</label>
-        <!-- 이미 업로드된 파일 목록 -->
-        <ul>
-          <li v-for="file in files" :key="file.id">
-            {{ file.originalFilename }}
-            <!-- 파일 삭제 버튼. deleteFile 메소드에 파일 ID 전달 -->
-            <button @click.prevent="deleteFile(file.id, $event)">삭제</button>
-          </li>
-        </ul>
-
-        <!-- 사용자가 새로 선택한 파일 목록 -->
-        <div v-if="board.newFiles && board.newFiles.length > 0">
+    <div class="header">
+      <h1 class="bold-text">공지사항 수정</h1>
+    </div>
+    <div class="content">
+      <form @submit.prevent="updateBoard">
+        <div class="form-group">
+          <label for="title" class="bold-text">제목</label>
+          <textarea id="title" v-model="board.title" class="form-control" rows="1" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="text" class="bold-text">내용</label>
+          <textarea id="text" v-model="board.text" class="form-control" rows="7" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="bold-text">첨부 파일</label>
           <ul>
-            <li v-for="(newFile, index) in board.newFiles" :key="index">
-              {{ newFile.name }}
-              <!-- 선택한 새 파일 삭제 버튼. removeNewFile 메소드에 인덱스 전달 -->
-              <button @click="removeNewFile(index)">삭제</button>
+            <li v-for="file in files" :key="file.id">
+              {{ file.originalFilename }}
+              <button @click.prevent="deleteFile(file.id, $event)">삭제</button>
             </li>
           </ul>
+          <div v-if="board.newFiles && board.newFiles.length > 0">
+            <ul>
+              <li v-for="(newFile, index) in board.newFiles" :key="index">
+                {{ newFile.name }}
+                <button @click="removeNewFile(index)">삭제</button>
+              </li>
+            </ul>
+          </div>
+          <input type="file" @change="handleFileUpload" multiple />
         </div>
-
-        <!-- 파일 선택 입력 필드 -->
-        <input type="file" @change="handleFileUpload" multiple />
-      </div>
-      <button type="submit" class="btn btn-primary">수정 완료</button>
-    </form>
+        <div class="button">
+          <button class="btn-submit bold-text">수정 완료</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
@@ -95,6 +84,7 @@ export default {
       this.board.newFiles = Array.from(event.target.files);
     },
     updateBoard() {
+      console.log("Updating board");
       const formData = new FormData();
 
       // Prepare the JSON part of the request
@@ -132,8 +122,11 @@ export default {
     },
 
     fetchFiles() {
+      const token = sessionStorage.getItem("token");
       axios
-        .get(`http://192.168.0.51/api/board/files/${this.board.id}`)
+        .get(`http://192.168.0.51/api/board/files/${this.board.id}`, {headers: {
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },})
         .then((response) => {
           this.files = response.data; // 파일 목록으로 응답 데이터 설정
         })
@@ -144,12 +137,17 @@ export default {
 
     // 새로 선택한 파일 삭제 메서드
     removeNewFile(index) {
-      this.board.newFiles.splice(index, 1);
-    },
+  console.log("Removing file at index", index);
+  this.board.newFiles.splice(index, 1);
+},
+
     // 파일 삭제 요청
     deleteFile(fileId) {
+      const token = sessionStorage.getItem("token");
       axios
-        .delete(`http://192.168.0.51/api/board/files/delete/${fileId}`)
+        .delete(`http://192.168.0.51/api/board/files/delete/${fileId}`, {headers: {
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },})
         .then(() => {
           alert("파일이 성공적으로 삭제되었습니다.");
           this.fetchFiles(); // 파일 목록 새로고침
@@ -174,30 +172,59 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 600px;
-  margin: auto;
-  margin-top: 50px;
+  max-width: 1240px; /* 너비 조정 */
+  margin: 50px auto; /* 중앙 정렬 및 위쪽 여백 추가 */
+  padding: 15px 20px; /* 내부 패딩은 변경하지 않음 */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 110px;
+  top: 20px;
+}
+
+.header h1 {
+  font-size: 22px; /* 폰트 크기 */
+  color: black; /* 폰트 색상 */
+  margin-bottom: 15px; /* 아래쪽 여백 */
+}
+
+.content {
+  padding: 10px;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 20px; /* 하단 여백 */
 }
 
 .form-control {
-  width: 100%;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+  width: 100%; /* 너비 */
+  padding: 8px; /* 패딩 */
+  font-size: 16px; /* 폰트 크기 */
+  border: 1px solid #ced4da; /* 테두리 */
+  border-radius: 4px; /* 테두리 둥글게 */
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
+.button {
+  display: flex; /* 플렉스 박스 */
+  justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+.btn-submit {
+  background-color: black; /* 배경 색상 */
+  color: white; /* 글자 색상 */
+  border: none; /* 테두리 없음 */
+  border-radius: 4px; /* 둥근 모서리 */
+  padding: 10px 20px; /* 패딩 */
+  font-size: 16px; /* 폰트 크기 */
+  cursor: pointer; /* 커서 포인터 */
+  transition: background-color 0.3s; /* 배경 색상 변경 애니메이션 */
+}
+
+.btn-submit:hover {
+  background-color: #F7941E; /* 호버 시 배경 색상 변경 */
+}
+.bold-text {
+  font-weight: bold; /* 볼드체 적용 */
 }
 </style>
