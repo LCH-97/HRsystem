@@ -116,16 +116,11 @@ export default {
           formData.append("uploadFiles", file);
         });
       }
-
-      // Adjust your request to include the correct header for Bearer token if you're using one
-      const headers = {
-        "Content-Type": "multipart/form-data",
-        // Include Authorization header if needed
-        // Authorization: `Bearer ${yourTokenHere}`,
-      };
-
+      const token = sessionStorage.getItem("token");
       axios
-        .patch(`http://192.168.0.51/api/board/update`, formData, { headers })
+        .patch(`http://192.168.0.51/api/board/update`, formData, {headers: {
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },})
         .then(() => {
           alert("공지사항이 성공적으로 수정되었습니다.");
           this.$router.push("/board/list");

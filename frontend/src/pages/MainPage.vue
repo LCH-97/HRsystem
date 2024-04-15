@@ -74,9 +74,9 @@
                               </tr>
                             </thead>
                             <tbody id="boardTableBody">
-                              <tr v-for="board in boards" :key="board.id">
+                              <tr v-for="board in boards" :key="board.id" @click="goToBoardReadPage(board.id)">
                                 <td>{{ board.title }}</td>
-                                <td>{{ board.writerid }}</td>
+                                <td>{{ board.writerName }}</td>
                                 <td>{{ board.createAt }}</td>
                               </tr>
                               
@@ -286,20 +286,34 @@ export default {
     },
     
     fetchBoardData(page) {
-      console.log("qweqwe");
-      const itemsPerPage = 6;
-      axios
-        .get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
-        .then((response) => {
-          // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
-          this.boards = response.data.result.boards;
-          console.log(this.boards); // 게시글 데이터가 올바르게 할당되었는지 콘솔에 출력
-        })
-        .catch((error) => {
-          console.error("Error fetching board data:", error);
-        });
-    },
+  console.log("Fetching board data");
+  const token = sessionStorage.getItem("token");
+  const itemsPerPage = 6;
+  const payload = {
+    page: page,
+    size: itemsPerPage
+  };
+
+  axios.post(`http://192.168.0.51/api/board/check`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
+    this.boards = response.data.result.boards;
+    console.log(this.boards); // 게시글 데이터가 올바르게 할당되었는지 콘솔에 출력
+  })
+  .catch(error => {
+    console.error("Error fetching board data:", error);
+  });
+},
     
+goToBoardReadPage(id) {
+      this.$router.push(`/board/read/${id}`);
+    },
+
     fetchApprovalData() {
       // 실제로는 서버에서 데이터를 가져와야 합니다.
       // 예시 데이터로 임시로 값을 할당합니다.
