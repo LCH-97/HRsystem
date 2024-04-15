@@ -50,7 +50,7 @@ public class OvertimeController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PatchMapping("/overtime/read/{id}") // 초과 근무 상세 조회
+    @GetMapping("/overtime/read/{id}") // 초과 근무 상세 조회
     public ResponseEntity<OvertimeDto> read(@PathVariable Integer id) {
         OvertimeDto overtimeDto = overtimeService.read(id);
         return ResponseEntity.ok().body(overtimeDto);
