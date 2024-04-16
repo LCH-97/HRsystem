@@ -45,7 +45,7 @@ class EmployeeServiceTest {
     private EmployeeController employeeController;
 
     @Test
-    @DisplayName("직원 회원가입") //회원가입
+    @DisplayName("직원 회원가입") //직원 회원가입
     void employeeSignupTest() {
         // given
         Employee employee = Employee.builder()
