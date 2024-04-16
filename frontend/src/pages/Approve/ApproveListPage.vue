@@ -114,7 +114,7 @@ export default {
     changePage(page) {
       // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
       this.currentPage = page;
-      this.fetchApprovals();
+      this.fetchApprovals(page);
     },
 
     prevGroup() {
@@ -143,7 +143,7 @@ export default {
     },
 
     async fetchApprovals(page = this.currentPage) {
-      const api = `http://192.168.0.51/api/approve/list?page=${page - 1}&size=${this.pageSize}`;
+      const api = `http://192.168.0.51/api/approve/list`;
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(api, {
@@ -151,6 +151,10 @@ export default {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
           },
+          params: {
+            page: page - 1,
+            size: this.pageSize
+          }
         });
         if (response.data && response.data.result) {
           this.approvals = response.data.result.content;
