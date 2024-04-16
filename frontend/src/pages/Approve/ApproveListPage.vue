@@ -119,7 +119,7 @@ export default {
   methods: {
     changePage(page) {
       this.currentPage = page;
-      this.fetchApprovals(page);
+      this.fetchApprovals();
     },
 
     prevGroup() {
