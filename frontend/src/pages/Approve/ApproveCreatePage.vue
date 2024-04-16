@@ -64,12 +64,14 @@
     </div>
   </main>
 </template>
+
 <script>
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import SideBar from "@/components/SideBar.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import DepartmentListModal from "@/components/DepartmentListModal.vue";
+
 export default {
   name: "ApproveCreatePage",
   components: {
@@ -79,7 +81,7 @@ export default {
   },
   data() {
     return {
-      backend: "http://localhost:8080",
+      backend: "http://192.168.0.51/api", // 변경된 백엔드 URL 적용
       title: "",
       content: "",
       confirmer1Id: "",
@@ -227,9 +229,6 @@ export default {
   left: 100px; /* 코드 1과 동일한 위치 조정 */
   top: 15px; /* 코드 1과 동일한 위치 조정 및 아래쪽 여백 추가 */
 }
-
-
-
 
 .header h1 {
   font-size: 22px;

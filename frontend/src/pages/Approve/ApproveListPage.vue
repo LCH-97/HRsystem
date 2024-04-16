@@ -43,8 +43,8 @@
     </div>
     <div class="pagination">
       <button v-if="currentPage > 1" @click="fetchApprovals(currentPage - 1)">이전</button>
-      <button v-for="n in totalPages" :key="n" @click="fetchApprovals(n)" :class="{ active: n === currentPage }">
-        {{ n }}
+      <button v-for="n in pageGroup" :key="n" @click="fetchApprovals(n)" :class="{ active: n === currentPage }">
+      {{ n }}
       </button>
       <button v-if="currentPage < totalPages" @click="fetchApprovals(currentPage + 1)">다음</button>
     </div>
@@ -71,8 +71,8 @@ export default {
       confirmer1: "",
       confirmer2: "",
       currentPage: 1,
-      pageSize: "",
-      pagesToShow: "",
+      pageSize: 10,
+      pagesToShow: 5,
       pageGroupStart: 1,
       totalPages: 0,
 
@@ -81,11 +81,7 @@ export default {
   computed: {
 
     pageGroup() {
-      let startPage =
-        Math.floor((this.currentPage - 1) / this.pagesToShow) *
-        this.pagesToShow +
-        1;
-
+      let startPage = Math.floor((this.currentPage - 1) / this.pagesToShow) * this.pagesToShow + 1;
       let pages = [];
       for (let i = 0; i < this.pagesToShow; i++) {
         let page = startPage + i;
@@ -146,9 +142,8 @@ export default {
       }
     },
 
-    async fetchApprovals() {
-
-      const api = `http://192.168.0.51/api/approve/list?page=${this.currentPage - 1}&size=${this.pageSize}`;
+    async fetchApprovals(page = this.currentPage) {
+      const api = `http://192.168.0.51/api/approve/list?page=${page - 1}&size=${this.pageSize}`;
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(api, {
@@ -160,12 +155,17 @@ export default {
         if (response.data && response.data.result) {
           this.approvals = response.data.result.content;
           this.filteredApprovals = this.approvals;
-          this.totalPages = response.data.result.totalPages; // 전체 페이지 수 업데이트
-          this.currentPage = response.data.result.number + 1; // 현재 페이지 업데이트. 백엔드에서 0부터 시작하는 경우가 많으므로 +1
+          this.totalPages = response.data.result.totalPages;
+          this.currentPage = response.data.result.number + 1;
+
+          this.pageGroupStart = Math.floor((this.currentPage - 1) / this.pagesToShow) * this.pagesToShow + 1;
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-      }},
+      }
+    },
+
+
 
     goToApproveReadPage(id) {
       if (id) {

@@ -388,28 +388,20 @@ export default {
       return statusMap[status] || "알 수 없음";
     },
     updateApprove() {
-      if (this.approve.status !== 3) {
-        alert("반려상태가 아니면 수정을 할 수 없습니다. 없습니다.");
-        return;
-      }
-      const approveId = this.$route.params.id;
-      localStorage.setItem(
-        "updateApproveInfo",
-        JSON.stringify({
-          id: approveId,
-          title: this.approve.title,
-          content: this.approve.content,
-        })
-      );
-      localStorage.setItem(
-        "updateAPproveLineInfo",
-        JSON.stringify({
-          confirmer1Id: this.confirmer1?.confirmerId,
-          confirmer2Id: this.confirmer2?.confirmerId,
-        })
-      );
-      this.$router.push("/approve/update");
-    },
+  if (this.approve.status !== 3) {  // 반려 상태일 때만 수정 가능
+    alert("반려 상태가 아니면 수정할 수 없습니다.");
+    return;
+  }
+  const approveId = this.$route.params.id;
+  localStorage.setItem("updateApproveInfo", JSON.stringify({
+    id: approveId,
+    title: this.approve.title,
+    content: this.approve.content,
+    confirmer1Id: this.confirmer1?.confirmerId,
+    confirmer2Id: this.confirmer2?.confirmerId
+  }));
+  this.$router.push("/approve/update");
+},
 
     async deleteApprove() {
       if (confirm("정말로 이 결재를 회수  하시겠습니까?")) {

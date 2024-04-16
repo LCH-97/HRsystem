@@ -103,23 +103,24 @@ export default {
       this.$router.push("/board/create");
     },
     async fetchBoards() {
-      const token = sessionStorage.getItem("token");
-      try {
-        const response = await axios.get(`http://192.168.0.51/api/board/check`, {
-          params: { page: this.currentPage, size: this.pageSize },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
-          },
-        });
-        this.boards = response.data.result.boards;
-        this.totalPages = Math.ceil(
-          response.data.result.totalElements / this.pageSize
-        );
-      } catch (error) {
-        console.error("Failed to fetch boards:", error);
+  const token = sessionStorage.getItem("token");
+  const payload = {
+    page: this.currentPage,
+    size: this.pageSize
+  };
+  try {
+    const response = await axios.post(`http://192.168.0.51/api/board/check`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    this.boards = response.data.result.boards;
+    this.totalPages = Math.ceil(response.data.result.totalElements / this.pageSize);
+  } catch (error) {
+    console.error("Failed to fetch boards:", error);
+  }
+},
     goToBoardReadPage(id) {
       this.$router.push(`/board/read/${id}`);
     },
