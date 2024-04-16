@@ -1,125 +1,140 @@
 <template>
-  <div class="container">
-    <table class="approve">
-      <tr>
-        <th>결재</th>
-        <td>
-          <div class="input-group" v-if="confirmer1 && confirmer1.status !== 4">
-            <label class="input-label">결재자1 : </label>
-            {{ confirmer1?.confirmerName }}
-          </div>
-          <div v-if="goout">
-            <div class="input-group">
-              {{ getStatusText(confirmer1?.status) }}
+  <div class="container with-shadow">
+    <div class="container1">
+      <table class="approve">
+        <tr>
+          <th>결재</th>
+          <td>
+            <div
+              class="input-group"
+              v-if="confirmer1 && confirmer1.status !== 4"
+            >
+              <label class="input-label">결재자1 : </label>
+              {{ confirmer1?.confirmerName }}
             </div>
-          </div>
-        </td>
-        <td>
-          <div class="input-group" v-if="confirmer2 && confirmer2.status !== 4">
-            <label class="input-label">결재자2 : </label>
-            {{ confirmer2?.confirmerName }}
-          </div>
-          <div v-if="goout">
-            <div class="input-group">
-              {{ getStatusText(confirmer2?.status) }}
+            <div v-if="goout">
+              <div class="input-group">
+                {{ getStatusText(confirmer1?.status) }}
+              </div>
             </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-    <div class="header">
-      <div v-if="goout">
-        <h1 class="title">휴가신청서</h1>
-        <br />
-        <table class="table">
-          <tr v-if="confirmer1?.status === 3 || confirmer2?.status === 3">
-            <th>반려 사유</th>
-            <td :colspan="confirmer1?.status === 3 ? '2' : ''">
-              {{ confirmer1?.status === 3 ? confirmer1.comment : confirmer2.comment }}
-            </td>
-          </tr>
-          <tr>
-            <th>첨부 파일</th>
-            <td colspan="2">
-              <div v-if="files.length > 0">
-                <ul class="file-list">
-                  <li v-for="file in files" :key="file.name">
-                    <a :href="file.downloadUrl" target="_blank">{{
+          </td>
+          <td>
+            <div
+              class="input-group"
+              v-if="confirmer2 && confirmer2.status !== 4"
+            >
+              <label class="input-label">결재자2 : </label>
+              {{ confirmer2?.confirmerName }}
+            </div>
+            <div v-if="goout">
+              <div class="input-group">
+                {{ getStatusText(confirmer2?.status) }}
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="header">
+        <div v-if="goout">
+          <h1 class="title">휴가신청서</h1>
+          <br />
+          <table class="table">
+            <tr v-if="confirmer1?.status === 3 || confirmer2?.status === 3">
+              <th>반려 사유</th>
+              <td :colspan="confirmer1?.status === 3 ? '2' : ''">
+                {{
+                  confirmer1?.status === 3
+                    ? confirmer1.comment
+                    : confirmer2.comment
+                }}
+              </td>
+            </tr>
+            <tr>
+              <th>첨부 파일</th>
+              <td colspan="2">
+                <div v-if="files.length > 0">
+                  <ul class="file-list">
+                    <li v-for="file in files" :key="file.name">
+                      <a :href="file.downloadUrl" target="_blank">{{
                         file.name
                       }}</a>
-                  </li>
-                </ul>
-              </div>
-              <div v-else>첨부 파일 없음</div>
-            </td>
-          </tr>
-          <tr>
-            <th>휴가결재 올린사람</th>
-            <td>{{ goout.writerName }}</td>
-          </tr>
-          <tr>
-            <th>휴가가는 직원</th>
-            <td>{{ goout.employeeName }}</td>
-          </tr>
-          <tr class="dates">
-            <th>대리인</th>
-            <td>{{ goout.agentName }}</td>
-          </tr>
-          <tr>
-            <th>기한</th>
-            <td>
-              <label class="input-label">시작 날짜 : </label>
-              {{ goout.first }}
-              <br />
+                    </li>
+                  </ul>
+                </div>
+                <div v-else>첨부 파일 없음</div>
+              </td>
+            </tr>
+            <tr>
+              <th>휴가결재 올린사람</th>
+              <td>{{ goout.writerName }}</td>
+            </tr>
+            <tr>
+              <th>휴가가는 직원</th>
+              <td>{{ goout.employeeName }}</td>
+            </tr>
+            <tr class="dates">
+              <th>대리인</th>
+              <td>{{ goout.agentName }}</td>
+            </tr>
+            <tr>
+              <th>기한</th>
+              <td>
+                <label class="input-label">시작 날짜 : </label>
+                {{ goout.first }}
+                <br />
 
-              <label class="input-label">종료 날짜 : </label>
-              {{ goout.last }}
-            </td>
-          </tr>
-          <tr>
-            <th>휴가 사용일 수</th>
-            <td>{{ daysUsed }}일</td>
-          </tr>
-          <tr class="vac">
-            <th>휴가 유형</th>
-            <td>{{ goout.gooutTypeName }}</td>
-          </tr>
-        </table>
+                <label class="input-label">종료 날짜 : </label>
+                {{ goout.last }}
+              </td>
+            </tr>
+            <tr>
+              <th>휴가 사용일 수</th>
+              <td>{{ daysUsed }}일</td>
+            </tr>
+            <tr class="vac">
+              <th>휴가 유형</th>
+              <td>{{ goout.gooutTypeName }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="goout-button">
+          <div
+            class="confirm1-button"
+            v-if="
+              confirmer1?.confirmerId === loggedInUserId && goout?.status == 0
+            "
+          >
+            <!-- Show these buttons if the logged-in user is confirmer1 -->
+            <button @click="confirm1">결재자1 결재</button>
+            <button @click="reject1">결재자1 반려</button>
+          </div>
+          <!-- Show these buttons if the logged-in user is confirmer2 -->
+          <div
+            class="confirm1-button"
+            v-else-if="
+              confirmer2?.confirmerId === loggedInUserId && goout?.status == 1
+            "
+          >
+            <button @click="confirm2">결재자2 결재</button>
+            <button @click="reject2">결재자2 반려</button>
+          </div>
+          <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+          <div
+            class="confirm1-button"
+            v-else-if="
+              goout?.writerId === loggedInUserId ||
+              goout?.employeeId === loggedInUserId
+            "
+          >
+            <button @click="updateGoout">수정</button>
+            <button @click="deleteGoout">등록취소</button>
+          </div>
+          <!-- If logged-in user's ID does not match any, do not show any buttons -->
+        </div>
       </div>
     </div>
   </div>
-  <div class="goout-button">
-    <div
-        class="confirm1-button"
-        v-if="confirmer1?.confirmerId === loggedInUserId && goout?.status == 0"
-    >
-      <!-- Show these buttons if the logged-in user is confirmer1 -->
-      <button @click="confirm1">결재자1 결재</button>
-      <button @click="reject1">결재자1 반려</button>
-    </div>
-    <!-- Show these buttons if the logged-in user is confirmer2 -->
-    <div
-        class="confirm1-button"
-        v-else-if="
-        confirmer2?.confirmerId === loggedInUserId && goout?.status == 1
-      "
-    >
-      <button @click="confirm2">결재자2 결재</button>
-      <button @click="reject2">결재자2 반려</button>
-    </div>
-    <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-    <div
-        class="confirm1-button"
-        v-else-if="
-        goout?.writerId === loggedInUserId ||
-        goout?.employeeId === loggedInUserId
-      "
-    >
-      <button @click="updateGoout">수정</button>
-      <button @click="deleteGoout">등록취소</button>
-    </div>
-    <!-- If logged-in user's ID does not match any, do not show any buttons -->
-  </div>
+  <footer><br /><br /><br /><br /><br /></footer>
 </template>
 
 <script>
@@ -142,18 +157,18 @@ export default {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
       const token = sessionStorage.getItem("token");
       axios
-          .get(`${this.backend}/goout/files/${this.id}`,{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      })
-          .then((response) => {
-            this.files = response.data; // 파일 목록 업데이트
-          })
-          .catch((error) => {
-            console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
-          });
+        .get(`${this.backend}/goout/files/${this.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          this.files = response.data; // 파일 목록 업데이트
+        })
+        .catch((error) => {
+          console.error("파일 목록을 가져오는 중 오류가 발생했습니다.", error);
+        });
     },
     setLoggedInUser() {
       const token = sessionStorage.getItem("token");
@@ -166,18 +181,21 @@ export default {
       if (confirm("결재하시겠습니까?")) {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/gooutLine/confirm1`, {
-            id: this.confirmer1.id,
-            gooutId: this.id, // 휴가 ID
-            confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
-            comment: "결재자1 승인", // 코멘트
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/gooutLine/confirm1`,
+            {
+              id: this.confirmer1.id,
+              gooutId: this.id, // 휴가 ID
+              confirmerId: this.confirmer1.confirmerId, // 결재자1 ID
+              comment: "결재자1 승인", // 코멘트
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 승인되었습니다.");
           await this.returnGooutStatus(1);
           this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
@@ -193,18 +211,21 @@ export default {
       if (confirm("결재하시겠습니까?")) {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/gooutLine/confirm2`, {
-            id: this.confirmer2.id,
-            gooutId: this.id, // 휴가 ID
-            confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
-            comment: "결재자2 승인", // 코멘트
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/gooutLine/confirm2`,
+            {
+              id: this.confirmer2.id,
+              gooutId: this.id, // 휴가 ID
+              confirmerId: this.confirmer2.confirmerId, // 결재자1 ID
+              comment: "결재자2 승인", // 코멘트
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 승인되었습니다.");
           await this.returnGooutStatus(2);
           this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
@@ -222,29 +243,34 @@ export default {
       if (reason !== null && reason.trim() !== "") {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/gooutLine/reject1`, {
-            id: this.confirmer1.id,
-            gooutId: this.id,
-            confirmerId: this.confirmer1.confirmerId,
-            comment: reason, // 사용자 입력 반려 사유 사용
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/gooutLine/reject1`,
+            {
+              id: this.confirmer1.id,
+              gooutId: this.id,
+              confirmerId: this.confirmer1.confirmerId,
+              comment: reason, // 사용자 입력 반려 사유 사용
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 반려되었습니다.");
           await this.returnGooutStatus(3);
-          this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
-            this.$router.go(0);
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          this.$router.push(`/goout/read/` + this.$route.params.id).then(
+            () => {
+              this.$router.go(0);
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
         } catch (error) {
           console.error("결재자1 반려 처리 중 오류가 발생했습니다:", error);
           alert("결재자1 반려 처리에 실패했습니다.");
@@ -259,18 +285,21 @@ export default {
       if (reason !== null && reason.trim() !== "") {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/gooutLine/reject2`, {
-            id: this.confirmer2.id,
-            gooutId: this.id,
-            confirmerId: this.confirmer2.confirmerId,
-            comment: reason, // 사용자 입력 반려 사유 사용
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
+          await axios.patch(
+            `${this.backend}/gooutLine/reject2`,
+            {
+              id: this.confirmer2.id,
+              gooutId: this.id,
+              confirmerId: this.confirmer2.confirmerId,
+              comment: reason, // 사용자 입력 반려 사유 사용
             },
-          });
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
           console.log("결재라인이 성공적으로 반려되었습니다.");
           await this.returnGooutStatus(3);
           this.$router.push(`/goout/read/` + this.$route.params.id).then(() => {
@@ -292,13 +321,12 @@ export default {
         };
         // 수정된 객체를 사용하여 백엔드에 요청
         const token = sessionStorage.getItem("token");
-        await axios.patch(`${this.backend}/goout/return`, payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          });
+        await axios.patch(`${this.backend}/goout/return`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        });
         alert("휴가/외출 정보의 상태 업데이트가 성공적으로 처리되었습니다.");
       } catch (error) {
         console.error("휴가/외출 정보의 상태 업데이트에 실패했습니다:", error);
@@ -308,12 +336,13 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const gooutResponse = await axios.get(
-            `${this.backend}/goout/check/${this.id}`,{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      }
+          `${this.backend}/goout/check/${this.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         if (gooutResponse.data.isSuccess) {
           this.goout = gooutResponse.data.result;
@@ -330,12 +359,13 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-            `http://192.168.0.51/api/gooutLine/2/${gooutId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      }
+          `http://192.168.0.51/api/gooutLine/2/${gooutId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         if (response.data.isSuccess && response.data.result.length >= 2) {
           // 첫 번째와 두 번째 결재자 정보 분리하여 저장
@@ -346,8 +376,8 @@ export default {
         }
       } catch (error) {
         console.error(
-            "결재라인 정보를 불러오는 중 오류가 발생했습니다.",
-            error
+          "결재라인 정보를 불러오는 중 오류가 발생했습니다.",
+          error
         );
       }
     },
@@ -368,22 +398,22 @@ export default {
       }
       const gooutId = this.$route.params.id;
       localStorage.setItem(
-          "updateGooutInfo",
-          JSON.stringify({
-            gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
-            employeeId: this.goout.employeeId,
-            agentId: this.goout.agentId,
-            first: this.goout.first,
-            last: this.goout.last,
-            id: gooutId,
-          })
+        "updateGooutInfo",
+        JSON.stringify({
+          gooutTypeId: this.goout.gooutTypeId, // Presuming gooutTypeId is already there
+          employeeId: this.goout.employeeId,
+          agentId: this.goout.agentId,
+          first: this.goout.first,
+          last: this.goout.last,
+          id: gooutId,
+        })
       );
       localStorage.setItem(
-          "updateGooutLineInfo",
-          JSON.stringify({
-            confirmer1Id: this.confirmer1?.confirmerId,
-            confirmer2Id: this.confirmer2?.confirmerId,
-          })
+        "updateGooutLineInfo",
+        JSON.stringify({
+          confirmer1Id: this.confirmer1?.confirmerId,
+          confirmer2Id: this.confirmer2?.confirmerId,
+        })
       );
       this.$router.push("/goout/update");
     },
@@ -392,11 +422,11 @@ export default {
         try {
           const token = sessionStorage.getItem("token");
           await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          });
           console.log("휴가 등록을 취소하였습니다.");
           alert("휴가 등록을 취소하였습니다.");
           this.$router.push(`/goout/list`);
@@ -432,7 +462,22 @@ export default {
 
 <style scoped>
 .container {
-  width: 800px;
+  margin-top: 65px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: auto;
+  width: 1000px;
+  margin-left: auto; /* 좌우 마진을 자동으로 설정 */
+  margin-right: auto; /* 좌우 마진을 자동으로 설정 */
+}
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.container1 {
+  width: 770px;
   margin: 0 auto;
 }
 .header {
@@ -443,17 +488,25 @@ export default {
   font-weight: bold;
 }
 .table {
-  width: 100%;
+  width: 770px;
   border-collapse: collapse;
+  margin: 0 auto;
 }
-th,
 td {
   border: 1px solid #ddd;
   padding: 8px;
+  word-wrap: break-word;
 }
 th {
   text-align: center;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: auto !important;
+  border: 1px solid #ddd !important;
+  padding: 8px !important;
 }
+
 .input-label {
   display: inline-block;
   width: 100px;
@@ -491,14 +544,18 @@ button:hover {
   margin-top: 20px;
 }
 .goout-button {
-  text-align: right; /* 오른쪽 정렬 추가 */
+  display: flex;
+  justify-content: flex-end; /* 이 부모 컨테이너의 모든 자식 요소들을 오른쪽 정렬 */
 }
-.goout-button {
-  margin-top: 20px; /* 결재 버튼 위쪽에 공백 추가 */
+
+.confirm1-button {
+  display: flex;
+  justify-content: flex-end; /* 자신의 내부 요소를 오른쪽 정렬 */
 }
 .approve {
   display: flex;
   justify-content: flex-end; /* 부모 요소를 오른쪽으로 정렬합니다. */
+  margin-bottom: 50px;
 }
 .approve th,
 .approve td {

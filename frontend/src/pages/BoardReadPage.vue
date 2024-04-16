@@ -1,37 +1,20 @@
 <template>
   <HeaderComponent />
   <SideBar />
-  <div class="container">
-    <table class="approve">
-      <tr>
-        <td>
-          <div class="input-group">
-            <label class="input-label">작성자: </label>
-            {{ board?.writerName }}
-          </div>
-        </td>
-      </tr>
-    </table>
-    <table class="date">
-      <tr>
-        <td>
-          <div class="input-group">
-            <label class="input-label">작성: </label>
-            {{ formatDate(board?.createAt) }}
-          </div>
-          <div class="input-group">
-            <label class="input-label">수정: </label>
-            {{ formatDate(board?.updateAt) }}
-          </div>
-        </td>
-      </tr>
-    </table>
-    <div class="header">
-      <div v-if="board">
-        <h1 class="title">제목</h1>
-        {{ board?.title }}
+  <div class="container with-shadow">
+    <div class="contauner1">
+      <div class="header">
+        <h1 class="title">{{ board?.title }}</h1>
+        <br/>
         <table class="table">
-          <!-- 첨부 파일을 오른쪽에 정렬하고 싶다면 아래와 같이 td에 class를 추가합니다 -->
+          <tr>
+            <th>작성자</th>
+            <td>{{ board?.writerName }}</td>
+          </tr>
+          <tr>
+            <th>작성 일자</th>
+            <td>{{ formatDate(board?.createAt) }}</td>
+          </tr>
           <tr>
             <th>첨부 파일</th>
             <td class="file-list-container" colspan="2">
@@ -47,23 +30,24 @@
               <div v-else>첨부 파일 없음</div>
             </td>
           </tr>
-          <!-- 내용 부분을 새로운 행으로 분리합니다 -->
           <tr>
             <th>내용</th>
             <td class="board-text" colspan="2">{{ board?.text }}</td>
           </tr>
         </table>
+
+      <div class="board-button">
+        <!-- Show these buttons if the logged-in user is the one who requested the leave -->
+        <div v-if="board?.writerId === loggedInUserId">
+          <button @click="updateBoard">수정</button>
+          <button @click="deleteBoard">삭제</button>
+        </div>
+        <!-- If logged-in user's ID does not match any, do not show any buttons -->
       </div>
     </div>
-  </div>
-  <div class="board-button">
-    <!-- Show these buttons if the logged-in user is the one who requested the leave -->
-    <div v-if="board?.writerId === loggedInUserId">
-      <button @click="updateBoard">수정</button>
-      <button @click="deleteBoard">삭제</button>
     </div>
-    <!-- If logged-in user's ID does not match any, do not show any buttons -->
   </div>
+  <footer><br /><br /><br /><br /><br /></footer>
 </template>
 
 <script>
@@ -127,13 +111,12 @@ export default {
       // 특정 휴가 결재 ID에 대한 파일 목록을 가져오도록 URL 수정
       const token = sessionStorage.getItem("token");
       axios
-        .get(`${this.backend}/board/files/${this.id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
-            },
-          })
+        .get(`${this.backend}/board/files/${this.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },
+        })
         .then((response) => {
           this.files = response.data; // 파일 목록 업데이트
         })
@@ -189,104 +172,69 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 1150px;
-  margin-top: 80px;
-  margin-left: 300px;
+  margin-top: 65px;
   padding: 20px;
-  background-color: #fff;
+  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: auto;
+  width: 810px;
+  margin-left: auto; /* 좌우 마진을 자동으로 설정 */
+  margin-right: auto; /* 좌우 마진을 자동으로 설정 */
+  left: 110px;
 }
-
-.board-button {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
-
-.header {
-  display: flex;
-  /* justify-content: center; 이 부분을 제거합니다. */
-  align-items: center;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
 .title {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
-  align-self: flex-start; /* 추가: 제목을 왼쪽에 정렬합니다. */
+  margin-left: 70px;
 }
-
-.text {
-  font-size: 18px;
-  margin-bottom: 10px;
-  align-self: flex-start; /* 추가: 제목을 왼쪽에 정렬합니다. */
-}
-
-.table,
-.approve {
-  width: 100%;
+.table {
+  width: 770px;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin: 0 auto;
 }
-
 th,
 td {
   border: 1px solid #ddd;
   padding: 8px;
+  word-wrap: break-word;
+}
+th {
   text-align: center;
 }
-
-.input-group {
+.header {
+  margin-top: 20px; /* 헤더 위쪽에 공백 추가 */
+  background-color: white;
+  text-align: center;
+  margin-left: 0 auto;
+  margin-right: 0 auto;
+}
+button {
+  color: white;
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  background-color: #111111;
+  cursor: pointer;
+  border-radius: 10px;
+}
+button:hover {
+  background-color: #f75c29;
+}
+.board-button {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
 }
-
-.input-label {
-  margin-right: 0.5rem;
-  font-weight: bold;
-}
-
-.board-text {
-  font-size: 0.875rem; /* 내용의 글씨 크기를 조절합니다 */
-}
-
-.file-list-container {
-  justify-content: flex-end; /* 첨부 파일 목록을 오른쪽으로 정렬합니다 */
-}
-
-.file-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  /* text-align: center; 이 부분을 제거합니다. */
-}
-
-.file-list li {
-  display: inline;
-  margin-right: 10px;
-}
-
-.file-list li a {
-  color: #007bff;
-  text-decoration: underline;
-}
-
-.board-button button {
-  padding: 5px 15px;
-  margin: 0 5px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.board-button button:hover {
-  background-color: #0056b3;
+.board-text{
+  text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+  vertical-align: top; /* 콘텐츠를 셀의 상단으로 정렬 */
+  min-height: 400px;
+  width: 665px;
 }
 </style>
