@@ -140,7 +140,12 @@ export default {
     async deleteBoard() {
       if (confirm("정말로 이 공지사항을 삭제하시겠습니까?")) {
         try {
-          await axios.delete(`${this.backend}/board/delete/${this.id}`);
+          const token = sessionStorage.getItem("token");
+          await axios.delete(`${this.backend}/board/delete/${this.id}`, {
+          headers: {
+            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
+          },
+        });
           alert("공지사항이 삭제되었습니다.");
           this.$router.push(`/board/list`);
         } catch (error) {
