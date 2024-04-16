@@ -96,9 +96,11 @@ export default {
     },
   },
   methods: {
-    changePage(page) {
+     changePage(page) {
       // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
+      console.log(`Changing to page ${page}`);
       this.currentPage = page;
+      // this.pageGroupStart = Math.floor((page - 1) / this.pagesToShow) * this.pagesToShow + 1;
       this.fetchGoouts();
     },
 
@@ -131,37 +133,34 @@ export default {
     goToGooutCreate() {
       this.$router.push("/goout/create");
     },
+    
     async fetchGoouts() {
-      try {
-        const token = sessionStorage.getItem("token");
-        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          params: {
-            page: this.currentPage, // API가 페이지를 0부터 계산한다고 가정
-            size: this.pageSize,
-          },
-        });
-        if (response.data.code === 1200 && response.data.isSuccess) {
-          const data = response.data.result; // 결과 데이터 구조에 따라 조정
-          this.goouts = data.goouts;
-          this.filteredGoouts = this.goouts;
-          this.totalPages = Math.ceil(data.totalElements / this.pageSize);
-        } else {
-          console.error(
-            "API call successful, but unexpected response structure:",
-            response.data
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Failed to fetch goouts:",
-          error.response ? error.response.data : error
-        );
+  console.log(`휴가리스트 읽기 시작`);
+  try {
+    const token = sessionStorage.getItem("token");
+    const payload = {
+      page: this.currentPage,
+      size: this.pageSize
+    };
+    const response = await axios.post(`http://192.168.0.51/api/goout/check`, payload, {
+      headers: {
+        Authorization: "Bearer " + token,
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    if (response.data.code === 1200 && response.data.isSuccess) {
+      const data = response.data.result;
+      this.goouts = data.goouts;
+      this.filteredGoouts = this.goouts;
+      this.totalPages = Math.ceil(data.totalElements / this.pageSize);
+    } else {
+      console.error("API call successful, but unexpected response structure:", response.data);
+    }
+    console.log(`휴가리스트 읽기 끝`);
+  } catch (error) {
+    console.error("Failed to fetch goouts:", error.response ? error.response.data : error);
+  }
+},
     goToGooutReadPage(id) {
       if (id) {
         this.$router.push(`/goout/read/${id}`);
