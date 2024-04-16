@@ -42,12 +42,17 @@
       </table>
     </div>
     <div class="pagination">
-      <button v-if="currentPage > 1" @click="fetchApprovals(currentPage - 1)">이전</button>
-      <button v-for="n in pageGroup" :key="n" @click="fetchApprovals(n)" :class="{ active: n === currentPage }">
-      {{ n }}
-      </button>
-      <button v-if="currentPage < totalPages" @click="fetchApprovals(currentPage + 1)">다음</button>
-    </div>
+        <button @click="prevGroup">이전</button>
+        <button
+          v-for="page in pageGroup"
+          :key="page"
+          :class="{ active: page === currentPage }"
+          @click="changePage(page)"
+        >
+          {{ page }}
+        </button>
+        <button @click="nextGroup">다음</button>
+      </div>
   </div>
 </template>
 
