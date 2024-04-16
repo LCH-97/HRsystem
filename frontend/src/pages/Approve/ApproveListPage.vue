@@ -190,7 +190,7 @@ export default {
 
 <style scoped>
 .container {
-  margin-top: 50px;
+  margin-top: 30px;
   padding: 20px;
   background-color: white;
   border-radius: 8px;
@@ -198,9 +198,9 @@ export default {
   position: relative;
   left: 463px;
   top: 50px;
-  height: auto;
   margin-left: -50px;
-  width: 80%;
+  width: 60%;
+  height: auto;
 }
 .with-shadow {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
