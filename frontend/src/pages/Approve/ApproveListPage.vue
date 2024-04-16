@@ -150,6 +150,7 @@ export default {
         const response = await axios.get(api, {
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
             Authorization: "Bearer " + token,
           },
           params: {
