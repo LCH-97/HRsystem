@@ -3,7 +3,7 @@ import VueJwtDecode from "vue-jwt-decode";
 
 import OvertimeCreatePage from "../pages/OvertimeCreatePage.vue";
 import OvertimeListPage from "../pages/OvertimeListPage.vue";
-import OvertimeModifyPage from "../pages/OvertimeModifyPage.vue";
+// import OvertimeModifyPage from "../pages/OvertimeModifyPage.vue";
 import OvertimeApproveaPage from "../pages/OvertimeApproveaPage.vue";
 import OvertimeDetailPage from "../pages/OvertimeDetailPage.vue";
 
@@ -47,7 +47,7 @@ const router = createRouter({
     { path: "/manager", component: ManagerPage },
     { path: "/overtimecreate", component: OvertimeCreatePage },
     { path: "/overtimelist", component: OvertimeListPage },
-    { path: "/overtimemodify", component: OvertimeModifyPage },
+    // { path: "/overtimemodify", component: OvertimeModifyPage },
     { path: "/overtimeapprovea", component: OvertimeApproveaPage },
     { path: "/overtime/read/:id", component: OvertimeDetailPage },
 

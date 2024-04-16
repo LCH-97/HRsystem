@@ -188,7 +188,7 @@ export default {
   left: 230px;
   height: auto;
   margin-left: -50px;
-  width: 80%;
+  width: 73%;
 }
 .with-shadow {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);

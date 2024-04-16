@@ -156,7 +156,7 @@ export default {
   left: 463px;
   height: auto;
   margin-left: -50px;
-  width: 100%;
+  width: 60%;
   top: 50px;
 }
 .with-shadow {
