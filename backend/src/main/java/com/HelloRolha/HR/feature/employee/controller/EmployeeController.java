@@ -21,7 +21,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/init")
+    @RequestMapping(method = RequestMethod.POST, value = "/init") //초기
     public ResponseEntity init(SignUpReq signUpReq) {
 
         BaseRes res = BaseRes.builder()
