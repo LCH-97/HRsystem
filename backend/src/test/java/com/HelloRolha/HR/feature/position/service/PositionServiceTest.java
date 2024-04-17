@@ -9,11 +9,15 @@ import com.HelloRolha.HR.feature.position.model.dto.create.CreatePositionReq;
 import com.HelloRolha.HR.feature.position.model.dto.create.CreatePositionRes;
 import com.HelloRolha.HR.feature.position.model.entity.Position;
 import com.HelloRolha.HR.feature.position.repo.PositionRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -21,31 +25,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+@ExtendWith({MockitoExtension.class})
+@ActiveProfiles({"test"})
+@SpringBootTest
 class PositionServiceTest {
     @Mock
     private PositionRepository positionRepository;
-//    @Mock
-//    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private PositionService positionService;
+
+    PositionServiceTest() {
+    }
     @Test
     void create() {
         System.out.println("test");
-        Position position = Position.builder()
-                .id(1)
-                .build();
-        given(positionRepository.save(any(Position.class))).willReturn(position);
-        CreatePositionReq request = CreatePositionReq.builder()
-                .positionNum(123)
-                .positionName("테스트")
-                .build();
-        //when
-        CreatePositionRes response = positionService.create(request);
-        //then
-//        assertNotNull(response.getId());
-        assertEquals(response.getId(),1);
+        Position position = ((Position.PositionBuilder)Position.builder().id(1)).build();
+        BDDMockito.given((Position)this.positionRepository.save((Position) ArgumentMatchers.any(Position.class))).willReturn(position);
+        CreatePositionReq request = CreatePositionReq.builder().positionNum(123).positionName("테스트").build();
+        CreatePositionRes response = this.positionService.create(request);
+        Assertions.assertEquals(response.getId(), 1);
     }
-
 }

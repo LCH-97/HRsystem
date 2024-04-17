@@ -1,10 +1,7 @@
 package com.HelloRolha.HR;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+public class HrApplicationTests {
 
-
-class HrApplicationTests {
 
 
 }
