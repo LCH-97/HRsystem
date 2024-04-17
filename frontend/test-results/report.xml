@@ -27,7 +27,6 @@
     <testcase classname="SignUpPage renders props.msg when passed" name="SignUpPage renders props.msg when passed" time="0.025">
     </testcase>
   </testsuite>
-  
   <testsuite name="BoardListPage.vue" errors="0" failures="0" skipped="0" timestamp="2024-03-27T06:43:46" time="0.119" tests="1">
     <testcase classname="BoardListPage.vue fetches board data on mount" name="BoardListPage.vue fetches board data on mount" time="0.015">
     </testcase>
