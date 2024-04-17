@@ -118,7 +118,7 @@ class EmployeeServiceTest {
 
     @Test
     @DisplayName("매니저 로그인")
-    void managerLoginTest() {
+    void managerLoginTest() { //매니저 로그인
         // Given
         LoginRes fakeResponse = LoginRes.builder()
                 //.name("manager01")

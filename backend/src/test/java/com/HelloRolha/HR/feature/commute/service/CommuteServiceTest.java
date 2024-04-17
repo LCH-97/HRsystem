@@ -25,8 +25,6 @@ class CommuteServiceTest {
     CommuteServiceTest() {
     }
 
-
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -34,7 +32,7 @@ class CommuteServiceTest {
 
     @Test
     @DisplayName("직원 출근")
-    void commuteTest() {
+    void commuteTest() { //직원 출근
         LocalDateTime fakeStartTime = LocalDateTime.of(2024, 1, 1, 9, 0);
         CommuteDto fakeResponse = CommuteDto.builder().startTime(fakeStartTime).build();
         LocalDateTime responseStartTime = fakeResponse.getStartTime();
