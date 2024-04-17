@@ -45,7 +45,7 @@ class EmployeeServiceTest {
     private EmployeeController employeeController;
 
     @Test
-    @DisplayName("직원 회원가입") //직원 회원가입
+    @DisplayName("직원 회원가입")
     void employeeSignupTest() {
         // given
         Employee employee = Employee.builder()
@@ -70,7 +70,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    @DisplayName("직원 로그인") //직원 로그인
+    @DisplayName("직원 로그인")
     void employeeLoginTest() {
         // Given
         LoginRes fakeResponse = LoginRes.builder()
@@ -92,7 +92,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    @DisplayName("매니저 회원가입") //매니저 회원가입
+    @DisplayName("매니저 회원가입")
     void managerSignupTest() {
         // Given
         Employee employee = Employee.builder()
