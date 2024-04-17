@@ -32,7 +32,7 @@ class CommuteServiceTest {
 
     @Test
     @DisplayName("직원 출근")
-    void commuteTest() { //직원 출근
+    void commuteTest() {
         LocalDateTime fakeStartTime = LocalDateTime.of(2024, 1, 1, 9, 0);
         CommuteDto fakeResponse = CommuteDto.builder().startTime(fakeStartTime).build();
         LocalDateTime responseStartTime = fakeResponse.getStartTime();

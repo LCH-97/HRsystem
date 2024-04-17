@@ -91,7 +91,6 @@ class EmployeeServiceTest {
          //assertNotNull(response.getRefreshTokenKey());
     }
 
-
     @Test
     @DisplayName("매니저 회원가입")
     void managerSignupTest() {
@@ -115,10 +114,9 @@ class EmployeeServiceTest {
         // Then
         assertTrue(response.getResult());
     }
-
     @Test
     @DisplayName("매니저 로그인")
-    void managerLoginTest() { //매니저 로그인
+    void managerLoginTest() {
         // Given
         LoginRes fakeResponse = LoginRes.builder()
                 //.name("manager01")

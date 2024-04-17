@@ -36,11 +36,8 @@ class PositionServiceTest {
 
     PositionServiceTest() {
     }
-
-
-
     @Test
-    void create() { //부서 생성
+    void create() {
         System.out.println("test");
         Position position = ((Position.PositionBuilder)Position.builder().id(1)).build();
         BDDMockito.given((Position)this.positionRepository.save((Position) ArgumentMatchers.any(Position.class))).willReturn(position);

@@ -37,6 +37,6 @@ class BoardServiceTest {
 //        ResponseEntity<BaseRes> responseEntity = boardController.create(boardCreateReq, (MultipartFile[])null);
 //        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 //    }
-    //공지사항 생성
+
 }
 
