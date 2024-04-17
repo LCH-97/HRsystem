@@ -51,7 +51,7 @@ class EmployeeServiceTest {
         Employee employee = Employee.builder()
                 .id(1)
                 .build();
-//        given(employeeRepository.save(any(Employee.class))).willReturn(employee);
+//       given(employeeRepository.save(any(Employee.class))).willReturn(employee);
         SignUpReq request = SignUpReq.builder()
                 .username("test01@test.com")
                 .password("qwer1234")
@@ -74,10 +74,10 @@ class EmployeeServiceTest {
     void employeeLoginTest() {
         // Given
         LoginRes fakeResponse = LoginRes.builder()
-                //.name("test01")
+                 //.name("test01")
                 .token("fakeToken")
-                //.refreshToken("fakeRefreshToken")
-                //.refreshTokenKey("fakeRefreshTokenKey")
+                 //.refreshToken("fakeRefreshToken")
+                 //.refreshTokenKey("fakeRefreshTokenKey")
                 .build();
 
         // When
@@ -85,10 +85,10 @@ class EmployeeServiceTest {
 
         // Then
         assertNotNull(response);
-        // assertNotNull(response.getName());
+         // assertNotNull(response.getName());
         assertNotNull(response.getToken());
-        //assertNotNull(response.getRefreshToken());
-        //assertNotNull(response.getRefreshTokenKey());
+         //assertNotNull(response.getRefreshToken());
+         //assertNotNull(response.getRefreshTokenKey());
     }
 
     @Test
@@ -114,7 +114,6 @@ class EmployeeServiceTest {
         // Then
         assertTrue(response.getResult());
     }
-
     @Test
     @DisplayName("매니저 로그인")
     void managerLoginTest() {

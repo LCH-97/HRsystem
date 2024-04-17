@@ -27,6 +27,8 @@ import static org.mockito.BDDMockito.given;
 class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
+
+
     //    @Mock
 //    private PasswordEncoder passwordEncoder;
     @InjectMocks
@@ -48,4 +50,5 @@ class DepartmentServiceTest {
 ////        assertNotNull(response.getId());
 //        assertEquals(response.getId(),1);
 //    }
+
 }
