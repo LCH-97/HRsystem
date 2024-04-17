@@ -6,7 +6,6 @@ describe('LoginPage.vue', () => {
     const wrapper = shallowMount(LoginPage);
     await wrapper.vm.login(); // Simulate login action
     
-
     // You can assert how your component reacts to the login error here
     // For example:
     // expect(wrapper.vm.popTitle).toBe("회원가입에 실패하였습니다.");
