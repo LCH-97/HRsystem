@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="1">
+
+  <testsuite name="templates.sidebar"
+    errors="0" failures="0" hostname="" id="" package="sidebar" skipped="0"
+    tests="1" time="24.53" timestamp="">
+  
+    <testcase name="To check successful sidebar action" classname="templates.sidebar" time="11.73" assertions="4">
+
+    
+
+    
+
+    
+
+    
+    </testcase>
+  
+
+  
+
+    
+
+  
+  </testsuite>
+</testsuites>

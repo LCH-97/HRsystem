@@ -33,7 +33,7 @@ import axios from 'axios';
 export default {
   data() {
       return {
-          backend: "http://localhost:8080",
+          backend: "http://192.168.0.51/api",
           name: "",
           detail: "",
           maxHoliday: "",
@@ -46,10 +46,12 @@ export default {
         detail: detail,
         maxHoliday: maxHoliday
     };
-
+    const token = sessionStorage.getItem("token");
     let response = await axios.post(`${this.backend}/gooutType/create`, jsonData, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: "Bearer " + token,
+
         }
     });
 

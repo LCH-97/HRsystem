@@ -1,14 +1,14 @@
 <template>
   <div>
     <HeaderComponent />
-      <SideBar />
+    <SideBar />
 
-    <h1>초과 근무 신청</h1>
+    <!-- <h1>초과 근무 신청</h1>
 
     <form @submit.prevent="submitForm" id="overtimeForm">
-      <div class="section-divider"></div>
-      <!-- 초과근무 신청서 -->
-      <div class="flex-container">
+      <div class="section-divider"></div> -->
+    <!-- 초과근무 신청서 -->
+    <!-- <div class="flex-container">
         <label for="date">Date</label>
         <input type="date" id="date" name="date" required v-model="form.date">
       </div>
@@ -48,20 +48,113 @@
       <br>
       Email: 000001234@gmail.com <br>
     </p>
+  </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <br>
+    <br>
+    <br>
+    <div class="container">
+      <div class="header">
+        <h1>초과근무 신청</h1>
+      </div>
+      <div class="content">
+        <form @submit.prevent="submitForm" id="overtimeForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="date">초과근무 날짜</label>
+                <input type="date" id="overtimeDate" name="date" required v-model="form.date" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="shift">새벽/야간</label>
+                <select id="shift" name="shift" required v-model="form.shift" @change="handleShiftChange"
+                  class="form-control">
+                  <option value="" disabled selected>시간대 선택</option>
+                  <option value="morning">새벽</option>
+                  <option value="afternoon">야간</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="startTime">초과근무 시작시간</label>
+                <select id="startTime" name="startTime" required v-model="form.startTime" class="form-control">
+                  <option value="" disabled selected>시간 선택</option>
+                  <option v-for="time in startTimes" :value="time.value" :key="time.value">{{ time.label }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="endTime">초과근무 종료시간</label>
+                <select id="endTime" name="endTime" required v-model="form.endTime" class="form-control">
+                  <option value="" disabled selected>시간 선택</option>
+                  <option v-for="time in endTimes" :value="time.value" :key="time.value">{{ time.label }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reason">초과근무 사유</label>
+            <textarea v-model="form.reason" id="reason" name="reason" rows="4" cols="50" required
+              class="form-control"></textarea>
+          </div>
+          <input type="submit" value="제출" class="btn-submit">
+        </form>
+
+      </div>
+    </div>
   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 </template>
 
 <script>
 import axios from 'axios';
-  import SideBar from '../components/SideBar.vue';
-  import HeaderComponent from '../components/HeaderComponent.vue';
+import SideBar from '../components/SideBar.vue';
+import HeaderComponent from '../components/HeaderComponent.vue';
 
 export default {
   name: 'OvertimeCreatePage',
   components: {
-        SideBar,
-      HeaderComponent,
-    },
+    SideBar,
+    HeaderComponent,
+  },
   data() {
     return {
       form: {
@@ -78,23 +171,31 @@ export default {
   methods: {
     async sendData(formData) {
       try {
-        let response = await axios.post("http://localhost:8080/employee/overtime/create", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        const token = sessionStorage.getItem("token");
+        let response = await axios.post("http://192.168.0.51/api/employee/overtime/create", formData, {
+          headers: { Authorization: "Bearer " + token, },
+
         });
 
-        console.log("ID:", response.data.id);
+        console.log("ID:", response.data.result.id);
         // Handle response as needed
         alert("초과 근무 신청이 완료되었습니다."); // 신청 완료 메시지 출력
       } catch (error) {
         console.error("Error:", error);
+        alert("초과 근무 신청이 실패했습니다."); // 신청 실패 메시지 출력
       }
     },
     async submitForm() {
       try {
         const formData = new FormData();
-        for (let key in this.form) {
-          formData.append(key, this.form[key]);
-        }
+
+        formData.append("date", this.form.date);
+        formData.append("shift", this.form.shift);
+        formData.append("startTime", this.form.startTime);
+        formData.append("endTime", this.form.endTime);
+        formData.append("reason", this.form.reason);
+        console.log("create overtime data:", this.form);
+
         await this.sendData(formData);
       } catch (error) {
         console.error("Error:", error);
@@ -130,79 +231,50 @@ export default {
 </script>
 
 <style scoped>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: rgba(255, 254, 254, 0.955); /* 회색 배경 */
-        }
-        h1 {
-            text-align: left;
-            font-size: 30px; /* 크기 작게 */
-            margin-bottom: -14px; /* 간격 추가 */
-            margin-top: 70px;
-            margin-left: 249px;
-        }
-        p {
-            text-align: left;
-            font-size: 14px;
-            margin-left: 249px;
-            margin-top: -54px;
-        }
-        form {
-            max-width: 1170px; /* 전체 폼의 최대 너비 조정 */
-            margin: 37 auto;
-            padding: 47px;
-            background-color: #fff; /* 흰색 배경 */
-            border-radius: 6px;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-            border: 0px solid #ffffff; /* 테두리 색 설정 */
-            text-align: left; /* 왼쪽 정렬 */
-            margin-left: 201px;
-        }
-        label {
-            display: inline-block; /* 인라인 블록 요소로 설정 */
-            width: 120px; /* 레이블 너비 설정 */
-            margin-bottom: 5px;
-            margin-right: 10px;
-        }
-        input[type="date"],
-        select,
-        textarea {
-            width: calc(100% - 130px); /* 테두리 고려하여 너비 조정 */
-            padding: 8px;
-            margin-bottom: 10px;
-            border:1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            background-color: #1a1817; /* 오렌지색 버튼 */
-            color: white;
-            padding: 10px 15px; /* 작은 사이즈로 조정 */
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px; /* 폰트 크기 조정 */
-            float: right; /* 우측 정렬 */
-            margin-top: 40px;
-        }
-        input[type="submit"]:hover {
-            background-color: #ef7b2d; /* 오렌지색 버튼 호버 상태 */
-        }
-        .section-divider {
-            border-bottom: 1px solid #ccc; /* 밑줄 추가 */
-            margin-bottom: 20px; /* 간격 추가 */
-            padding-bottom: 10px; /* 간격 추가 */
-            font-weight: bold; /* 제목 굵게 */
-        }
-        .flex-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start; /* 왼쪽 정렬 */
-            margin-bottom: 10px; /* 간격 추가 */
-        }
-        .flex-item {
-            margin-right: 10px; /* 간격 추가 */
-        }
-    </style>
+.container {
+  max-width: 1254px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 113px;
+}
+
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 32px;
+  color: black;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.btn-submit {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+  position: relative;
+  right: -1089px;
+}
+
+.btn-submit:hover {
+  background-color: #F7941E;
+}
+</style>
