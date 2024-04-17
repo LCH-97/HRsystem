@@ -5,6 +5,7 @@ describe('LoginPage.vue', () => {
   it('handles login error', async () => {
     const wrapper = shallowMount(LoginPage);
     await wrapper.vm.login(); // Simulate login action
+    
 
     // You can assert how your component reacts to the login error here
     // For example:
