@@ -12,11 +12,11 @@ import java.io.IOException;
 public class SalaryScheduler {
     private final SalaryService salaryService;
 //    @Scheduled(cron = "0 0 0 1 * *") // 매월 1일에 월급 계산
-    @Scheduled(fixedRate = 300000)
-    public void test () throws IOException {
-
-        System.out.println("test");
-
-        salaryService.init();
-    }
+//    @Scheduled(fixedRate = 300000)
+//    public void test () throws IOException {
+//
+//        System.out.println("test");
+//
+//        salaryService.init();
+//    }
 }
