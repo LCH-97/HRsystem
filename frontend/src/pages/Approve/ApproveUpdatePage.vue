@@ -1,3 +1,4 @@
+
 <template>
   <HeaderComponent />
   <SideBar />
@@ -301,4 +302,6 @@ input, select, textarea {
 .form-group {
   margin-bottom: 20px; /* 내용과 결재자 1, 결재자 2 사이 간격 조정 */
 }
+
 </style>
+

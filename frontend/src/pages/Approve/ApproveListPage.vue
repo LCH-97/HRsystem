@@ -12,7 +12,7 @@
       <button @click="filterApprovalsByStatus(4)">회수</button>
     </div>
     <div>
-      <a class="make-approve" href="/approve/create">결재 생성 </a>
+      <a class="make-approve" href="/approve/">결재 생성 </a>
     </div>
     <div class="approveList">
       <table>
@@ -42,12 +42,17 @@
       </table>
     </div>
     <div class="pagination">
-      <button v-if="currentPage > 1" @click="fetchApprovals(currentPage - 1)">이전</button>
-      <button v-for="n in pageGroup" :key="n" @click="fetchApprovals(n)" :class="{ active: n === currentPage }">
-      {{ n }}
-      </button>
-      <button v-if="currentPage < totalPages" @click="fetchApprovals(currentPage + 1)">다음</button>
-    </div>
+        <button @click="prevGroup">이전</button>
+        <button
+          v-for="page in pageGroup"
+          :key="page"
+          :class="{ active: page === currentPage }"
+          @click="changePage(page)"
+        >
+          {{ page }}
+        </button>
+        <button @click="nextGroup">다음</button>
+      </div>
   </div>
 </template>
 
@@ -66,8 +71,8 @@ export default {
     return {
       approvals: [],
       approveLine: [],
-      filteredApprovals: [], // 필터링된 결재 목록
-      currentFilterStatus: null, // 현재 선택된 필터 상태
+      filteredApprovals: [],
+      currentFilterStatus: null,
       confirmer1: "",
       confirmer2: "",
       currentPage: 1,
@@ -78,14 +83,21 @@ export default {
 
     };
   },
+  created() {
+    this.fetchApprovals();
+  },
   computed: {
 
     pageGroup() {
-      let startPage = Math.floor((this.currentPage - 1) / this.pagesToShow) * this.pagesToShow + 1;
+      let startPage =
+        Math.floor((this.currentPage - 1) / this.pagesToShow) *
+          this.pagesToShow +
+        1;
       let pages = [];
       for (let i = 0; i < this.pagesToShow; i++) {
         let page = startPage + i;
-        if (page > this.totalPages) break;
+        if (page > this.totalPages) break; 
+
         pages.push(page);
       }
       return pages;
@@ -106,28 +118,20 @@ export default {
       return counts;
     },
   },
-  async mounted() {
-    await this.fetchApprovals(this.currentPage);
-    //   // await this.fetchApproveLine();
-  },
+
   methods: {
     changePage(page) {
-      // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
       this.currentPage = page;
       this.fetchApprovals();
     },
 
     prevGroup() {
-      // 이전 그룹으로 이동 (페이지 번호 배열만 -5)
       this.pageGroupStart = Math.max(1, this.pageGroupStart - this.pagesToShow);
-      // 현재 페이지도 페이지 그룹의 첫 페이지로 설정
       this.changePage(this.pageGroupStart);
     },
     nextGroup() {
-      // 다음 그룹으로 이동 (페이지 번호 배열만 +5)
       if (this.pageGroupStart + this.pagesToShow <= this.totalPages) {
         this.pageGroupStart += this.pagesToShow;
-        // 현재 페이지도 페이지 그룹의 첫 페이지로 설정
         this.changePage(this.pageGroupStart);
       }
     },
@@ -143,14 +147,21 @@ export default {
     },
 
     async fetchApprovals(page = this.currentPage) {
-      const api = `http://192.168.0.51/api/approve/list?page=${page - 1}&size=${this.pageSize}`;
+
+      const api = `http://192.168.0.51/api/approve/list`;
+
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(api, {
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
             Authorization: "Bearer " + token,
           },
+          params: {
+            page: page - 1,
+            size: this.pageSize
+          }
         });
         if (response.data && response.data.result) {
           this.approvals = response.data.result.content;
