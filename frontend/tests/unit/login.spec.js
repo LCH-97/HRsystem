@@ -10,11 +10,12 @@ describe('LoginPage.vue', () => {
   it('handles login error', async () => {
     const wrapper = shallowMount(LoginPage);
     await wrapper.vm.login(); // Simulate login action
-   
 
+  
     expect(window.sessionStorage.setItem).toHaveBeenCalledWith('token', 'testToken');
     expect(window.sessionStorage.setItem).toHaveBeenCalledWith('refreshToken', 'testRefreshToken');
     expect(window.sessionStorage.setItem).toHaveBeenCalledWith('name', 'testName');
     expect(pushMock).toHaveBeenCalledWith('/main');
+
   });
 });
