@@ -28,6 +28,7 @@ class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
 
+
     //    @Mock
 //    private PasswordEncoder passwordEncoder;
     @InjectMocks
