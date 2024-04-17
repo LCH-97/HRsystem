@@ -96,9 +96,11 @@ export default {
     },
   },
   methods: {
-    changePage(page) {
+     changePage(page) {
       // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
+      console.log(`Changing to page ${page}`);
       this.currentPage = page;
+      // this.pageGroupStart = Math.floor((page - 1) / this.pagesToShow) * this.pagesToShow + 1;
       this.fetchGoouts();
     },
 
@@ -131,6 +133,7 @@ export default {
     goToGooutCreate() {
       this.$router.push("/goout/create");
     },
+    
     async fetchGoouts() {
   console.log(`휴가리스트 읽기 시작`);
   try {

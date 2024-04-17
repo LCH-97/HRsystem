@@ -12,7 +12,7 @@
       <button @click="filterApprovalsByStatus(4)">회수</button>
     </div>
     <div>
-      <a class="make-approve" href="/approve/create">결재 생성 </a>
+      <a class="make-approve" href="/approve/">결재 생성 </a>
     </div>
     <div class="approveList">
       <table>
@@ -87,6 +87,7 @@ export default {
     this.fetchApprovals();
   },
   computed: {
+
     pageGroup() {
       let startPage =
         Math.floor((this.currentPage - 1) / this.pagesToShow) *
@@ -96,6 +97,7 @@ export default {
       for (let i = 0; i < this.pagesToShow; i++) {
         let page = startPage + i;
         if (page > this.totalPages) break; 
+
         pages.push(page);
       }
       return pages;
@@ -116,6 +118,7 @@ export default {
       return counts;
     },
   },
+
   methods: {
     changePage(page) {
       this.currentPage = page;
@@ -144,7 +147,9 @@ export default {
     },
 
     async fetchApprovals(page = this.currentPage) {
-      const api = `http://192.168.0.51/api//approve/list`;
+
+      const api = `http://192.168.0.51/api/approve/list`;
+
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(api, {

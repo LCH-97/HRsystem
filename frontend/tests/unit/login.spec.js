@@ -6,6 +6,7 @@ import LoadingPage from "@/components/LoadingPage.vue";
 jest.mock('axios');
 
 describe('LoginPage.vue', () => {
+
   let wrapper;
   const pushMock = jest.fn();
 
@@ -70,6 +71,7 @@ describe('LoginPage.vue', () => {
 
     await wrapper.vm.login();
     await wrapper.vm.$nextTick();
+
 
     expect(window.sessionStorage.setItem).toHaveBeenCalledWith('token', 'testToken');
     expect(window.sessionStorage.setItem).toHaveBeenCalledWith('refreshToken', 'testRefreshToken');
