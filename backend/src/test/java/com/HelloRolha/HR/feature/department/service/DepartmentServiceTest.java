@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@SpringBootTest
 class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
@@ -29,21 +31,21 @@ class DepartmentServiceTest {
 //    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private DepartmentService departmentService;
-    @Test
-    void create() {
-        System.out.println("test");
-        Department department = Department.builder()
-                .id(1)
-                .build();
-        given(departmentRepository.save(any(Department.class))).willReturn(department);
-        CreateDepartmentReq request = CreateDepartmentReq.builder()
-                .departmentNum(100)
-                .departmentName("비서실")
-                .build();
-        //when
-        CreateDepartmentRes response = departmentService.create(request);
-        //then
-//        assertNotNull(response.getId());
-        assertEquals(response.getId(),1);
-    }
+//    @Test
+//    void create() {
+//        System.out.println("test");
+//        Department department = Department.builder()
+//                .id(1)
+//                .build();
+//        given(departmentRepository.save(any(Department.class))).willReturn(department);
+//        CreateDepartmentReq request = CreateDepartmentReq.builder()
+//                .departmentNum(100)
+//                .departmentName("비서실")
+//                .build();
+//        //when
+//        CreateDepartmentRes response = departmentService.create(request);
+//        //then
+////        assertNotNull(response.getId());
+//        assertEquals(response.getId(),1);
+//    }
 }

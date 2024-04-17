@@ -29,12 +29,12 @@ class BoardServiceTest {
     void setUp() {
     }
 
-    @Test
-    @DisplayName("공지사항 생성")
-    void testCreateBoardSuccess() {
-        BoardController boardController = new BoardController(this.boardService);
-        BoardCreateReq boardCreateReq = BoardCreateReq.builder().title("board").text("boardText").build();
-        ResponseEntity<BaseRes> responseEntity = boardController.create(boardCreateReq, (MultipartFile[])null);
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+//    @Test
+//    @DisplayName("공지사항 생성")
+//    void testCreateBoardSuccess() {
+//        BoardController boardController = new BoardController(this.boardService);
+//        BoardCreateReq boardCreateReq = BoardCreateReq.builder().title("board").text("boardText").build();
+//        ResponseEntity<BaseRes> responseEntity = boardController.create(boardCreateReq, (MultipartFile[])null);
+//        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//    }
 }

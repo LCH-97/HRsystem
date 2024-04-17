@@ -17,6 +17,7 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -26,6 +27,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles({"test"})
+@SpringBootTest
 class PositionServiceTest {
     @Mock
     private PositionRepository positionRepository;
