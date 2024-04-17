@@ -37,6 +37,7 @@ class PositionServiceTest {
     PositionServiceTest() {
     }
 
+
     @Test
     void create() {
         System.out.println("test");
