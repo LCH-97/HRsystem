@@ -92,7 +92,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    @DisplayName("매니저 회원가입")
+    @DisplayName("매니저 회원가입") //매니저 회원가입
     void managerSignupTest() {
         // Given
         Employee employee = Employee.builder()
