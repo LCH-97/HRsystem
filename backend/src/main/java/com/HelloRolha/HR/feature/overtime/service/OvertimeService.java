@@ -73,7 +73,6 @@ public class OvertimeService {
                         .shift(overtime.getShift())
                         .startTime(overtime.getStartTime())
                         .endTime(overtime.getEndTime())
-                        .sumTime(overtime.getSumTime().toString())
                         .date(overtime.getDate())
                         .reason(overtime.getReason())
                         .status(overtime.getStatus())
