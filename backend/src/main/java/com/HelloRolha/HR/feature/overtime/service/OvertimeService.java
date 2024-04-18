@@ -151,7 +151,7 @@ public class OvertimeService {
             overtime.setStartTime(overtimeDto.getStartTime());
             overtime.setEndTime(overtimeDto.getEndTime());
             overtime.setReason(overtimeDto.getReason());
-            overtime.setStatus("대기 중");
+            overtime.setStatus("대기중");
             overtimeRepository.save(overtime);
         }
     }
