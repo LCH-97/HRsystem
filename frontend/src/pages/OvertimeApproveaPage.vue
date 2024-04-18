@@ -61,7 +61,7 @@ export default {
     async fetchOvertimeList() {
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get("http://192.168.0.51/api/employee/overtime/list",{
+        const response = await axios.get("http://192.168.0.51/api/employee/overtime/list/real",{
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
@@ -76,10 +76,24 @@ export default {
     },
     async approveOvertime(id) {
       try {
-        await axios.patch(`http://192.168.0.51/api/employee/overtime/approve/${id}`);
+        console.log("1")
+        const token = sessionStorage.getItem("token");
+        const payload = {
+          id: id,
+        };
+        console.log("2")
+        await axios.patch(`http://192.168.0.51/api/employee/overtime/approve`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        });
+        console.log("2")
+        alert("초과 근무를 승인 하였습니다.");
         this.fetchOvertimeList(); // 목록 다시 불러오기
       } catch (error) {
         console.error("Error:", error);
+        alert("초과 근무 승인에 실패 하였습니다.");
       }
     }
   }
