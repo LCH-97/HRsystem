@@ -421,11 +421,11 @@ export default {
       if (confirm("휴가 등록을 취소하시겠습니까?")) {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {
+          await axios.patch(`${this.backend}/goout/cancel/${this.id}`, {}, {
             headers: {
-              "Content-Type": "application/json",
               Authorization: "Bearer " + token,
-            },
+              "Content-Type": "application/json",
+            }
           });
           console.log("휴가 등록을 취소하였습니다.");
           alert("휴가 등록을 취소하였습니다.");

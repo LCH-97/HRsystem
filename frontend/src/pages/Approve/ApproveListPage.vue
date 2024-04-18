@@ -146,22 +146,21 @@ export default {
       }
     },
 
-    async fetchApprovals(page = this.currentPage) {
+    async fetchApprovals() {
 
       const api = `http://192.168.0.51/api/approve/list`;
 
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get(api, {
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-cache",
-            Authorization: "Bearer " + token,
-          },
-          params: {
-            page: page - 1,
-            size: this.pageSize
-          }
+        const payload = {
+          page: this.currentPage - 1,
+          size: this.pageSize
+        };
+        const response = await axios.post(api, payload, {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            }
         });
         if (response.data && response.data.result) {
           this.approvals = response.data.result.content;
