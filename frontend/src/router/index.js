@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import VueJwtDecode from "vue-jwt-decode";
+import jwtDecode from 'jwt-decode';
 
 import OvertimeCreatePage from "../pages/OvertimeCreatePage.vue";
 import OvertimeListPage from "../pages/OvertimeListPage.vue";
@@ -48,7 +49,26 @@ const router = createRouter({
     { path: "/overtimecreate", component: OvertimeCreatePage },
     { path: "/overtimelist", component: OvertimeListPage },
     // { path: "/overtimemodify", component: OvertimeModifyPage },
-    { path: "/overtimeapprovea", component: OvertimeApproveaPage },
+    {
+      path: '/overtimeapprovea',
+      component: OvertimeApproveaPage,
+      beforeEnter: (to, from, next) => {
+        const token = sessionStorage.getItem('token');
+        if (token) {
+          const decoded = jwtDecode(token);  // 올바른 디코드 함수 사용
+          if (decoded.ROLE === 'ROLE_ADMIN') {
+            next();
+          } else {
+            alert('인사 관리자만 접근 가능합니다.');
+            next(false);  // 현재 라우트 이동 취소
+          }
+        } else {
+          alert('인증 정보가 필요합니다.');
+          next(false);  // 현재 라우트 이동 취소
+        }
+      }
+    },
+    // { path: "/overtimeapprovea", component: OvertimeApproveaPage },
     { path: "/overtime/read/:id", component: OvertimeDetailPage },
 
     { path: "/approve/list", component: ApproveListPage },
