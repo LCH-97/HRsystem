@@ -14,9 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GooutLine extends ApproveLineBaseEntity {
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "goout_id")
     private Goout goout;
-
 }

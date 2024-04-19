@@ -27,10 +27,7 @@ public class JwtUtils {
 
         Claims claims = Jwts.claims();
         claims.put("ID", employee.getId());
-        claims.put("NAME", employee.getName());
-        claims.put("DEPARTMENT", employee.getDepartment().getDepartmentName());
-        claims.put("POSITION", employee.getPosition().getPositionName());
-        claims.put("ROLE", employee.getAuthority());
+
 
         byte[] secretBytes = secretKey.getBytes();
 

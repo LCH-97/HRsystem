@@ -305,7 +305,7 @@ public class GooutService {
                     .orElseThrow(() -> new RuntimeException("해당 휴가/외출 신청이 존재하지 않습니다."));
 
             GooutFile gooutFile = new GooutFile();
-            gooutFile.setFilename(saveFileName);
+            gooutFile.setFileName(saveFileName);
             gooutFile.setOriginalFilename(originalName);
             gooutFile.setGoout(goout); // 찾아온 Goout 엔티티 사용
             gooutFileRepository.save(gooutFile);
