@@ -27,7 +27,7 @@
           <td>{{ overtime.reason }}</td>
           <td>{{ overtime.status }}</td>
           <td>
-            <button v-if="overtime.status === '대기중'" class="approval-button" @click.stop="approveOvertime(overtime.id)">
+            <button v-if="overtime.status === '대기 중'" class="approval-button" @click.stop="approveOvertime(overtime.id, $event)">
               승인
             </button>
           </td>
@@ -65,7 +65,7 @@ export default {
     paginatedData() {
       const start = this.currentPage * this.pageSize;
       const end = start + this.pageSize;
-      return this.overtimeList.slice(start, end);
+      return this.overtimeList.filter(overtime => overtime.status !== '승인됨').slice(start, end);
     },
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
