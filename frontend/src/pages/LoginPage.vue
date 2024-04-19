@@ -119,11 +119,8 @@ export default {
         .catch(error => {
           console.error('Error Login:', error);
           
-          if (error.code === "ERR_NETWORK") {
-            this.popTitle = "로그인에 실패하였습니다.";
-            this.popText = "ERR_NETWORK: 서버와의 통신이 실패하였습니다.";
-          }
-          else if (error.response.data.code === "USER-004") {
+          
+          if (error.response.data.code === "USER-004" || error.response.data.code === "USER-003") {
             this.popTitle = "로그인에 실패하였습니다.";
             this.popText = "다시 시도해주세요.";
           } else if (error.response.data.code === "EMPLOYEE-001") {
@@ -133,6 +130,10 @@ export default {
             this.popTitle = "로그인에 실패하였습니다.";
             this.popText = "AxiosError: 서버와의 통신이 실패하였습니다. ";
           
+          }
+          else if (error.code === "ERR_NETWORK") {
+            this.popTitle = "로그인에 실패하였습니다.";
+            this.popText = "ERR_NETWORK: 서버와의 통신이 실패하였습니다.";
           }
           else {
             this.popTitle = "예상하지 못한 에러입니다. ";
