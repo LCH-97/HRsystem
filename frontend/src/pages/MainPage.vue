@@ -13,8 +13,8 @@
                 <div class="card mb-4">
                   <div class="card-body">
                     <div class="chartjs-size-monitor">
-                      <div class="chartjs-size-monitor-expand1">
-                        <FullCalendar :options="calendarOptions" />
+                      <div class="chartjs-size-monitor-expand1" style="margin-top: 28px; direction: ltr; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 33px;">
+                        <FullCalendar :options="calendarOptions" style="margin-top: 30px; direction: ltr; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 33px;" />
                       </div>
                       
                     </div>
@@ -74,9 +74,9 @@
                               </tr>
                             </thead>
                             <tbody id="boardTableBody">
-                              <tr v-for="board in boards" :key="board.id">
+                              <tr v-for="board in boards" :key="board.id" @click="goToBoardReadPage(board.id)">
                                 <td>{{ board.title }}</td>
-                                <td>{{ board.writerid }}</td>
+                                <td>{{ board.writerName }}</td>
                                 <td>{{ board.createAt }}</td>
                               </tr>
                               
@@ -103,8 +103,8 @@
                     <div class="chartjs-size-monitor">
                       <div class="chartjs-size-monitor-expand">
                         <div id="commute-info">
-                          <h2 style="font-size: 28px; position: relative; top: 93px;">안녕하세요</h2>
-                          <h2 style="font-size: 28px; position: relative; top: 106px;">{{ this.name }}님</h2>
+                          <h2 style="font-size: 27px; position: relative; top: 85px;">안녕하세요</h2>
+                          <h2 style="font-size: 26px; position: relative; top: 102px;">{{ this.name }}님</h2>
                           <img class="profile-pic" src="https://png.pngtree.com/png-clipart/20191121/original/pngtree-user-vector-icon-png-image_5152508.jpg" alt="Profile Picture" />
 
                           <!-- 나중에는 여기 직원 이름이 오도록 -->
@@ -286,20 +286,34 @@ export default {
     },
     
     fetchBoardData(page) {
-      console.log("qweqwe");
-      const itemsPerPage = 6;
-      axios
-        .get(`http://192.168.0.51/api/board/check?page=${page}&perPage=${itemsPerPage}`)
-        .then((response) => {
-          // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
-          this.boards = response.data.result.boards;
-          console.log(this.boards); // 게시글 데이터가 올바르게 할당되었는지 콘솔에 출력
-        })
-        .catch((error) => {
-          console.error("Error fetching board data:", error);
-        });
-    },
+  console.log("Fetching board data");
+  const token = sessionStorage.getItem("token");
+  const itemsPerPage = 6;
+  const payload = {
+    page: page,
+    size: itemsPerPage
+  };
+
+  axios.post(`http://192.168.0.51/api/board/check`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    // 백엔드에서 전달된 데이터 중 게시글 목록만 추출하여 할당
+    this.boards = response.data.result.boards;
+    console.log(this.boards); // 게시글 데이터가 올바르게 할당되었는지 콘솔에 출력
+  })
+  .catch(error => {
+    console.error("Error fetching board data:", error);
+  });
+},
     
+goToBoardReadPage(id) {
+      this.$router.push(`/board/read/${id}`);
+    },
+
     fetchApprovalData() {
       // 실제로는 서버에서 데이터를 가져와야 합니다.
       // 예시 데이터로 임시로 값을 할당합니다.
@@ -401,7 +415,7 @@ button:active {
 }
 
 #commute-info {
-  height: 614px;
+  height: 591px;
   font-size: 12px;
   text-align: center;
   border: 2px solid #fdfbfb;
@@ -418,11 +432,11 @@ button:active {
 
 .profile-pic {
   width: 100px;
-  height: 100px;
+  height: 99px;
   border-radius: 50%;
   border: 2px solid #fff;
   position: absolute;
-  top: 246px;
+  top: 234px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -430,7 +444,7 @@ button:active {
 .main-button-container {
   position: relative;
   padding: 0px;
-  margin-top: 343px;
+  margin-top: 286px;
 }
 
 #sumTime {
@@ -455,7 +469,7 @@ body {
   overflow-x: auto;
   font-size: 10px;
   margin-top: 24px;
-  height: 376px;
+  height: 354px;
 }
 
 .table {
@@ -499,7 +513,14 @@ body {
 }
 
 .chartjs-size-monitor-expand1 {
-  margin-top: 9px;
+  margin-top: 1px;
+  direction: ltr;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 33px;
+  margin-top: 4px;
 }
 
 .card-header2 {
@@ -512,4 +533,3 @@ body {
 }
 
 </style>
-

@@ -2,13 +2,10 @@
   <div>
     <HeaderComponent />
     <SideBar />
-<br>
-<br>
-<br>
 <div class="container with-shadow">
-      <h1>초과근무 목록</h1>
-      <div class="datatable-container">
-        <table id="datatablesSimple" class="datatable-table">
+      <h2>초과근무 목록</h2>
+      <div class="overtimeList">
+        <table>
           <thead>
             <tr>
               <th>No.</th>
@@ -33,9 +30,12 @@
           </tbody>
         </table>
         <div class="pagination">
-          <button @click="prevPage">&lt;</button>
-          <span>{{ currentPage }}</span>
-          <button @click="nextPage">&gt;</button>
+          <button @click="prevPage">이전</button>
+          <button v-for="page in pageGroup"
+          :key="page"
+          :class="{ active: page === currentPage}"
+          @click="changePage(page)"> {{ currentPage }}</button>
+          <button @click="nextPage">다음</button>
         </div>
       </div>
     </div>
@@ -101,44 +101,52 @@ export default {
 </script>
 <style scoped>
 .container {
-  max-width: 1254px;
-  margin: 0 auto;
-  padding: 15px;
-  background-color: #fff;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: white;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  left: 113px;
-  height: 436px;
+  left: 463px;
+  height: auto;
+  margin-left: -50px;
+  width: 60%;
+  top: 50px;
 }
 .with-shadow {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
-h1 {
-  font-size: 24px;
-  margin-bottom: 32px;
-  margin-left: 13px;
+.overtimeList table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-left: 10px;
+  margin-top: 70px;
+}
+.overtimeList th,
+.overtimeList td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
 .pagination {
   display: flex;
-  justify-content: center; /* center buttons horizontally */
-  align-items: center; /* center buttons vertically */
-  margin-top: 20px;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
-.pagination button {
-  cursor: pointer;
-  padding: 8px 12px;
+button {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white;
+  letter-spacing: 0.2px;
   border: none;
-  background-color: #F0F0F0;
-  border-radius: 5px;
-  margin: 0 5px;
+  border-radius: 10px;
+  background-color: #111111;
+  margin: -5px 0px 15px 10px;
 }
-.pagination button:hover {
-  background-color: #E0E0E0;
-}
-.pagination button:disabled {
-  cursor: not-allowed;
-  background-color: #ddd;
+
+button:hover {
+  background-color: #f75c29;
 }
 </style>

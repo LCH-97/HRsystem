@@ -114,7 +114,7 @@
                 <nav class="sb-sidenav-menu-nested nav">
                   <router-link to="/overtimecreate" id="overtimecreate" class="nav-link">초과 근무 생성</router-link>
                   <router-link to="/overtimelist" id="overtimelist" class="nav-link">초과 근무 목록</router-link>
-                  <router-link to="/overtimemodify" id="overtimemodify" class="nav-link">초과 근무 수정</router-link>
+                  <!-- <router-link to="/overtimemodify" id="overtimemodify" class="nav-link">초과 근무 수정</router-link> -->
                   <router-link to="/overtimeapprovea" id="overtimeapprovea" class="nav-link">초과 근무 승인 목록</router-link>
                 </nav>
               </div>

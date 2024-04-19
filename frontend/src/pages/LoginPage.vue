@@ -119,8 +119,10 @@ export default {
         .catch(error => {
           console.error('Error Login:', error);
           
+
           
           if (error.response.data.code === "USER-004" || error.response.data.code === "USER-003") {
+
             this.popTitle = "로그인에 실패하였습니다.";
             this.popText = "다시 시도해주세요.";
           } else if (error.response.data.code === "EMPLOYEE-001") {

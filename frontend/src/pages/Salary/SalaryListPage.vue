@@ -109,11 +109,13 @@
             </div>
         </div>
     </div>
+    <LoadingPage v-if="isLoading" @close-event="close" :-title="loadingTitle" :-text="loadingText"></LoadingPage>
 </template>
 
 <script>
 import SideBar from "@/components/SideBar.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
+import LoadingPage from "@/components/SideBar.vue"
 import axios from "axios";
 
 
@@ -123,6 +125,7 @@ export default {
     components: {
         SideBar,
         HeaderComponent,
+        LoadingPage,
     },
     data() {
         return {
@@ -248,9 +251,8 @@ export default {
         // const today = new Date();
         
         this.fetchSalaryData();
-        this.selectedYear = 2023;
-        this.selectedMonth = 1; 
-        this.getSalaryList(this.selectedYear,this.selectedMonth);
+
+        this.getSalaryList(2024,3);
     },
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="container with-shadow">
+    <h2>휴가 목록</h2>
       <div class="filter">
         <button @click="filterGoouts(null)">전체</button>
         <button @click="filterGoouts(0)">기안중</button>
@@ -15,13 +16,13 @@
         <table>
           <thead>
             <tr>
-              <th style="text-align: center">게시글 번호</th>
-              <th style="text-align: center">이름</th>
-              <th style="text-align: center">작성자 이름</th>
-              <th style="text-align: center">휴가 유형</th>
-              <th style="text-align: center">상태</th>
-              <th style="text-align: center">시작 날짜</th>
-              <th style="text-align: center">종료 날짜</th>
+              <th>게시글 번호</th>
+              <th>이름</th>
+              <th>작성자 이름</th>
+              <th>휴가 유형</th>
+              <th>상태</th>
+              <th>시작 날짜</th>
+              <th>종료 날짜</th>
             </tr>
           </thead>
           <tbody>
@@ -31,15 +32,15 @@
               @click="goToGooutReadPage(goout.id)"
               class="gooutItem"
             >
-              <td style="text-align: center">{{ goout.id }}</td>
-              <td style="text-align: center">{{ goout.name }}</td>
-              <td style="text-align: center">{{ goout.writerName }}</td>
-              <td style="text-align: center">{{ goout.gooutTypeName }}</td>
-              <td style="text-align: center">
+              <td>{{ goout.id }}</td>
+              <td>{{ goout.name }}</td>
+              <td>{{ goout.writerName }}</td>
+              <td>{{ goout.gooutTypeName }}</td>
+              <td>
                 {{ getStatusText(goout.status) }}
               </td>
-              <td style="text-align: center">{{ goout.first }}</td>
-              <td style="text-align: center">{{ goout.last }}</td>
+              <td>{{ goout.first }}</td>
+              <td>{{ goout.last }}</td>
             </tr>
           </tbody>
         </table>
@@ -54,7 +55,7 @@
         >
           {{ page }}
         </button>
-        <button @click="nextGroup">이후</button>
+        <button @click="nextGroup">다음</button>
       </div>
     </div>
 </template>
@@ -95,9 +96,11 @@ export default {
     },
   },
   methods: {
-    changePage(page) {
+     changePage(page) {
       // 페이지를 변경하고, 새로운 페이지의 데이터를 불러옵니다.
+      console.log(`Changing to page ${page}`);
       this.currentPage = page;
+      // this.pageGroupStart = Math.floor((page - 1) / this.pagesToShow) * this.pagesToShow + 1;
       this.fetchGoouts();
     },
 
@@ -130,37 +133,34 @@ export default {
     goToGooutCreate() {
       this.$router.push("/goout/create");
     },
+    
     async fetchGoouts() {
-      try {
-        const token = sessionStorage.getItem("token");
-        const response = await axios.get(`http://192.168.0.51/api/goout/check`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          params: {
-            page: this.currentPage, // API가 페이지를 0부터 계산한다고 가정
-            size: this.pageSize,
-          },
-        });
-        if (response.data.code === 1200 && response.data.isSuccess) {
-          const data = response.data.result; // 결과 데이터 구조에 따라 조정
-          this.goouts = data.goouts;
-          this.filteredGoouts = this.goouts;
-          this.totalPages = Math.ceil(data.totalElements / this.pageSize);
-        } else {
-          console.error(
-            "API call successful, but unexpected response structure:",
-            response.data
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Failed to fetch goouts:",
-          error.response ? error.response.data : error
-        );
+  console.log(`휴가리스트 읽기 시작`);
+  try {
+    const token = sessionStorage.getItem("token");
+    const payload = {
+      page: this.currentPage,
+      size: this.pageSize
+    };
+    const response = await axios.post(`http://192.168.0.51/api/goout/check`, payload, {
+      headers: {
+        Authorization: "Bearer " + token,
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    if (response.data.code === 1200 && response.data.isSuccess) {
+      const data = response.data.result;
+      this.goouts = data.goouts;
+      this.filteredGoouts = this.goouts;
+      this.totalPages = Math.ceil(data.totalElements / this.pageSize);
+    } else {
+      console.error("API call successful, but unexpected response structure:", response.data);
+    }
+    console.log(`휴가리스트 읽기 끝`);
+  } catch (error) {
+    console.error("Failed to fetch goouts:", error.response ? error.response.data : error);
+  }
+},
     goToGooutReadPage(id) {
       if (id) {
         this.$router.push(`/goout/read/${id}`);
@@ -188,10 +188,10 @@ export default {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  left: 113px;
+  left: 230px;
   height: auto;
   margin-left: -50px;
-  width: 90%;
+  width: 73%;
 }
 .with-shadow {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -217,6 +217,7 @@ export default {
 .gooutList td {
   border: 1px solid #ddd;
   padding: 8px;
+  text-align: center;
 }
 .pagination {
   display: flex;
@@ -228,7 +229,7 @@ export default {
   position: absolute;
   right: 40px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   padding: 7px 10px;
   color: white;
@@ -236,7 +237,7 @@ export default {
   border: none;
   border-radius: 10px;
   background-color: #111111;
-  margin-top: -45px;
+  margin-top: -20px;
 }
 .make-goout:hover {
   background-color: #f75c29;
@@ -245,7 +246,7 @@ export default {
   margin-top: 20px;
 }
 button {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   padding: 5px 10px;
   color: white;

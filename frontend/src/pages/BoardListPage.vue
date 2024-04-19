@@ -1,8 +1,11 @@
 <template>
   <HeaderComponent />
   <SideBar />
-  <div class="all">
-    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+  <div class="container with-shadow">
+    <h2>공지사항</h2>
+    <div class="make-board">
+      <button @click="goToBoardCreate">글쓰기</button>
+    </div>
     <div class="boardList">
       <table>
         <thead>
@@ -38,10 +41,7 @@
       >
         {{ page }}
       </button>
-      <button @click="nextGroup">이후</button>
-    </div>
-    <div class="button-container2">
-      <button @click="goToBoardCreate">글쓰기</button>
+      <button @click="nextGroup">다음</button>
     </div>
   </div>
 </template>
@@ -103,23 +103,24 @@ export default {
       this.$router.push("/board/create");
     },
     async fetchBoards() {
-      const token = sessionStorage.getItem("token");
-      try {
-        const response = await axios.get(`http://192.168.0.51/api/board/check`, {
-          params: { page: this.currentPage, size: this.pageSize },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
-          },
-        });
-        this.boards = response.data.result.boards;
-        this.totalPages = Math.ceil(
-          response.data.result.totalElements / this.pageSize
-        );
-      } catch (error) {
-        console.error("Failed to fetch boards:", error);
+  const token = sessionStorage.getItem("token");
+  const payload = {
+    page: this.currentPage,
+    size: this.pageSize
+  };
+  try {
+    const response = await axios.post(`http://192.168.0.51/api/board/check`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
-    },
+    });
+    this.boards = response.data.result.boards;
+    this.totalPages = Math.ceil(response.data.result.totalElements / this.pageSize);
+  } catch (error) {
+    console.error("Failed to fetch boards:", error);
+  }
+},
     goToBoardReadPage(id) {
       this.$router.push(`/board/read/${id}`);
     },
@@ -145,76 +146,59 @@ export default {
 </script>
 
 <style scoped>
-.all {
-  margin-top: -125px; /* 위쪽 마진을 줄임 */
-  margin-left: 300px;
-  margin-right: auto;
-  max-width: 1150px; /* 최대 너비를 줄여 좁은 폭으로 설정 */
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  left: 463px;
+  height: auto;
+  margin-left: -50px;
+  width: 60%;
+  top: 50px;
 }
-
+.with-shadow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
 .boardList table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center; /* 테이블 내용 중앙 정렬 */
+  margin-left: 10px;
+  margin-top: 70px;
 }
-
-.boardList th {
-  background-color: #f8f9fa; /* 헤더 배경색 */
-  color: #495057; /* 헤더 글자색 */
-  border-bottom: 2px solid #e3e6f0; /* 하단 테두리 스타일 */
-  padding: 0.75rem;
-}
-
+.boardList th,
 .boardList td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #e3e6f0;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
-
-.pagination button,
-.button-container2 button {
-  font-size: 18px; /* 폰트 크기 조정 */
-  font-weight: 600; /* 폰트 굵기 조정 */
-  padding: 5px 10px; /* 패딩 조정 */
-  color: white; /* 글자 색상을 흰색으로 설정 */
-  letter-spacing: 0.2px; /* 글자 간격 조정 */
-  border: none; /* 테두리 제거 */
-  border-radius: 10px; /* 버튼 모서리 둥글게 조정 */
-  background-color: #111111; /* 배경색을 검정색으로 설정 */
-  margin: 5px; /* 버튼 간 마진 조정 */
-  transition: background-color 0.3s; /* 배경색 변경 시 효과 조정 */
-}
-
-.button-container2 {
-  display: flex;
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  align-items: center;
-  position: fixed; /* 고정 위치 */
-  bottom: 20px; /* 아래쪽 여백 */
-  right: 20px; /* 오른쪽 여백 */
-}
-
-.pagination button:hover,
-.button-container2 button:hover {
-  background-color: #f75c29; /* 마우스 호버 시 배경색을 주황색으로 변경 */
-}
-
-.active {
-  font-weight: bold; /* 활성 페이지 번호를 굵게 표시 */
-  color: #495057; /* 활성 페이지 번호의 글자색 변경 */
-  background-color: #e9ecef; /* 활성 페이지 번호의 배경색 변경 */
-}
-
-.boardItem:hover {
-  background-color: #f8f9fa; /* 항목에 마우스를 올렸을 때 배경색 변경 */
-  cursor: pointer; /* 마우스 호버 시 커서 변경 */
-}
-
 .pagination {
   display: flex;
-  justify-content: center; /* 중앙 정렬을 위한 스타일 */
+  justify-content: center;
   align-items: center;
-  width: 100%; /* 컨테이너 너비 전체 사용 */
-  margin-top: 20px; /* 상단 여백 추가 */
+  margin-top: 20px; /* 페이지네이션과 위의 내용 사이에 공간 추가 */
 }
+button {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  color: white;
+  letter-spacing: 0.2px;
+  border: none;
+  border-radius: 10px;
+  background-color: #111111;
+  margin: -5px 0px 15px 10px;
+}
+
+button:hover {
+  background-color: #f75c29;
+}
+.make-board{
+  position: absolute;
+  right: 50px;
+  top: 80px;
+}
+
 </style>
