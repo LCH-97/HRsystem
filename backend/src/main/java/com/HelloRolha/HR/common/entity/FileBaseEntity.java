@@ -18,6 +18,7 @@ import javax.persistence.MappedSuperclass;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class FileBaseEntity extends BaseEntity{
-    private String fileName;
+    private String originalFilename; // 원본 파일 이름을 저장할 필드 추가
+    private String fileName; // S3에 저장된 파일명 (UUID 포함)
     private String path;
 }

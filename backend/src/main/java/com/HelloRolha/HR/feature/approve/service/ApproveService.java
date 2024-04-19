@@ -222,7 +222,7 @@ public Page<ApproveList> list(Pageable pageable) {
                     .orElseThrow(() -> new RuntimeException("해당 결재가 존재하지 않습니다."));
 
             ApproveFile approveFile = new ApproveFile();
-            approveFile.setFilename(saveFileName);
+            approveFile.setFileName(saveFileName);
             approveFile.setOriginalFilename(originalName);
             approveFile.setApprove(approve);
             approveFileRepository.save(approveFile);
