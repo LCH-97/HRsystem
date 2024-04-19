@@ -50,7 +50,7 @@ public class OvertimeController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PatchMapping("/overtime/read/{id}") // 초과 근무 상세 조회
+    @GetMapping("/overtime/read/{id}") // 초과 근무 상세 조회
     public ResponseEntity<OvertimeDto> read(@PathVariable Integer id) {
         OvertimeDto overtimeDto = overtimeService.read(id);
         return ResponseEntity.ok().body(overtimeDto);
@@ -66,14 +66,25 @@ public class OvertimeController {
         }
     }
 
-    @PatchMapping("/overtime/approve/{id}")
-    public ResponseEntity<String> approveOvertime(@PathVariable Integer id) {
+    @PatchMapping("/overtime/approve")
+    public ResponseEntity<String> approveOvertime(@RequestBody OvertimeDto overtimeDto) {
         try {
-            overtimeService.approveOvertime(id);
+            overtimeService.approveOvertime(overtimeDto.getId());
             return ResponseEntity.ok().body("초과 근무가 성공적으로 승인되었습니다.");
         } catch (OvertimeNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
+    @GetMapping("/overtime/list/real") // 초과 근무 목록 조회
+    public ResponseEntity<BaseRes> list2() {
+        List<OvertimeDto> overtimeDtos = overtimeService.list();
+        BaseRes response = BaseRes.builder()
+                .code(1200)
+                .message("초과 근무 확인 성공2")
+                .isSuccess(true)
+                .result(overtimeDtos)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
 }

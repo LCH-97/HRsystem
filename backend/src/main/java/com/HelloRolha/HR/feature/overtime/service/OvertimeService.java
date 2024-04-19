@@ -26,7 +26,6 @@ import java.util.Optional;
 
 @Service
 public class OvertimeService {
-
     private final OvertimeRepository overtimeRepository;
 
     @Autowired
@@ -73,7 +72,6 @@ public class OvertimeService {
                         .shift(overtime.getShift())
                         .startTime(overtime.getStartTime())
                         .endTime(overtime.getEndTime())
-                        .sumTime(overtime.getSumTime().toString())
                         .date(overtime.getDate())
                         .reason(overtime.getReason())
                         .status(overtime.getStatus())
@@ -120,7 +118,13 @@ public class OvertimeService {
     }
 
     public OvertimeDto read(Integer id) {
-        Overtime overtime = overtimeRepository.findById(id).orElseThrow(() -> new OvertimeNotFoundException(""));
+        Optional<Overtime> optionalOvertime = overtimeRepository.findByIdWithDetails(id);
+
+        return optionalOvertime.map(overtime -> {
+            Employee employee = overtime.getEmployee();
+            if (employee == null) {
+                throw new RuntimeException("작성자의 정보를 찾을 수 없습니다.");
+            }
 
         return OvertimeDto.builder()
                 .id(overtime.getId())
@@ -130,7 +134,10 @@ public class OvertimeService {
                 .date(overtime.getDate())
                 .reason(overtime.getReason())
                 .status(overtime.getStatus())
+                .employeeName(employee.getName())
+                .employeeId(employee.getId())
                 .build();
+        }).orElse(null);
     }
 
 
@@ -143,7 +150,7 @@ public class OvertimeService {
             overtime.setStartTime(overtimeDto.getStartTime());
             overtime.setEndTime(overtimeDto.getEndTime());
             overtime.setReason(overtimeDto.getReason());
-            overtime.setStatus("대기 중");
+            overtime.setStatus("대기중");
             overtimeRepository.save(overtime);
         }
     }

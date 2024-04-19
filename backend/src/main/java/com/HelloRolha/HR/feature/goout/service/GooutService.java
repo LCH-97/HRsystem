@@ -141,7 +141,6 @@ public class GooutService {
         return gooutCreateRes;
     }
 
-    @Transactional
     public GooutListRes list(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
         Page<Goout> gooutPage = gooutRepository.findList(pageable);

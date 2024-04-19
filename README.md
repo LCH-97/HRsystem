@@ -1,3 +1,16 @@
+# hr_system
+
+![ea3b64c35a81da70e7697c7b7f51a40c](https://github.com/kkm4232/be02-pre-Jenkins-practice/assets/149145532/27cbc02e-0c2f-48d9-8acc-53115237b506)
+
+
+
+
+> **[플레이 데이터] 한화시스템 BEYOND SW캠프/ (🔶Hello_R_loha-HRsystem🔶)**
+---
+
+
+<br>
+
 ## 🌷&nbsp;&nbsp;시스템 아키텍처
 
 

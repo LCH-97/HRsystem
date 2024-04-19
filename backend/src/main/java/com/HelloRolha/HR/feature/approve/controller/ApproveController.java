@@ -1,11 +1,13 @@
 package com.HelloRolha.HR.feature.approve.controller;
 
 import com.HelloRolha.HR.common.dto.BaseRes;
+import com.HelloRolha.HR.common.dto.PaginationReq;
 import com.HelloRolha.HR.feature.approve.model.dto.approve.*;
 import com.HelloRolha.HR.feature.approve.model.dto.approveFile.ApproveFileDto;
 import com.HelloRolha.HR.feature.approve.service.ApproveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +41,9 @@ public class ApproveController {
                 .build();
         return ResponseEntity.ok().body(response);
     }
-    @GetMapping("/list")
-    public ResponseEntity<BaseRes> list(
-            @PageableDefault(size = 10) Pageable pageable
-            ) {
+    @PostMapping("/list")
+    public ResponseEntity<BaseRes> list(@RequestBody PaginationReq paginationReq) {
+        Pageable pageable = PageRequest.of(paginationReq.getPage(), paginationReq.getSize());
         Page<ApproveList> approveLists = approveService.list(pageable);
         BaseRes response = BaseRes.builder()
                 .code(1200)
