@@ -27,7 +27,7 @@
           <td>{{ overtime.reason }}</td>
           <td>{{ overtime.status }}</td>
           <td>
-            <button v-if="overtime.status === '대기중'" class="approval-button" @click.stop="approveOvertime(overtime.id)">
+            <button v-if="overtime.status === '대기 중'" class="approval-button" @click.stop="approveOvertime(overtime.id)">
               승인
             </button>
           </td>
