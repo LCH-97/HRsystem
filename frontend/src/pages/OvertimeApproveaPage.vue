@@ -65,7 +65,7 @@ export default {
     paginatedData() {
       const start = this.currentPage * this.pageSize;
       const end = start + this.pageSize;
-      return this.overtimeList.slice(start, end);
+      return this.overtimeList.filter(overtime => overtime.status !== '승인됨').slice(start, end);
     },
     totalPages() {
       return Math.ceil(this.totalItems / this.pageSize);
