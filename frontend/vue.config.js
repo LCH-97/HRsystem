@@ -4,16 +4,10 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   devServer: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        secure: false,
-        changeOrigin: true,
-        logLevel: 'debug'
-      }
-    }
+    allowedHosts: "all"  // 모든 호스트를 허용합니다.
   }
 });
+
 
 // preset: "@vue/cli-plugin-unit-jest",
 // transformIgnorePatterns: ['/node_modules/']
