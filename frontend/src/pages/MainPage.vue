@@ -206,7 +206,7 @@ export default {
       this.isLoading = true;
       this.loadingTitle = "출근 중"
       this.loadingText = "잠시만 기다려주세요."
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       const token = sessionStorage.getItem("token");
       axios
         .post(api + "/employee/commute", null, {
@@ -230,7 +230,7 @@ export default {
       console.log(" leave click");
       if(this.isLoading) return;
       this.isLoading = true;
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       const token = sessionStorage.getItem("token");
       axios
         .patch(api + "/employee/leave/" + this.commuteId, null, {
@@ -257,7 +257,7 @@ export default {
       this.isLoading = true;
       this.loadingTitle = "출근 확인 중"
       this.loadingText = "잠시만 기다려주세요."
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       const token = sessionStorage.getItem("token");
       axios
         .get(api + "/employee/commute/check", {
@@ -294,7 +294,7 @@ export default {
     size: itemsPerPage
   };
 
-  axios.post(`http://192.168.0.51/api/board/check`, payload, {
+  axios.post(`http://www.lch-hr-api.kro.kr/board/check`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'

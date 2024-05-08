@@ -35,7 +35,7 @@
       },
       fetchGooutTypes() {
         const token = sessionStorage.getItem("token");
-        axios.get('http://192.168.0.51/api/gooutType/list',{
+        axios.get('http://www.lch-hr-api.kro.kr/gooutType/list',{
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

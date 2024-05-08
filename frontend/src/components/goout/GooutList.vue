@@ -142,7 +142,7 @@ export default {
       page: this.currentPage,
       size: this.pageSize
     };
-    const response = await axios.post(`http://192.168.0.51/api/goout/check`, payload, {
+    const response = await axios.post(`http://www.lch-hr-api.kro.kr/goout/check`, payload, {
       headers: {
         Authorization: "Bearer " + token,
         'Content-Type': 'application/json'

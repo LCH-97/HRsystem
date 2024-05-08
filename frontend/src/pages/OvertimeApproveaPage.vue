@@ -91,7 +91,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          "http://192.168.0.51/api/employee/overtime/list/real",
+          "http://www.lch-hr-api.kro.kr/employee/overtime/list/real",
           {
             headers: {
               "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export default {
         };
         console.log("2");
         await axios.patch(
-          `http://192.168.0.51/api/employee/overtime/approve`,
+          `http://www.lch-hr-api.kro.kr/employee/overtime/approve`,
           payload,
           {
             headers: {

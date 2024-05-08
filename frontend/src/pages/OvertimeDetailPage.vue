@@ -55,7 +55,7 @@ export default {
     return {
       overtime: null,
       id: this.$route.params.id,
-      backend: "http://192.168.0.51/api", // 백엔드 서버 주소\
+      backend: "http://www.lch-hr-api.kro.kr", // 백엔드 서버 주소\
       loggedInUserId: null, // 현재 로그인한 사용자의 ID
     };
   },

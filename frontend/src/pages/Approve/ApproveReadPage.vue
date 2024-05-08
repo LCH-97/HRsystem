@@ -132,7 +132,7 @@ export default {
 
       confirmer1: "",
       confirmer2: "",
-      backend: "http://192.168.0.51/api",
+      backend: "http://www.lch-hr-api.kro.kr",
       files: [],
     };
   },
@@ -321,7 +321,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const approveResponse = await axios.get(
-          `http://192.168.0.51/api/approve/read/${this.id}`,
+          `http://www.lch-hr-api.kro.kr/approve/read/${this.id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -345,7 +345,7 @@ export default {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          `http://192.168.0.51/api/approve/line/2/${approveId}`,
+          `http://www.lch-hr-api.kro.kr/approve/line/2/${approveId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -407,7 +407,7 @@ export default {
       if (confirm("정말로 이 결재를 회수  하시겠습니까?")) {
         try {
           const token = sessionStorage.getItem("token");
-          await axios.delete(`http://192.168.0.51/api/approve/cancel/${this.id}`, {
+          await axios.delete(`http://www.lch-hr-api.kro.kr/approve/cancel/${this.id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

@@ -109,7 +109,7 @@ export default {
     size: this.pageSize
   };
   try {
-    const response = await axios.post(`http://192.168.0.51/api/board/check`, payload, {
+    const response = await axios.post(`http://www.lch-hr-api.kro.kr/board/check`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'

@@ -108,7 +108,7 @@ export default {
       }
       const token = sessionStorage.getItem("token");
       axios
-        .patch(`http://192.168.0.51/api/board/update`, formData, {headers: {
+        .patch(`http://www.lch-hr-api.kro.kr/board/update`, formData, {headers: {
             Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
           },})
         .then(() => {
@@ -124,7 +124,7 @@ export default {
     fetchFiles() {
       const token = sessionStorage.getItem("token");
       axios
-        .get(`http://192.168.0.51/api/board/files/${this.board.id}`, {headers: {
+        .get(`http://www.lch-hr-api.kro.kr/board/files/${this.board.id}`, {headers: {
             Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
           },})
         .then((response) => {
@@ -145,7 +145,7 @@ export default {
     deleteFile(fileId) {
       const token = sessionStorage.getItem("token");
       axios
-        .delete(`http://192.168.0.51/api/board/files/delete/${fileId}`, {headers: {
+        .delete(`http://www.lch-hr-api.kro.kr/board/files/delete/${fileId}`, {headers: {
             Authorization: "Bearer " + token, // 요청 헤더에 토큰을 포함시킵니다.
           },})
         .then(() => {

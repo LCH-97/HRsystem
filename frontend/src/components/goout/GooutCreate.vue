@@ -142,7 +142,7 @@ export default {
   },
   data() {
     return {
-      backend: "http://192.168.0.51/api",
+      backend: "http://www.lch-hr-api.kro.kr",
       gooutTypeId: "",
       agentId: "",
       employeeId: "",

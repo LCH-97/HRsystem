@@ -192,7 +192,7 @@ export default {
   methods: {
     fetchSalaryData() {
       console.log("fetchSalaryData method start");
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       // 요청하면 월급 처음 준 날하고, 마지막으로 준 날 반환됨.
       const token = sessionStorage.getItem("token");
       axios
@@ -222,7 +222,7 @@ export default {
     getAuthorizeList() {
       console.log("getAuthorizeList");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);
@@ -249,7 +249,7 @@ export default {
     authorize(employeeId) {
       console.log("authorize");
       // const api = process.env.VUE_APP_BACKEND_URL;
-      const api = "http://192.168.0.51/api";
+      const api = "http://www.lch-hr-api.kro.kr";
       console.log(api);
       // let formData = new FormData();
       // formData.append('username', this.username);

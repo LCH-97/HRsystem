@@ -148,7 +148,7 @@ export default {
 
     async fetchApprovals() {
 
-      const api = `http://192.168.0.51/api/approve/list`;
+      const api = `http://www.lch-hr-api.kro.kr/approve/list`;
 
       try {
         const token = sessionStorage.getItem("token");

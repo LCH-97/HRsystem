@@ -81,7 +81,7 @@ export default {
   },
   data() {
     return {
-      backend: "http://192.168.0.51/api", // 변경된 백엔드 URL 적용
+      backend: "http://www.lch-hr-api.kro.kr", // 변경된 백엔드 URL 적용
       confirmer1Id: "",
       confirmer2Id: "",
       confirmer1Name: "",
