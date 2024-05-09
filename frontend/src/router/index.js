@@ -108,37 +108,50 @@ const router = createRouter({
 
 export default router;
 
-router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  if (!requiresAuth) return next();
-
-  const token = sessionStorage.getItem("token");
-  const refreshToken = sessionStorage.getItem("refreshToken");
-
-  if (token && !isTokenExpired(token)) {
-    return next();
-  }
-
-  if (!refreshToken) {
-    return next('/login');
-  }
-
-  try {
-    const response = await axios.post(`http://www.lch-hr-api.kro.kr/refresh/accessToken`, { refreshToken }, {
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${refreshToken}` }
-    });
-    sessionStorage.setItem("token", response.data.result.token);
-    sessionStorage.setItem("refreshToken", response.data.result.refreshToken);
-    next();
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    next('/login');
-  }
-});
-
 function isTokenExpired(token) {
-  const { exp } = jwtDecode(token);
-  return Date.now() >= exp * 1000;
+  const decoded = VueJwtDecode.decode(token);
+  const currentTime = Math.floor(Date.now() / 1000);
+  return decoded.exp < currentTime;
 }
 
-export default router;
+async function refreshToken() {
+  try {
+    const refreshToken = sessionStorage.getItem("refreshToken");
+    const response = await axios.post(`http://www.lch-hr-api.kro.kr/refresh/accessToken`, {
+      refreshToken: refreshToken
+    }, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + refreshToken,
+      }
+    });
+
+    sessionStorage.setItem("token", response.data.result.token);
+    sessionStorage.setItem("refreshToken", response.data.result.refreshToken);
+    return true;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
+}
+
+router.beforeEach(async (to, from, next) => {
+  const authRequired = authRequiredRoutes.includes(to.path) || isDynamicAuthRequired(to.path);
+
+  if (!authRequired) {
+    next();
+    return;
+  }
+
+  const token = sessionStorage.getItem("token");
+  if (token && !isTokenExpired(token)) {
+    next();
+    return;
+  }
+
+  if (await refreshToken()) {
+    next();
+  } else {
+    forceLogout();
+  }
+});
