@@ -60,7 +60,7 @@
               <h2 class="sub-heading">직원 커스텀 필드</h2>
               <div class="form-group">
                 <label for="inputEmail">아이디</label>
-                <input type="email" class="form-control" id="inputEmail" placeholder="아이디를 입력하세요(test1~50까지는 이미 있습니다.)" v-model="username">
+                <input type="email" class="form-control" id="inputEmail" placeholder="아이디를 입력하세요(test1~test15까지는 이미 있습니다.)" v-model="username">
               </div>
               <div class="form-group">
                 <label for="inputPassword">비밀번호</label>
