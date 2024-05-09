@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import VueJwtDecode from "vue-jwt-decode";
 import jwtDecode from 'jwt-decode';
 
 import OvertimeCreatePage from "../pages/OvertimeCreatePage.vue";
