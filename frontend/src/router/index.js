@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import VueJwtDecode from "vue-jwt-decode";
 import jwtDecode from 'jwt-decode';
 
 import OvertimeCreatePage from "../pages/OvertimeCreatePage.vue";
@@ -110,71 +109,36 @@ const router = createRouter({
 export default router;
 
 router.beforeEach(async (to, from, next) => {
-  console.log("현재 경로:", to.path);
-  const authRequiredRoutes = ["/main", "/manager", "/overtimecreate", "/overtimelist", "/overtimemodify", "/overtimeapprovea",
-   "/approve/list", "/approve/create","/board/list", "/board/create", "/board/update","/goout/list", "/gooutType",
-   "/salary/list","/goout/list","/goout/create","/goout/update","/gooutType/list","/gooutType/create","/gooutType/update",];
-  // 동적 경로를 확인하는 함수 정의
-  const isDynamicAuthRequired = (path) => {
-    if (path.match(/^\/overtime|approve|board|goout|gooutType\/read\/\d+$/)) {
-      // "/board/read/숫자" 형식의 경로에 대해 true 반환
-      return true;
-    }
-    return false;
-  };
-  
-  const authRequired = authRequiredRoutes.includes(to.path) || isDynamicAuthRequired(to.path);
-  console.log("인증 필요 여부:", authRequired);
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  if (!requiresAuth) return next();
 
   const token = sessionStorage.getItem("token");
   const refreshToken = sessionStorage.getItem("refreshToken");
 
-  if (!authRequired) {
-    console.log("인증 필요 없음");
-    next();
-    return;
+  if (token && !isTokenExpired(token)) {
+    return next();
   }
 
-  console.log("체크포인트1")
   if (!refreshToken) {
-    next("/login");
-    return;
+    return next('/login');
   }
 
-  // 토큰의 만료 여부를 확인합니다.
-  if (token) {
-    try {
-      console.log("체크포인트2")
-      const tokenData = VueJwtDecode.decode(token);
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      if (tokenData.exp < currentTime && refreshToken) {
-        // accessToken 만료 & refreshToken 존재
-        console.log("체크포인트3")
-        const response = await axios.post(`http://www.lch-hr-api.kro.kr/refresh/accessToken`, 
-        {
-          refreshToken: sessionStorage.getItem("refreshToken")
-        }, { headers: { "Content-Type": "application/json",Authorization: "Bearer " + refreshToken, }});
-   
-        sessionStorage.setItem("token", response.data.result.token);
-        sessionStorage.setItem("refreshToken", response.data.result.refreshToken);
-        console.log("token 재발급 성공")
-        next();
-      } else {
-        next();
-      }
-    } catch (error) {
-      console.error('Token Processing Error:', error);
-      forceLogout();
-    }
-  } else {
-    forceLogout();
+  try {
+    const response = await axios.post(`http://www.lch-hr-api.kro.kr/refresh/accessToken`, { refreshToken }, {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${refreshToken}` }
+    });
+    sessionStorage.setItem("token", response.data.result.token);
+    sessionStorage.setItem("refreshToken", response.data.result.refreshToken);
+    next();
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    next('/login');
   }
+});
+
+function isTokenExpired(token) {
+  const { exp } = jwtDecode(token);
+  return Date.now() >= exp * 1000;
 }
 
-);
-
-function forceLogout() {
-  sessionStorage.clear();
-  router.push("/login");
-}
+export default router;
